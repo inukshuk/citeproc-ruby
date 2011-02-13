@@ -1,0 +1,185 @@
+<style 
+      xmlns="http://purl.org/net/xbiblio/csl"
+      class="in-text"
+      xml:lang="en">
+  <info>
+    <title>American Medical Association</title>
+    <id>http://www.zotero.org/styles/ama</id>
+    <link href="http://www.zotero.org/styles/ama" />
+    <author>
+      <name>Julian Onions</name>
+      <email>julian.onions@gmail.com</email>
+    </author>
+    <category term="numeric" />
+    <category term="medicine" />
+    <updated />
+    <summary>The American Medical Association style as used in JAMA.</summary>
+    <link href="http://www.samford.edu/schools/pharmacy/dic/amaquickref07.pdf" rel="documentation" />
+  </info>
+  <macro name="editor">
+    <names variable="editor">
+      <name delimiter=", " delimiter-precedes-last="always" initialize-with="" name-as-sort-order="all" sort-separator=" " />
+      <label form="short" prefix=", " suffix="." text-case="lowercase" />
+    </names>
+  </macro>
+  <macro name="anon">
+    <text form="short" term="anonymous" text-case="capitalize-first" />
+  </macro>
+  <macro name="author">
+    <group suffix=".">
+      <names variable="author">
+        <name delimiter=", " delimiter-precedes-last="always" initialize-with="" name-as-sort-order="all" sort-separator=" " />
+        <label form="short" prefix=" " suffix="" text-case="lowercase" />
+        <substitute>
+          <names variable="editor" />
+          <text macro="anon" />
+        </substitute>
+      </names>
+    </group>
+  </macro>
+  <macro name="author-short">
+    <names variable="author">
+      <name and="symbol" delimiter=", " form="short" initialize-with="." />
+      <substitute>
+        <names variable="editor" />
+        <names variable="translator" />
+        <text macro="anon" />
+      </substitute>
+    </names>
+  </macro>
+  <macro name="access">
+    <group>
+      <text suffix=" " value="Available at:" />
+      <text variable="URL" />
+      <group prefix=" [" suffix="]">
+        <text suffix=" " term="accessed" text-case="capitalize-first" />
+        <date variable="accessed">
+          <date-part name="month" suffix=" " />
+          <date-part name="day" suffix=", " />
+          <date-part name="year" />
+        </date>
+      </group>
+    </group>
+  </macro>
+  <macro name="title">
+    <choose>
+      <if type="book">
+        <text font-style="italic" variable="title" />
+      </if>
+      <else>
+        <text variable="title" />
+      </else>
+    </choose>
+  </macro>
+  <macro name="publisher">
+    <group delimiter=": ">
+      <text variable="publisher-place" />
+      <text variable="publisher" />
+    </group>
+  </macro>
+  <macro name="year-date">
+    <group prefix=" ">
+      <choose>
+        <if variable="issued">
+          <date variable="issued">
+            <date-part name="year" />
+          </date>
+        </if>
+        <else>
+          <text term="no date" />
+        </else>
+      </choose>
+    </group>
+  </macro>
+  <macro name="edition">
+    <choose>
+      <if is-numeric="edition">
+        <group delimiter=" ">
+          <number form="ordinal" variable="edition" />
+          <text form="short" suffix="." term="edition" />
+        </group>
+      </if>
+      <else>
+        <text suffix="." variable="edition" />
+      </else>
+    </choose>
+  </macro>
+  <citation 
+         collapse="citation-number">
+    <sort>
+      <key variable="citation-number" />
+    </sort>
+    <layout delimiter="," vertical-align="sup">
+      <text variable="citation-number" />
+      <group prefix="(" suffix=")">
+        <label form="short" variable="locator" />
+        <text variable="locator" />
+      </group>
+    </layout>
+  </citation>
+  <bibliography 
+         et-al-min="6"
+         et-al-use-first="3"
+         hanging-indent="false">
+    <layout>
+      <text prefix="" suffix=". " variable="citation-number" />
+      <text macro="author" suffix="" />
+      <choose>
+        <if type="book">
+          <group suffix=".">
+            <text macro="title" prefix=" " suffix="." />
+            <text macro="edition" prefix=" " />
+            <text macro="editor" prefix=" (" suffix=")" />
+          </group>
+          <text macro="publisher" prefix=" " suffix="" />
+          <group prefix="; " suffix=".">
+            <date variable="issued">
+              <date-part name="year" />
+            </date>
+            <text prefix=":" variable="page" />
+          </group>
+        </if>
+        <else-if type="chapter">
+          <text macro="title" prefix=" " suffix="." />
+          <group prefix=" ">
+            <text suffix=": " term="in" text-case="capitalize-first" />
+            <text macro="editor" />
+            <text font-style="italic" prefix=" " suffix="." variable="container-title" />
+            <text prefix="Vol " suffix="." variable="volume" />
+            <text macro="edition" prefix=" " />
+            <text prefix=" " suffix="." variable="collection-title" />
+            <group suffix=".">
+              <text macro="publisher" prefix=" " />
+              <group prefix="; " suffix=".">
+                <date variable="issued">
+                  <date-part name="year" />
+                </date>
+                <text prefix=":" variable="page" />
+              </group>
+            </group>
+          </group>
+        </else-if>
+        <else>
+          <group suffix=".">
+            <text macro="title" prefix=" " />
+            <text macro="editor" prefix=" " />
+          </group>
+          <group prefix=" " suffix=".">
+            <text font-style="italic" form="short" suffix="." variable="container-title" />
+            <group delimiter=";" prefix=" ">
+              <date variable="issued">
+                <date-part name="year" />
+              </date>
+              <group>
+                <text variable="volume" />
+                <text prefix="(" suffix=")" variable="issue" />
+              </group>
+            </group>
+            <text prefix=":" variable="page" />
+          </group>
+        </else>
+      </choose>
+      <text macro="access" prefix=" " suffix="." />
+    </layout>
+  </bibliography>
+</style>

@@ -1,0 +1,189 @@
+<style 
+      xmlns="http://purl.org/net/xbiblio/csl"
+      class="in-text"
+      xml:lang="en">
+  <info>
+    <title>Modern Language Association</title>
+    <id>http://www.zotero.org/styles/mla</id>
+    <link href="http://www.zotero.org/styles/mla" />
+    <author>
+      <name>Simon Kornblith</name>
+      <email>simon@simonster.com</email>
+    </author>
+    <contributor>
+      <name> modified by Christian Werthschulte</name>
+      <email>Christian.Werthschulte@rub.de</email>
+    </contributor>
+    <category term="generic-base" />
+    <category term="author-date" />
+    <updated />
+  </info>
+  <macro name="editor-translator">
+    <names delimiter=". " variable="editor translator">
+      <label form="verb-short" suffix=". " text-case="capitalize-first" />
+      <name and="symbol" delimiter=", " />
+    </names>
+  </macro>
+  <macro name="author">
+    <names variable="author">
+      <name and="text" delimiter=", " delimiter-precedes-last="always" name-as-sort-order="first" sort-separator=", " />
+      <label form="short" prefix=", " suffix="." />
+      <substitute>
+        <names variable="editor" />
+        <names variable="translator" />
+        <text macro="title" />
+      </substitute>
+    </names>
+  </macro>
+  <macro name="author-short">
+    <names variable="author">
+      <name and="symbol" delimiter=", " form="short" initialize-with=". " />
+      <substitute>
+        <names variable="editor" />
+        <names variable="translator" />
+        <text macro="title-short" />
+      </substitute>
+    </names>
+  </macro>
+  <macro name="access">
+    <group delimiter=" ">
+      <date variable="accessed">
+        <date-part name="day" suffix=" " />
+        <date-part form="short" name="month" strip-periods="false" suffix=" " />
+        <date-part name="year" />
+      </date>
+      <text prefix="&lt;" suffix="&gt;" variable="URL" />
+    </group>
+  </macro>
+  <macro name="title">
+    <choose>
+      <if type="book">
+        <text font-style="italic" variable="title" />
+      </if>
+      <else>
+        <text quotes="true" variable="title" />
+      </else>
+    </choose>
+  </macro>
+  <macro name="title-short">
+    <choose>
+      <if type="book">
+        <text font-style="italic" form="short" variable="title" />
+      </if>
+      <else>
+        <text form="short" quotes="true" variable="title" />
+      </else>
+    </choose>
+  </macro>
+  <macro name="edition">
+    <choose>
+      <if is-numeric="edition">
+        <group delimiter=" ">
+          <number form="ordinal" variable="edition" />
+          <text form="short" suffix="." term="edition" />
+        </group>
+      </if>
+      <else>
+        <text variable="edition" />
+      </else>
+    </choose>
+  </macro>
+  <macro name="publisher-year">
+    <group delimiter=", ">
+      <group delimiter=": ">
+        <text variable="publisher-place" />
+        <text variable="publisher" />
+      </group>
+      <date variable="issued">
+        <date-part name="year" />
+      </date>
+    </group>
+  </macro>
+  <citation 
+         disambiguate-add-givenname="true"
+         disambiguate-add-names="true"
+         et-al-min="4"
+         et-al-use-first="1">
+    <layout delimiter="; " prefix="(" suffix=")">
+      <group delimiter=" ">
+        <choose>
+          <if match="any" variable="author editor translator">
+            <group delimiter=", ">
+              <text macro="author-short" />
+              <choose>
+                <if disambiguate="true">
+                  <text macro="title-short" />
+                </if>
+              </choose>
+            </group>
+          </if>
+          <else>
+            <text macro="title-short" />
+          </else>
+        </choose>
+        <text variable="locator" />
+      </group>
+    </layout>
+  </citation>
+  <bibliography 
+         et-al-min="4"
+         et-al-use-first="1"
+         hanging-indent="true"
+         line-spacing="2"
+         subsequent-author-substitute="---">
+    <sort>
+      <key macro="author" />
+      <key variable="title" />
+    </sort>
+    <layout>
+      <text macro="author" suffix="." />
+      <text macro="title" prefix=" " suffix="." />
+      <choose>
+        <if type="book">
+          <text macro="edition" prefix=" " suffix="." />
+          <text macro="editor-translator" prefix=" " suffix="." />
+          <text macro="publisher-year" prefix=" " suffix="." />
+        </if>
+        <else-if type="chapter">
+          <group>
+            <text font-style="italic" prefix=" " suffix="." variable="container-title" />
+            <text macro="edition" prefix=" " suffix="." />
+            <text macro="editor-translator" prefix=" " suffix="." />
+            <text macro="publisher-year" prefix=" " suffix="." />
+          </group>
+          <text prefix=" " suffix="." variable="page" />
+        </else-if>
+        <else>
+          <group delimiter=": " prefix=" " suffix=".">
+            <group delimiter=" ">
+              <text macro="editor-translator" suffix="." />
+              <text font-style="italic" variable="container-title" />
+              <choose>
+                <if type="article-journal">
+                  <group delimiter=" ">
+                    <group delimiter=".">
+                      <text variable="volume" />
+                      <text variable="issue" />
+                    </group>
+                    <date prefix="(" suffix=")" variable="issued">
+                      <date-part name="year" />
+                    </date>
+                  </group>
+                </if>
+                <else>
+                  <date variable="issued">
+                    <date-part name="day" suffix=" " />
+                    <date-part form="short" name="month" strip-periods="false" suffix=" " />
+                    <date-part name="year" />
+                  </date>
+                </else>
+              </choose>
+            </group>
+            <text variable="page" />
+          </group>
+        </else>
+      </choose>
+      <text macro="access" prefix=" " suffix="." />
+    </layout>
+  </bibliography>
+</style>

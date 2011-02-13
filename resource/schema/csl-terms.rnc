@@ -1,0 +1,106 @@
+## Terms
+div {
+  cs-terms =
+    
+    ## Miscellaneous Terms
+    "accessed"
+    | "ad"
+    | "and"
+    | "and others"
+    | "anonymous"
+    | "at"
+    | "bc"
+    | "by"
+    | "circa"
+    | "cited"
+    | "edition"
+    | "et-al"
+    | "forthcoming"
+    | "from"
+    | "ibid"
+    | "in"
+    | "in press"
+    | "internet"
+    | "interview"
+    | "letter"
+    | "no date"
+    | "online"
+    | "presented at"
+    | "reference"
+    | "retrieved"
+    | 
+      ## Months
+      "month-01"
+    | "month-02"
+    | "month-03"
+    | "month-04"
+    | "month-05"
+    | "month-06"
+    | "month-07"
+    | "month-08"
+    | "month-09"
+    | "month-10"
+    | "month-11"
+    | "month-12"
+    | 
+      ## Seasons
+      "season-01"
+    | "season-02"
+    | "season-03"
+    | "season-04"
+    | 
+      ## Quotes
+      "open-quote"
+    | "close-quote"
+    | "open-inner-quote"
+    | "close-inner-quote"
+    |
+      ## Ordinals
+      "ordinal-01"
+    | "ordinal-02"
+    | "ordinal-03"
+    | "ordinal-04"
+    |
+      ## Long Ordinals
+      "long-ordinal-01"
+    | "long-ordinal-02"
+    | "long-ordinal-03"
+    | "long-ordinal-04"
+    | "long-ordinal-05"
+    | "long-ordinal-06"
+    | "long-ordinal-07"
+    | "long-ordinal-08"
+    | "long-ordinal-09"
+    | "long-ordinal-10"
+    |
+      ## Contributor Roles
+      cs-names
+    | "editortranslator"
+    |
+      ## Categories
+      info-field-categories
+    |
+      ## Locators
+      cs-terms.locator
+    | cs-terms.extension
+  
+  ## Locators
+  cs-terms.locator =
+    "book"
+    | "chapter"
+    | "column"
+    | "figure"
+    | "folio"
+    | "issue"
+    | "line"
+    | "note"
+    | "opus"
+    | "page"
+    | "paragraph"
+    | "part"
+    | "section"
+    | "sub verbo"
+    | "verse"
+    | "volume"
+}
+

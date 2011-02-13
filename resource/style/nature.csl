@@ -1,0 +1,88 @@
+<style 
+      xmlns="http://purl.org/net/xbiblio/csl"
+      class="in-text"
+      xml:lang="en">
+  <info>
+    <title>Nature Journal</title>
+    <id>http://www.zotero.org/styles/nature</id>
+    <link href="http://www.zotero.org/styles/nature" />
+    <author>
+      <name>Michael Berkowitz</name>
+      <email>mberkowi@gmu.edu</email>
+    </author>
+    <category term="biology" />
+    <category term="generic-base" />
+    <category term="numeric" />
+    <updated />
+  </info>
+  <macro name="title">
+    <choose>
+      <if type="book">
+        <text font-style="italic" variable="title" />
+      </if>
+      <else>
+        <text variable="title" />
+      </else>
+    </choose>
+  </macro>
+  <macro name="author">
+    <names variable="author">
+      <name and="symbol" delimiter=", " delimiter-precedes-last="never" initialize-with="." name-as-sort-order="all" sort-separator=", " />
+    </names>
+  </macro>
+  <macro name="access">
+    <choose>
+      <if variable="volume" />
+      <else-if variable="DOI">
+        <text prefix="doi:" variable="DOI" />
+      </else-if>
+      <else-if variable="URL">
+        <text term="at" />
+        <text prefix=" &lt;" suffix="&gt;" variable="URL" />
+      </else-if>
+    </choose>
+  </macro>
+  <macro name="issuance">
+    <choose>
+      <if type="book">
+        <group prefix="(" suffix=").">
+          <text suffix=": " variable="publisher" />
+          <text suffix=", " variable="publisher-place" />
+          <date variable="issued">
+            <date-part name="year" />
+          </date>
+        </group>
+      </if>
+      <else>
+        <date prefix="(" suffix=")." variable="issued">
+          <date-part name="year" />
+        </date>
+      </else>
+    </choose>
+  </macro>
+  <citation 
+         collapse="citation-number">
+    <sort>
+      <key variable="citation-number" />
+    </sort>
+    <layout delimiter="," vertical-align="sup">
+      <text variable="citation-number" />
+    </layout>
+  </citation>
+  <bibliography 
+         entry-spacing="0"
+         et-al-min="4"
+         et-al-use-first="1"
+         second-field-align="true">
+    <layout>
+      <text suffix="." variable="citation-number" />
+      <text macro="author" />
+      <text macro="title" prefix=" " suffix=". " />
+      <text font-style="italic" form="short" suffix=" " variable="container-title" />
+      <text font-weight="bold" suffix=", " variable="volume" />
+      <text variable="page" />
+      <text macro="issuance" />
+      <text macro="access" />
+    </layout>
+  </bibliography>
+</style>

@@ -1,0 +1,117 @@
+<style 
+      xmlns="http://purl.org/net/xbiblio/csl"
+      class="in-text"
+      xml:lang="en">
+  <info>
+    <title>National Library of Medicine</title>
+    <id>http://www.zotero.org/styles/nlm</id>
+    <link href="http://www.zotero.org/styles/nlm" />
+    <author>
+      <name>Michael Berkowitz</name>
+      <email>mberkowi@gmu.edu</email>
+    </author>
+    <category term="generic-base" />
+    <category term="numeric" />
+    <updated />
+  </info>
+  <macro name="author">
+    <names suffix=". " variable="author">
+      <name delimiter=", " delimiter-precedes-last="always" initialize-with="" name-as-sort-order="all" sort-separator=" " />
+    </names>
+  </macro>
+  <macro name="editor">
+    <names suffix=", editor(s). " variable="editor">
+      <name delimiter=", " delimiter-precedes-last="always" initialize-with="" name-as-sort-order="all" sort-separator=" " />
+    </names>
+  </macro>
+  <macro name="publisher">
+    <text suffix=": " variable="publisher-place" />
+    <text suffix="; " variable="publisher" />
+    <date variable="issued">
+      <date-part name="year" suffix=". " />
+    </date>
+  </macro>
+  <macro name="access">
+    <group delimiter=" ">
+      <group delimiter=" " prefix="[" suffix="]">
+        <text term="cited" text-case="lowercase" />
+        <date suffix=" " variable="accessed">
+          <date-part name="year" />
+          <date-part form="short" name="month" prefix=" " />
+          <date-part name="day" prefix=" " />
+        </date>
+      </group>
+      <group>
+        <text value="Available from: " />
+        <text variable="URL" />
+      </group>
+    </group>
+  </macro>
+  <macro name="title">
+    <group delimiter=" ">
+      <text variable="title" />
+      <choose>
+        <if variable="URL">
+          <text prefix="[" suffix="]" term="internet" text-case="capitalize-first" />
+        </if>
+      </choose>
+    </group>
+  </macro>
+  <macro name="edition">
+    <choose>
+      <if is-numeric="edition">
+        <group delimiter=" ">
+          <number form="ordinal" variable="edition" />
+          <text form="short" suffix="." term="edition" />
+        </group>
+      </if>
+      <else>
+        <text suffix="." variable="edition" />
+      </else>
+    </choose>
+  </macro>
+  <citation 
+         collapse="citation-number">
+    <sort>
+      <key variable="citation-number" />
+    </sort>
+    <layout delimiter="; " prefix="(" suffix=")">
+      <text variable="citation-number" />
+    </layout>
+  </citation>
+  <bibliography 
+         second-field-align="true">
+    <layout>
+      <text suffix=". " variable="citation-number" />
+      <text macro="author" />
+      <text macro="title" suffix=". " />
+      <choose>
+        <if type="book">
+          <text macro="edition" prefix=" " suffix=" " />
+          <text macro="publisher" prefix=" " />
+        </if>
+        <else-if type="chapter">
+          <group prefix=" " suffix=". ">
+            <text suffix=": " term="in" text-case="capitalize-first" />
+            <text macro="editor" />
+            <text variable="container-title" />
+          </group>
+          <text macro="publisher" prefix=" " />
+          <text prefix=" p. " suffix="." variable="page" />
+        </else-if>
+        <else>
+          <text form="short" suffix=". " variable="container-title" />
+          <date suffix=";" variable="issued">
+            <date-part name="year" suffix=" " />
+            <date-part form="short" name="month" suffix=" " />
+            <date-part name="day" />
+          </date>
+          <text variable="volume" />
+          <text prefix="(" suffix="):" variable="issue" />
+          <text suffix="." variable="page" />
+        </else>
+      </choose>
+      <text macro="access" />
+    </layout>
+  </bibliography>
+</style>
