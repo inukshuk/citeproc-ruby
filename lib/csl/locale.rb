@@ -35,13 +35,13 @@ module CSL
     def set(tag)
       @language, @region = tag.to_s.split(/-/)
     end
-
+    
     def tag
       [@language, @region].join('-')
     end
     
     def terms
-      @terms = @terms || build_terms
+      @terms ||= build_terms
     end
     
     def [](tag)
@@ -51,7 +51,7 @@ module CSL
     # @example
     # #options['punctuation-in-quotes'] => 'true'
     def options
-      @options = @options || Hash.new { |h,k| @doc.at_css('style-options')[k.to_s] }
+      @options ||= Hash.new { |h,k| @doc.at_css('style-options')[k.to_s] }
     end
     
     alias :style_options :options
@@ -59,7 +59,7 @@ module CSL
     # @example
     # #date(:numeric)['month']['suffix'] => '/'
     def date(form=:text)
-      @date = @date || Hash[@doc.css("date[form='#{form}'] > date-part").map { |d| [d['name'], Hash[d.to_a]] }]
+      @date ||= Hash[@doc.css("date[form='#{form}'] > date-part").map { |d| [d['name'], Hash[d.to_a]] }]
     end
     
     # Around Alias Chains to call reload whenver locale changes
@@ -74,8 +74,11 @@ module CSL
 
     # Reloads the XML file. Called automatically whenever the locale changes.
     def reload!
+      match_region if @region.nil?
+      
       @options, @date, @terms = nil
       @doc = Nokogiri::XML(File.open(document_path)) { |config| config.strict.noblanks }
+      
     rescue Exception => e
       CiteProc.log.error "Failed to open locale file, falling back to default: #{e.message}"
       unless tag == Locale.default
@@ -97,6 +100,12 @@ module CSL
       @terms
     end
 
+    # Set region to first available region for current language.
+    def match_region
+      Dir.entries(Locale.path).detect { |l| l.match(%r/^[\w]+-#{@language}-([A-Z]{2})\.xml$/) }
+      @region = $1
+    end
+    
     def document_path
       File.expand_path("./locales-#{@language}-#{@region}.xml", Locale.path)
     end
