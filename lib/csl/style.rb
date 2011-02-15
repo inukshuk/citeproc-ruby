@@ -40,12 +40,19 @@ module CSL
       @doc = Nokogiri::XML(locate(style)) { |config| config.strict.noblanks }
     end
     
+    # Returns the CSL Relax NG schema defintion.
     def schema
       @attributes[:schema] ||= Nokogiri::XML::RelaxNG(File.open(Style.schema))
     end
     
+    # Validates the current style's source document against the CSL defintion.
+    def validate
+      schema.validate(@doc)
+    end
+    
+    # Returns true if the current style's source document conforms to the CSL definition.
     def valid?
-      schema.validate(@doc).empty?
+      validate.empty?
     end
 
     # Updates the current style using the URI returned by #link.
@@ -54,7 +61,7 @@ module CSL
     end
     
     def info
-      @attributes[:info] ||= @doc.at_css('style info')
+      @attributes[:info] ||= @doc.at_css('style > info')
     end
 
     [:title, :id].each do |method_id|
@@ -68,8 +75,15 @@ module CSL
     end
     
     def macros
-      @attributes[:macros] ||= Hash[@doc.css('style macro').map { |m| [m[:name], Macro.new(m)] } ]
+      @attributes[:macros] ||= Hash[@doc.css('style > macro').map { |m| [m[:name], m] } ]
     end
+    
+    [:citation, :bibliography].each do |method_id|
+      define_method method_id do
+        @attributes[method_id] ||= @doc.at_css("style > #{method_id}")
+      end
+    end
+    
     
     private
     
@@ -83,23 +97,5 @@ module CSL
       Kernel.open(resource)
     end
   end
-  
-  class Macro
     
-    def initialize(node)
-      @node = node
-    end
-    
-    def name
-      @name ||= @node[:name]
-    end
-    
-    def execute
-      
-    end
-    
-    alias :run :execute
-    
-  end
-  
 end

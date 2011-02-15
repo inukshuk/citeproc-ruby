@@ -16,43 +16,15 @@
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 #++
 
-module CSL
-
-  class Processor
-    
-    attr_reader :style, :bibliography, :abbreviations, :format
-    attr_accessor :language
-    
-    def initialize
-      @bibliography = Bibliography.new
-    end
-
-    def style=(resource)
-      @style = Style.new(resource)
-    end
-    
-    def format=(new_format)
-    end
-
-    def registry
-      @registry ||= {}
-    end
-    
-    def register(items)
-      items = [items] unless items.is_a?(Array)
-      items.each do |item|
-        registry[item['id']] = Item.new(item)
-      end
-    end
-    
-    def cite
-    end
-
-    def nocite
-    end
-    
-    def compile
-    end
-    
-  end
-end
+CSL::Item.converters[:bibtex] = (Hash.new { |hash, key| key.to_s }).merge(Hash[*%w{
+  date      issued
+  isbn      ISBN
+  booktitle container-title
+  journal   container-title
+  series    collection-title
+  address   publisher-place
+  pages     page
+  number    issue
+  url       URL
+  doi       DOI
+}])

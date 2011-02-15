@@ -17,17 +17,11 @@
 #++
 
 module CSL
-
-  module Item
+  
+  module Attributes
 
     def self.included(base)
       base.extend(ClassMethods)
-    end
-
-    def self.parse(item)
-      Hash[item.map { |key, value|
-        [key, Date::FIELDS.include?(key) ? Date.new(value) : Name::FIELDS.include?(key) ? Name.new(value) : value]
-      }]
     end
     
     attr_writer :attributes
@@ -37,11 +31,11 @@ module CSL
     end
     
     def [](id)
-      attributes[id.to_s.downcase.gsub(/[-\s]+/,'_')]
+      attributes[id.to_s]
     end
     
     def []=(id, value)
-      attributes[id.to_s.downcase.gsub(/[-\s]+/,'_')] = value
+      attributes[id.to_s] = value
     end
     
     def merge(argument)
@@ -57,17 +51,20 @@ module CSL
     alias_method :to_hash, :attributes
     
     module ClassMethods
-      def fields(*args)
+      def attr_fields(*args)
+        args = args.shift if args.first.is_a?(Array)
         args.each do |field|
+          field = field.to_s
+          method_id = field.downcase.gsub(/[-\s]+/,'_')
           
-          define_method field do; attributes[field.to_s]; end
+          define_method method_id do; attributes[field]; end
           
-          define_method [field, '='].join do |value|
-            attributes[field.to_s]
+          define_method [method_id, '='].join do |value|
+            attributes[field]
           end
           
-          define_method [field, '?'].join do
-            !(attributes[field.to_s] || ["", [], 0].include?(attributes[field.to_s]))
+          define_method [method_id, '?'].join do
+            !(attributes[field] || ["", [], 0].include?(attributes[field]))
           end
           
         end
@@ -76,16 +73,59 @@ module CSL
     
   end
   
-  class Name
-    
-    FIELDS = %w{
+  
+  class Item
+    include Attributes
+
+    @date_fields = %w{ accessed container event-date issued original-date }
+
+    @name_fields = %w{
       author editor translator recipient interviewer publisher composer
-      original-publisher original-author container-author collection-editor
-    }
+      original-publisher original-author container-author collection-editor }
+
+    @text_fields = %w{
+      id abstract annote archive archive-location archive-place authority
+      call-number chapter-number citation-label citation-number collection-title
+      container-title DOI edition event event-place first-reference-note-number
+      genre ISBN issue jurisdiction keyword locator medium note number
+      number-of-pages number-of-volumes original-publisher original-publisher-place
+      original-title page page-first publisher publisher-place references
+      section status title URL version volume year-suffix }
     
-    include Item
+    @converters = Hash.new
     
-    fields :given, :family, :literal, :suffix, :dropping_particle,
+    class << self
+      attr_reader :date_fields, :name_fields, :text_fields, :converters
+      
+      def fields
+        date_fields + name_fields + text_fields
+      end
+    end
+    
+    attr_fields Item.fields
+    
+    def initialize(attributes={})
+      merge(attributes)
+    end
+    
+    def merge(attributes)
+      attributes.map do |key, value|
+        key = convert(key)
+        self.attributes[key] = Item.date_fields.include?(key) ? Date.new(value) : Item.name_fields.include?(key) ? Name.new(value) : value
+      end
+    end
+  
+    # Converts a key (e.g., from BibTeX) to CSL syntax. @see converters.rb
+    def convert(key)
+      Item.converters.values.map { |c| c[key] }
+    end
+  end
+  
+  
+  class Name       
+    include Attributes
+    
+    attr_fields :given, :family, :literal, :suffix, :dropping_particle,
       :non_dropping_particle, :comma_suffix, :static_ordering, :parse_names
 
     [[:last, :family], [:first, :given]].each do |m|
@@ -107,12 +147,9 @@ module CSL
   end
 
   class Date
+    include Attributes
 
-    FIELDS = %w{ accessed container event-date issued original-date }
-
-    include Item
-
-    fields :date_parts, :season, :circa, :literal
+    attr_fields :date_parts, :season, :circa, :literal
 
     def initialize(attributes={})
       @attributes = {}.merge(attributes)      

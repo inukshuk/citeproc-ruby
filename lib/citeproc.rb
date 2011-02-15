@@ -40,6 +40,7 @@ require 'citeproc/version'
 
 require 'csl/locale'
 require 'csl/items'
+require 'csl/converters'
 require 'csl/style'
 require 'csl/bibliography'
 require 'csl/processor'
