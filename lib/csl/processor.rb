@@ -18,27 +18,52 @@
 
 module CSL
 
+  def self.default_abbreviations
+    Hash[
+      'container', {},
+      'collection-title', {},
+      'authority', {},
+      'institution', {},
+      'title', {},
+      'publisher', {},
+      'publisher-place', {},
+      'hereinafter', {}]
+  end
+  
   class Processor
-    attr_reader :style, :schema, :bibliography
+    
+    attr_reader :style, :schema, :bibliography, :abbreviations, :format
     attr_accessor :language, :data_store
 
+    alias :ds :data_store
+    
     def initialize
-      @bibliography = {}
+      @bibliography = Bibliography.new
+      @abbreviations = { 'default' => CSL.default_abreviations }
     end
 
-    def style=(path)
-      @style = Nokogiri::XML(File.open(path))
+    def style=(style)
+      @style = Nokogiri::XML(File.exists?(style) ? File.open(style) : style)
     end
     
-    def schema=(path)
-      @schema = Nokogiri::XML::RelaxNG(File.open(path))
+    def schema=(schema)
+      @schema = Nokogiri::XML::RelaxNG(File.exists?(schema) ? File.open(schema) : schema)
     end
     
     def valid?
       @schema.validate(@style).empty?
     end
     
+    def format=(new_format)
+    end
+    
     def cite
+    end
+
+    def nocite
+    end
+    
+    def compile
     end
     
   end

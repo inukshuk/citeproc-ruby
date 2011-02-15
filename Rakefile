@@ -10,6 +10,20 @@ require 'citeproc/version'
 
 task :default => []
 
+begin
+  require 'rspec/core/rake_task'
+rescue LoadError
+  puts 'To use rspec-2 for testing you must install the rspec-2 gem:\n\t\tgem install rspec'
+  exit(0)
+end
+
+desc "Run rspec-2 on the specs in ./specs"
+RSpec::Core::RakeTask.new(:spec) do |t|
+  t.rspec_opts = ['-c', '-f progress', '-r ./spec/spec_helper.rb']
+  t.pattern = 'spec/**/*_spec.rb'
+end
+
+
 Rake::RDocTask.new(:rdoc_task) do |rd|
   rd.main = 'README.md'
   rd.title = "CiteProc-Ruby Documentation"

@@ -25,16 +25,18 @@ require 'nokogiri'
 
 module CiteProc
   
-  Log = Logging.logger['citeproc']
+  Log = Logging.logger[self.name]
   Log.add_appenders(Logging.appenders.stderr)
   
   Log.level = ENV.has_key?('DEBUG') ? :debug : :info
   
-  def self.log; Log end
+  def self.log; Log; end
   
 end
 
 require 'citeproc/version'
 
 require 'csl/locale'
+require 'csl/items'
+require 'csl/bibliography'
 require 'csl/processor'
