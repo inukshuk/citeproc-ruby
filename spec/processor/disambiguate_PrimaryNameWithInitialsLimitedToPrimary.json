@@ -1,0 +1,94 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation \n         et-al-min=\"3\"\n         et-al-use-first=\"1\"\n         disambiguate-add-givenname=\"true\"\n         disambiguate-add-year-suffix=\"true\"\n         givenname-disambiguation-rule=\"primary-name-with-initials\">\n    <layout delimiter=\"; \">\n      <names delimiter=\", \" variable=\"author\">\n        <name and=\"text\" delimiter=\", \" delimiter-precedes-last=\"never\" form=\"short\" initialize-with=\".\" />\n      </names>\n      <group prefix=\" (\" suffix=\")\">\n        <date variable=\"issued\">\n          <date-part name=\"year\" />\n        </date>\n        <text variable=\"year-suffix\" />\n      </group>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Asthma", 
+                    "given": "Albert", 
+                    "static-ordering": false
+                }, 
+                {
+                    "family": "Bronchitis", 
+                    "given": "Bosworth", 
+                    "static-ordering": false
+                }, 
+                {
+                    "family": "Cold", 
+                    "given": "Crispin", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1980"
+                    ]
+                ]
+            }, 
+            "title": "Book A", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Asthma", 
+                    "given": "Gargoyle", 
+                    "static-ordering": false
+                }, 
+                {
+                    "family": "Bronchitis", 
+                    "given": "Billy", 
+                    "static-ordering": false
+                }, 
+                {
+                    "family": "Cold", 
+                    "given": "Odeous", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1995"
+                    ]
+                ]
+            }, 
+            "title": "Book B", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Dropsy", 
+                    "given": "Duncan", 
+                    "static-ordering": false
+                }, 
+                {
+                    "family": "Asthma", 
+                    "given": "Albert", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-3", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1995"
+                    ]
+                ]
+            }, 
+            "title": "Book B", 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "A. Asthma et al. (1980); G. Asthma et al. (1995); Dropsy and Asthma (1995)"
+}

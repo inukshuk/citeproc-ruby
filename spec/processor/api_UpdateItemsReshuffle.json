@@ -1,0 +1,117 @@
+{
+    "abbreviations": false, 
+    "bibentries": [
+        [
+            "ITEM-1", 
+            "ITEM-2", 
+            "ITEM-3", 
+            "ITEM-4", 
+            "ITEM-5"
+        ], 
+        [
+            "ITEM-1", 
+            "ITEM-4", 
+            "ITEM-5", 
+            "ITEM-2", 
+            "ITEM-3"
+        ]
+    ], 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation>\n    <layout delimiter=\"; \" suffix=\".\">\n      <group delimiter=\" \">\n        <names variable=\"author\">\n          <name form=\"short\" />\n        </names>\n        <date variable=\"issued\">\n          <date-part name=\"year\" />\n        </date>\n      </group>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Doe", 
+                    "given": "John", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        1960
+                    ]
+                ]
+            }, 
+            "title": "Book A"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Roe", 
+                    "given": "Jane", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        1970
+                    ]
+                ]
+            }, 
+            "title": "Book B"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Smith", 
+                    "given": "John", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-3", 
+            "issued": {
+                "date-parts": [
+                    [
+                        1980
+                    ]
+                ]
+            }, 
+            "title": "Book C"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Brown", 
+                    "given": "Robert", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-4", 
+            "issued": {
+                "date-parts": [
+                    [
+                        1990
+                    ]
+                ]
+            }, 
+            "title": "Book D"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Ichi", 
+                    "given": "Taro", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-5", 
+            "issued": {
+                "date-parts": [
+                    [
+                        2000
+                    ]
+                ]
+            }, 
+            "title": "Book E"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "Doe 1960; Brown 1990; Ichi 2000; Roe 1970; Smith 1980."
+}

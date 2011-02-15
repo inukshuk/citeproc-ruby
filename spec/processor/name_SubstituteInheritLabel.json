@@ -1,0 +1,53 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <locale>\n    <terms>\n      <term name=\"et al.\">hello</term>\n    </terms>\n  </locale>\n  <citation>\n    <layout delimiter=\"; \" prefix=\"[\" suffix=\"]\">\n      <names prefix=\"[X]\" variable=\"author\">\n        <name />\n        <label form=\"short\" prefix=\" (\" suffix=\".)\" font-style=\"italic\"/>\n        <substitute>\n          <names variable=\"editor\" />\n        </substitute>\n      </names>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "editor": [
+                {
+                    "family": "Roe", 
+                    "given": "Jane", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "item-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "2000"
+                    ]
+                ]
+            }, 
+            "title": "Her Anonymous Anthology", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Doe", 
+                    "given": "John", 
+                    "static-ordering": false, 
+                    "uri": "http://people.org/doej"
+                }
+            ], 
+            "id": "simple-western-name-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1965", 
+                        "6", 
+                        "1"
+                    ]
+                ]
+            }, 
+            "title": "His Anonymous Life", 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "[[X]Jane Roe (<i>ed.</i>); [X]John Doe]"
+}

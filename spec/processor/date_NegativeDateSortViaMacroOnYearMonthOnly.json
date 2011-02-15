@@ -1,0 +1,64 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <macro name=\"shortdate\">\n      <date variable=\"issued\" delimiter=\"-\">\n        <date-part name=\"year\"/>\n        <date-part name=\"month\" form=\"numeric\"/>\n      </date>\n  </macro>\n  <macro name=\"longdate\">\n      <date variable=\"issued\" delimiter=\"-\">\n        <date-part name=\"year\"/>\n        <date-part name=\"month\" form=\"numeric\"/>\n        <date-part name=\"day\" form=\"numeric\"/>\n      </date>\n  </macro>\n  <citation>\n    <sort>\n      <key macro=\"shortdate\"/>\n      <key variable=\"title\"/>\n    </sort>\n    <layout delimiter=\", \">\n      <group delimiter=\" \">\n        <text variable=\"title\"/>\n        <text macro=\"longdate\" prefix=\"(\" suffix=\")\"/>\n      </group>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        -100, 
+                        7, 
+                        13
+                    ]
+                ]
+            }, 
+            "title": "BookY"
+        }, 
+        {
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        -100, 
+                        7, 
+                        14
+                    ]
+                ]
+            }, 
+            "title": "BookX"
+        }, 
+        {
+            "id": "ITEM-3", 
+            "issued": {
+                "date-parts": [
+                    [
+                        68, 
+                        3, 
+                        15
+                    ]
+                ]
+            }, 
+            "title": "BookB"
+        }, 
+        {
+            "id": "ITEM-4", 
+            "issued": {
+                "date-parts": [
+                    [
+                        68, 
+                        3, 
+                        16
+                    ]
+                ]
+            }, 
+            "title": "BookA"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "BookX (100BC-7-14), BookY (100BC-7-13), BookA (68AD-3-16), BookB (68AD-3-15)"
+}

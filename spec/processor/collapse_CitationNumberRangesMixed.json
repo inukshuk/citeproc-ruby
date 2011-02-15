@@ -1,0 +1,91 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": [
+        [
+            {
+                "id": "ITEM-1"
+            }, 
+            {
+                "id": "ITEM-2"
+            }, 
+            {
+                "id": "ITEM-3"
+            }, 
+            {
+                "id": "ITEM-4"
+            }, 
+            {
+                "id": "ITEM-5"
+            }, 
+            {
+                "id": "ITEM-6"
+            }, 
+            {
+                "id": "ITEM-7"
+            }
+        ], 
+        [
+            {
+                "id": "ITEM-1"
+            }, 
+            {
+                "id": "ITEM-2"
+            }, 
+            {
+                "id": "ITEM-3"
+            }, 
+            {
+                "id": "ITEM-5"
+            }, 
+            {
+                "id": "ITEM-6"
+            }, 
+            {
+                "id": "ITEM-7"
+            }
+        ]
+    ], 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation \n         collapse=\"citation-number\">\n    <sort>\n      <key variable=\"citation-number\" />\n    </sort>\n    <layout delimiter=\", \" prefix=\"(\" suffix=\")\">\n      <text prefix=\"[\" suffix=\"]\" variable=\"citation-number\" />\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "id": "ITEM-1", 
+            "title": "Paper 1", 
+            "type": "book"
+        }, 
+        {
+            "id": "ITEM-2", 
+            "title": "Paper 2", 
+            "type": "book"
+        }, 
+        {
+            "id": "ITEM-3", 
+            "title": "Paper 3", 
+            "type": "book"
+        }, 
+        {
+            "id": "ITEM-4", 
+            "title": "Paper 4", 
+            "type": "book"
+        }, 
+        {
+            "id": "ITEM-5", 
+            "title": "Paper 5", 
+            "type": "book"
+        }, 
+        {
+            "id": "ITEM-6", 
+            "title": "Paper 6", 
+            "type": "book"
+        }, 
+        {
+            "id": "ITEM-7", 
+            "title": "Paper 7", 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "([1]-[7])\n([1]-[3], [5]-[7])"
+}

@@ -1,0 +1,30 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation>\n    <layout>\n      <names variable=\"author\">\n        <name et-al-min=\"4\" delimiter=\", \"/>\n      </names>\n    </layout>\n  </citation>\n  <bibliography\n      et-al-use-first=\"2\">\n    <layout>\n      <names variable=\"author\">\n        <name et-al-min=\"3\" delimiter=\", \"/>\n      </names>\n    </layout>\n  </bibliography>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Doe", 
+                    "given": "John"
+                }, 
+                {
+                    "family": "Roe", 
+                    "given": "Jane"
+                }, 
+                {
+                    "family": "Snoakes", 
+                    "given": "Richard"
+                }
+            ], 
+            "id": "ITEM-1", 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "John Doe, Jane Roe, Richard Snoakes"
+}

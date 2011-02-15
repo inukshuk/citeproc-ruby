@@ -1,0 +1,77 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": [
+        [
+            {
+                "id": "ITEM-1"
+            }
+        ], 
+        [
+            {
+                "id": "ITEM-2"
+            }
+        ], 
+        [
+            {
+                "id": "ITEM-3"
+            }
+        ]
+    ], 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <title>Chicago Manual of Style (Author-Date format)</title>\n    <id>http://www.zotero.org/styles/chicago-author-date</id>\n    <link rel=\"self\" href=\"http://www.zotero.org/styles/chicago-author-date\" />\n    <author>\n      <name>Julian Onions</name>\n      <email>julian.onions@gmail.com</email>\n    </author>\n    <category citation-format=\"author-date\" />\n    <category field=\"generic-base\" />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n    <summary>The author-date variant of the Chicago style</summary>\n    <link href=\"http://www.chicagomanualofstyle.org/tools_citationguide.html\" rel=\"documentation\" />\n  </info>\n  <citation>\n    <layout suffix=\".\">\n      <group delimiter=\", \">\n        <text variable=\"title\" />\n        <group delimiter=\" \">\n          <choose>\n            <if variable=\"issue\">\n              <group delimiter=\" \">\n                <text prefix=\"[\" suffix=\"]\" variable=\"volume\"/>\n                <text variable=\"issue\"/>\n              </group>\n            </if>\n            <else>\n              <text variable=\"volume\"/>\n            </else>\n          </choose>\n          <text variable=\"container-title\"/>\n          <text variable=\"page\"/>\n          <group prefix=\"(\" suffix=\")\" delimiter=\" \">\n            <text variable=\"authority\"/>\n            <date variable=\"issued\" date-parts=\"year\" form=\"text\"/>\n          </group>\n        </group>\n      </group>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "authority": "P.C.", 
+            "container-title": "App. Cas.", 
+            "id": "ITEM-3", 
+            "issue": 1, 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1915"
+                    ]
+                ]
+            }, 
+            "page": "719", 
+            "title": "British Columbia Elec. Ry. v. Loach", 
+            "type": "legal_case", 
+            "volume": "1916"
+        }, 
+        {
+            "authority": "Eng. C.A.", 
+            "container-title": "P.", 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1930"
+                    ]
+                ]
+            }, 
+            "page": "217", 
+            "title": "Hastings v. Perkins", 
+            "type": "legal_case", 
+            "volume": "1930"
+        }, 
+        {
+            "authority": "K.B.", 
+            "container-title": "Eng. Rep.", 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1782"
+                    ]
+                ]
+            }, 
+            "page": "379", 
+            "title": "The King v. Lockwood", 
+            "type": "legal_case", 
+            "volume": "99"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "The King v. Lockwood, 99 Eng. Rep. 379 (K.B. 1782).\nHastings v. Perkins, 1930 P. 217 (Eng. C.A.).\nBritish Columbia Elec. Ry. v. Loach, [1916] 1 App. Cas. 719 (P.C. 1915)."
+}

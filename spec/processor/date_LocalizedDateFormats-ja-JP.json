@@ -1,0 +1,25 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <locale>\n    <date form=\"text\">\n      <date-part name=\"year\" suffix=\"&#24180;\"/>\n      <date-part name=\"month\" form=\"numeric\" suffix=\"&#26376;\"/>\n      <date-part name=\"day\" suffix=\"&#26085;\"/>\n    </date>\n    <date form=\"numeric\">\n      <date-part name=\"year\" suffix=\"&#24180;\"/>\n      <date-part name=\"month\" form=\"numeric\" suffix=\"&#26376;\"/>\n      <date-part name=\"day\" suffix=\"&#26085;\"/>\n    </date>\n  </locale>\n  <citation>\n    <layout>\n      <group delimiter=\"&#x0A;\">\n        <date variable=\"issued\" form=\"text\" date-parts=\"year-month-day\"/>\n        <date variable=\"issued\" form=\"text\" date-parts=\"year-month\"/>\n        <date variable=\"issued\" form=\"text\" date-parts=\"year\"/>\n        <date variable=\"issued\" form=\"numeric\" date-parts=\"year-month-day\"/>\n        <date variable=\"issued\" form=\"numeric\" date-parts=\"year-month\"/>\n        <date variable=\"issued\" form=\"numeric\" date-parts=\"year\"/>\n      </group>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        1998, 
+                        4, 
+                        10
+                    ]
+                ]
+            }, 
+            "title": "BookA"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "1998年4月10日\n1998年4月\n1998年\n1998年4月10日\n1998年4月\n1998年"
+}

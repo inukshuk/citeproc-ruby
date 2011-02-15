@@ -1,0 +1,90 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": [
+        [
+            {
+                "id": "ITEM-1"
+            }
+        ], 
+        [
+            {
+                "id": "ITEM-2"
+            }
+        ], 
+        [
+            {
+                "id": "ITEM-3"
+            }
+        ], 
+        [
+            {
+                "id": "ITEM-4"
+            }
+        ], 
+        [
+            {
+                "id": "ITEM-5"
+            }
+        ], 
+        [
+            {
+                "id": "ITEM-6"
+            }
+        ], 
+        [
+            {
+                "id": "ITEM-7"
+            }
+        ]
+    ], 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\"\n      page-range-format=\"expanded\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation>\n    <layout>\n      <text variable=\"title\"/>\n      <text variable=\"page\" prefix=\", at \"/>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "id": "ITEM-1", 
+            "page": "110-5", 
+            "title": "Example: minimal", 
+            "type": "book"
+        }, 
+        {
+            "id": "ITEM-2", 
+            "page": "N110-5", 
+            "title": "Example: prefix on one number only", 
+            "type": "book"
+        }, 
+        {
+            "id": "ITEM-3", 
+            "page": "N110-N5", 
+            "title": "Example: same prefix on both numbers", 
+            "type": "book"
+        }, 
+        {
+            "id": "ITEM-4", 
+            "page": "N110-P5", 
+            "title": "Example: different prefixes on both numbers", 
+            "type": "book"
+        }, 
+        {
+            "id": "ITEM-5", 
+            "page": "123N110-N5", 
+            "title": "Example: leading number before prefix", 
+            "type": "book"
+        }, 
+        {
+            "id": "ITEM-6", 
+            "page": "123N110-N5, 456K200-99", 
+            "title": "Example: multiple ranges", 
+            "type": "book"
+        }, 
+        {
+            "id": "ITEM-7", 
+            "page": "123N110-N5, 000c23-22", 
+            "title": "Example: first less than second", 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "Example: minimal, at 110–115\nExample: prefix on one number only, at N110–N115\nExample: same prefix on both numbers, at N110–N115\nExample: different prefixes on both numbers, at N110–P5\nExample: leading number before prefix, at 123N110–N115\nExample: multiple ranges, at 123N110–N115, 456K200–K299\nExample: first less than second, at 123N110–N115, 000c23–22"
+}

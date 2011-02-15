@@ -1,0 +1,103 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": [
+        [
+            {
+                "citationID": "CITATION-1", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-1"
+                    }, 
+                    {
+                        "id": "ITEM-2"
+                    }, 
+                    {
+                        "id": "ITEM-3"
+                    }
+                ], 
+                "properties": {
+                    "noteIndex": 0
+                }
+            }, 
+            [], 
+            []
+        ], 
+        [
+            {
+                "citationID": "CITATION-2", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-4"
+                    }
+                ], 
+                "properties": {
+                    "noteIndex": 0
+                }
+            }, 
+            [], 
+            [
+                [
+                    "CITATION-1", 
+                    0
+                ]
+            ]
+        ], 
+        [
+            {
+                "citationID": "CITATION-1", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-1"
+                    }, 
+                    {
+                        "id": "ITEM-2"
+                    }, 
+                    {
+                        "id": "ITEM-3"
+                    }, 
+                    {
+                        "id": "ITEM-4"
+                    }
+                ], 
+                "properties": {
+                    "noteIndex": 0
+                }
+            }, 
+            [
+                [
+                    "CITATION-2", 
+                    0
+                ]
+            ], 
+            []
+        ]
+    ], 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation \n         collapse=\"citation-number\">\n    <sort>\n      <key variable=\"citation-number\" />\n    </sort>\n    <layout delimiter=\", \">\n      <text prefix=\"[\" suffix=\"]\" variable=\"citation-number\" />\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "id": "ITEM-1", 
+            "title": "Paper 1", 
+            "type": "book"
+        }, 
+        {
+            "id": "ITEM-2", 
+            "title": "Paper 2", 
+            "type": "book"
+        }, 
+        {
+            "id": "ITEM-3", 
+            "title": "Paper 3", 
+            "type": "book"
+        }, 
+        {
+            "id": "ITEM-4", 
+            "title": "Paper 4", 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "..[0] [1]\n>>[1] [1]-[4]"
+}

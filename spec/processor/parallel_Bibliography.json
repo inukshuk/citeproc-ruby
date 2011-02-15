@@ -1,0 +1,80 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": [
+        [
+            {
+                "citationID": "CITATION-1", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-3"
+                    }, 
+                    {
+                        "id": "ITEM-1"
+                    }, 
+                    {
+                        "id": "ITEM-2"
+                    }
+                ], 
+                "properties": {
+                    "index": 0, 
+                    "noteIndex": 1
+                }
+            }, 
+            [], 
+            []
+        ]
+    ], 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation year-suffix-delimiter=\", \">\n    <layout delimiter=\"; \" suffix=\".\">\n      <choose>\n      <if position=\"first\">\n        <group delimiter=\", \">\n          <text variable=\"title\"/>\n          <group delimiter=\" \">\n            <text variable=\"volume\"/>\n            <text variable=\"container-title\"/>\n            <group>\n              <text variable=\"page\"/>\n              <text variable=\"locator\" prefix=\", \"/>\n            </group>\n            <date variable=\"issued\" date-parts=\"year\" form=\"text\" prefix=\"(\" suffix=\")\"/>\n          </group>\n        </group>\n      </if>\n      <else-if position=\"ibid-with-locator\">\n        <text term=\"ibid\"/>\n        <text variable=\"locator\" prefix=\" at \"/>\n      </else-if>\n      <else-if position=\"ibid\">\n        <text term=\"ibid\"/>\n      </else-if>\n      <else-if position=\"subsequent\">\n        <group delimiter=\", \">\n          <text variable=\"title\"/>\n          <group delimiter=\" \">\n            <text variable=\"volume\"/>\n            <text variable=\"container-title\"/>\n            <text variable=\"locator\"/>\n          </group>\n        </group>\n      </else-if>\n      <else>\n        <text value=\"WTF?\"/>\n      </else>\n      </choose>\n    </layout>\n  </citation>\n  <bibliography>\n    <layout>\n\t  <group delimiter=\", \">\n        <text variable=\"title\"/>\n        <group delimiter=\" \">\n          <text variable=\"volume\"/>\n          <text variable=\"container-title\"/>\n          <group>\n            <text variable=\"page\"/>\n            <text variable=\"locator\" prefix=\", \"/>\n          </group>\n          <date variable=\"issued\" date-parts=\"year\" form=\"text\" prefix=\"(\" suffix=\")\"/>\n        </group>\n      </group>\n    </layout>\n  </bibliography>\n</style>", 
+    "input": [
+        {
+            "container-title": "U.S.", 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1965"
+                    ]
+                ]
+            }, 
+            "page": "200", 
+            "title": "Smith v. Noakes", 
+            "type": "legal_case", 
+            "volume": "222"
+        }, 
+        {
+            "container-title": "L.Ed.", 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1965"
+                    ]
+                ]
+            }, 
+            "page": "300", 
+            "title": "Smith v. Noakes", 
+            "type": "legal_case", 
+            "volume": "333"
+        }, 
+        {
+            "container-title": "U.S.", 
+            "id": "ITEM-3", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1965"
+                    ]
+                ]
+            }, 
+            "page": "400", 
+            "title": "Jim v. Bob", 
+            "type": "legal_case", 
+            "volume": "444"
+        }
+    ], 
+    "mode": "bibliography", 
+    "result": "<div class=\"csl-bib-body\">\n  <div class=\"csl-entry\">Jim v. Bob, 444 U.S. 400 (1965)</div>\n  <div class=\"csl-entry\">Smith v. Noakes, 222 U.S. 200, 333 L.Ed. 300 (1965)</div>\n</div>"
+}

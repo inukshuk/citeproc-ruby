@@ -1,0 +1,79 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation>\n    <layout>\n      <names variable=\"author\">\n        <name />\n      </names>\n    </layout>\n  </citation>\n  <bibliography \n         subsequent-author-substitute=\"———\">\n    <layout>\n      <group delimiter=\" \">\n        <group delimiter=\", \">\n          <names variable=\"author\">\n            <name and=\"text\" delimiter=\", \" />\n          </names>\n          <text variable=\"title\" />\n        </group>\n        <date prefix=\"(\" suffix=\")\" variable=\"issued\">\n          <date-part name=\"year\" />\n        </date>\n      </group>\n    </layout>\n  </bibliography>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Smith", 
+                    "given": "John", 
+                    "static-ordering": false
+                }, 
+                {
+                    "family": "Roe", 
+                    "given": "Jane", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "item-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "2000"
+                    ]
+                ]
+            }, 
+            "title": "Book A", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Smith", 
+                    "given": "John", 
+                    "static-ordering": false
+                }, 
+                {
+                    "family": "Roe", 
+                    "given": "Jane", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "item-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "2001"
+                    ]
+                ]
+            }, 
+            "title": "Book B", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Smith", 
+                    "given": "John", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "item-3", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "2002"
+                    ]
+                ]
+            }, 
+            "title": "Book C", 
+            "type": "book"
+        }
+    ], 
+    "mode": "bibliography", 
+    "result": "<div class=\"csl-bib-body\">\n  <div class=\"csl-entry\">John Smith and Jane Roe, Book A (2000)</div>\n  <div class=\"csl-entry\">———, Book B (2001)</div>\n  <div class=\"csl-entry\">John Smith, Book C (2002)</div>\n</div>"
+}

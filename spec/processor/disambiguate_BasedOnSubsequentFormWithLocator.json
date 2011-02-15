@@ -1,0 +1,168 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": [
+        [
+            {
+                "id": "ITEM-1", 
+                "locator": "12", 
+                "note-number": "1"
+            }, 
+            {
+                "id": "ITEM-2", 
+                "locator": "23", 
+                "note-number": "1"
+            }
+        ], 
+        [
+            {
+                "id": "ITEM-5", 
+                "locator": "34", 
+                "note-number": "2"
+            }
+        ], 
+        [
+            {
+                "id": "ITEM-3", 
+                "locator": "45", 
+                "note-number": "2"
+            }
+        ], 
+        [
+            {
+                "id": "ITEM-4", 
+                "locator": "56", 
+                "note-number": "3"
+            }
+        ], 
+        [
+            {
+                "first-reference-note-number": "1", 
+                "id": "ITEM-1", 
+                "locator": "67", 
+                "note-number": "4", 
+                "position": 1
+            }
+        ], 
+        [
+            {
+                "first-reference-note-number": "3", 
+                "id": "ITEM-3", 
+                "locator": "78", 
+                "note-number": "5", 
+                "position": 1
+            }
+        ], 
+        [
+            {
+                "first-reference-note-number": "2", 
+                "id": "ITEM-5", 
+                "locator": "89", 
+                "note-number": "5", 
+                "position": 1
+            }
+        ]
+    ], 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation>\n    <layout delimiter=\"; \" suffix=\".\">\n      <choose>\n        <if position=\"subsequent\">\n          <names variable=\"author\">\n            <name form=\"short\" />\n          </names>\n          <choose>\n            <if disambiguate=\"true\">\n              <text prefix=\", \" variable=\"title\" />\n            </if>\n          </choose>\n          <text prefix=\", \" suffix=\" \" value=\"supra note\" />\n          <text variable=\"first-reference-note-number\" />\n          <group>\n            <text value=\"at\" prefix=\", \" suffix=\" \"/>\n            <text variable=\"locator\"/>\n          </group>\n        </if>\n        <else>\n          <names variable=\"author\">\n            <name />\n          </names>\n          <text prefix=\", \" variable=\"title\" />\n          <text variable=\"locator\" prefix=\" \"/>\n          <date variable=\"issued\">\n            <date-part name=\"year\" prefix=\" (\" suffix=\")\" />\n          </date>\n        </else>\n      </choose>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Doe", 
+                    "given": "John", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "2000"
+                    ]
+                ]
+            }, 
+            "title": "His Book", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Doe", 
+                    "given": "John", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "2001"
+                    ]
+                ]
+            }, 
+            "title": "His Other Book", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Roe", 
+                    "given": "Jane", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-3", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1998"
+                    ]
+                ]
+            }, 
+            "title": "Her Book", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Roe", 
+                    "given": "Jane", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-4", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1999"
+                    ]
+                ]
+            }, 
+            "title": "Her Other Book", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Noakes", 
+                    "given": "John", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-5", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1730"
+                    ]
+                ]
+            }, 
+            "title": "His Book", 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "John Doe, His Book 12 (2000); John Doe, His Other Book 23 (2001).\nJohn Noakes, His Book 34 (1730).\nJane Roe, Her Book 45 (1998).\nJane Roe, Her Other Book 56 (1999).\nDoe, His Book, supra note 1, at 67.\nRoe, Her Book, supra note 3, at 78.\nNoakes, supra note 2, at 89."
+}

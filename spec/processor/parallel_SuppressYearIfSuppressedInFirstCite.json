@@ -1,0 +1,55 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": [
+        [
+            {
+                "id": "ITEM-1", 
+                "label": "paragraph", 
+                "locator": "6"
+            }, 
+            {
+                "id": "ITEM-2", 
+                "label": "page", 
+                "locator": "983"
+            }
+        ]
+    ], 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <locale>\n    <terms>\n      <term name=\"page\" form=\"symbol\"></term>\n    </terms>\n  </locale>\n  <citation>\n    <layout delimiter=\"; \" suffix=\".\">\n      <group delimiter=\" \">\n        <group delimiter=\", \">\n          <text variable=\"title\"/>\n          <group delimiter=\"\">\n            <group delimiter=\" \">\n              <text variable=\"volume\"/>\n              <text variable=\"container-title\"/>\n              <text variable=\"page\"/>\n            </group>\n            <group prefix=\", \">\n               <label variable=\"locator\" form=\"symbol\" suffix=\" \"/>\n               <text variable=\"locator\"/>\n            </group>\n          </group>\n        </group>\n        <date variable=\"issued\" date-parts=\"year\" form=\"text\" prefix=\"(\" suffix=\")\"/>\n      </group>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "container-title": "ME", 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1999"
+                    ]
+                ]
+            }, 
+            "page": "110", 
+            "title": "Beck v. Beck", 
+            "type": "legal_case", 
+            "volume": "1999"
+        }, 
+        {
+            "container-title": "A.2d", 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1999"
+                    ]
+                ]
+            }, 
+            "page": "981", 
+            "title": "Beck v. Beck", 
+            "type": "legal_case", 
+            "volume": "733"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "Beck v. Beck, 1999 ME 110, ¶ 6, 733 A.2d 981, 983."
+}

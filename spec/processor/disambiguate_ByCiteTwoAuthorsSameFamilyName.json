@@ -1,0 +1,74 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation \n         disambiguate-add-givenname=\"true\"\n         disambiguate-add-year-suffix=\"true\"\n         givenname-disambiguation-rule=\"by-cite\">\n    <layout delimiter=\"; \">\n      <names delimiter=\", \" variable=\"author\">\n        <name and=\"text\" delimiter=\", \" delimiter-precedes-last=\"never\" form=\"short\" initialize-with=\".\" />\n      </names>\n      <group prefix=\" (\" suffix=\")\">\n        <date variable=\"issued\">\n          <date-part name=\"year\" />\n        </date>\n        <text variable=\"year-suffix\" />\n      </group>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Asthma", 
+                    "given": "Albert", 
+                    "static-ordering": false
+                }, 
+                {
+                    "family": "Asthma", 
+                    "given": "Bridget", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1980"
+                    ]
+                ]
+            }, 
+            "title": "Book A", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Bronchitis", 
+                    "given": "Beauregarde", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1995"
+                    ]
+                ]
+            }, 
+            "title": "Book B", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Asthma", 
+                    "given": "Albert", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-3", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1885"
+                    ]
+                ]
+            }, 
+            "title": "Book C", 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "A. Asthma and B. Asthma (1980); Bronchitis (1995); Asthma (1885)"
+}

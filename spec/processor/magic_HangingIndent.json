@@ -1,0 +1,50 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation>\n    <layout>\n      <text value=\"hello\" />\n    </layout>\n  </citation>\n  <bibliography \n         hanging-indent=\"true\">\n    <layout>\n      <group delimiter=\" \">\n        <group delimiter=\", \">\n          <names variable=\"author\">\n            <name />\n          </names>\n          <text variable=\"title\" />\n        </group>\n        <date prefix=\"(\" suffix=\")\" variable=\"issued\">\n          <date-part name=\"year\" />\n        </date>\n      </group>\n    </layout>\n  </bibliography>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Smith", 
+                    "given": "John", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "2000"
+                    ]
+                ]
+            }, 
+            "title": "Book A: being a book with a very long and verbose title with lots of words that takes up excessive space on the page and leaves the reader more confused about the content rather than less", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Jones", 
+                    "given": "Robert", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "2001"
+                    ]
+                ]
+            }, 
+            "title": "Book B: a work of great eloquence in which every word makes the reader eager for the next which is a good thing because it has a very long and ostensibly boring title", 
+            "type": "book"
+        }
+    ], 
+    "mode": "bibliography", 
+    "result": "<div class=\"csl-bib-body\">\n  <div class=\"csl-entry\">John Smith, Book A: being a book with a very long and verbose title with lots of words that takes up excessive space on the page and leaves the reader more confused about the content rather than less (2000)</div>\n  <div class=\"csl-entry\">Robert Jones, Book B: a work of great eloquence in which every word makes the reader eager for the next which is a good thing because it has a very long and ostensibly boring title (2001)</div>\n</div>"
+}

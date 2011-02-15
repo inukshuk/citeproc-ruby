@@ -1,0 +1,49 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": [
+        [
+            {
+                "id": "ITEM-1"
+            }
+        ], 
+        [
+            {
+                "id": "ITEM-2"
+            }
+        ]
+    ], 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation>\n    <layout delimiter=\"; \">\n      <group prefix=\"(\" suffix=\").\">\n        <date variable=\"issued\">\n          <date-part name=\"year\" />\n        </date>\n        <choose>\n          <if match=\"none\" type=\"book chapter article-journal\">\n            <date variable=\"issued\">\n              <date-part name=\"month\" prefix=\", \" />\n              <date-part name=\"day\" prefix=\" \" />\n            </date>\n          </if>\n        </choose>\n      </group>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        2006, 
+                        1, 
+                        20
+                    ]
+                ]
+            }, 
+            "type": "book"
+        }, 
+        {
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        2007, 
+                        2, 
+                        15
+                    ]
+                ]
+            }, 
+            "type": "article-newspaper"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "(2006).\n(2007, February 15)."
+}

@@ -1,0 +1,32 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation>\n    <layout>\n      <names variable=\"editor\">\n        <name />\n        <substitute>\n          <names variable=\"translator\" />\n          <group>\n            <text variable=\"title\" />\n            <text value=\" (this should appear)\" />\n          </group>\n          <group>\n            <text prefix=\" aiyeeee! \" value=\"Ooops\" />\n            <text value=\" ... this should NOT appear\" />\n          </group>\n        </substitute>\n      </names>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Doe", 
+                    "given": "John", 
+                    "static-ordering": false
+                }
+            ], 
+            "edition": "5", 
+            "id": "item-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "2000"
+                    ]
+                ]
+            }, 
+            "title": "His Anonymous Life", 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "His Anonymous Life (this should appear)"
+}

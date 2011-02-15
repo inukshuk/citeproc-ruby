@@ -1,0 +1,125 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": [
+        [
+            {
+                "citationID": "CITATION-1", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-1", 
+                        "locator": "78"
+                    }, 
+                    {
+                        "id": "ITEM-2", 
+                        "locator": "89"
+                    }
+                ], 
+                "properties": {
+                    "noteIndex": 1
+                }
+            }, 
+            [], 
+            []
+        ], 
+        [
+            {
+                "citationID": "CITATION-2", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-3"
+                    }
+                ], 
+                "properties": {
+                    "noteIndex": 2
+                }
+            }, 
+            [
+                [
+                    "CITATION-1", 
+                    1
+                ]
+            ], 
+            []
+        ], 
+        [
+            {
+                "citationID": "CITATION-3", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-1"
+                    }, 
+                    {
+                        "id": "ITEM-2"
+                    }
+                ], 
+                "properties": {
+                    "noteIndex": 3
+                }
+            }, 
+            [], 
+            [
+                [
+                    "CITATION-1", 
+                    1
+                ], 
+                [
+                    "CITATION-2", 
+                    2
+                ]
+            ]
+        ]
+    ], 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <locale xml:lang=\"en\">\n    <terms>\n      <term name=\"ibid\">id.</term>\n    </terms>\n  </locale>\n  <citation>\n    <layout delimiter=\"; \">\n      <choose>\n      <if position=\"first\">\n        <group delimiter=\", \">\n          <text variable=\"title\"/>\n          <group delimiter=\" \">\n            <text variable=\"volume\"/>\n            <text variable=\"container-title\"/>\n            <text variable=\"page\"/>\n            <date variable=\"issued\" prefix=\"(\" suffix=\")\">\n              <date-part name=\"year\"/>\n            </date>\n          </group>\n        </group>\n      </if>\n      <else-if position=\"ibid-with-locator\">\n        <text term=\"ibid\" suffix=\" at \"/>\n        <text variable=\"locator\"/>\n      </else-if>\n      <else-if position=\"ibid\">\n        <text term=\"ibid\"/>\n      </else-if>\n      <else-if position=\"subsequent\">\n        <group delimiter=\", \">\n          <text variable=\"title\"/>\n          <group delimiter=\" \">\n            <text variable=\"volume\"/>\n            <text variable=\"container-title\"/>\n            <choose>\n            <if variable=\"locator\">\n              <text variable=\"locator\"/>\n            </if>\n            <else>\n              <text variable=\"page\"/>\n            </else>\n            </choose>\n           </group>\n        </group>\n      </else-if>\n      <else>\n        <text value=\"WTF?\"/>\n      </else>\n      </choose>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "container-title": "U.S.", 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        2001
+                    ]
+                ]
+            }, 
+            "page": "23", 
+            "title": "Doe v. Roe", 
+            "type": "legal_case", 
+            "volume": "12"
+        }, 
+        {
+            "container-title": "L.Ed.", 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        2001
+                    ]
+                ]
+            }, 
+            "page": "45", 
+            "title": "Doe v. Roe", 
+            "type": "legal_case", 
+            "volume": "34"
+        }, 
+        {
+            "container-title": "U.S.", 
+            "id": "ITEM-3", 
+            "issued": {
+                "date-parts": [
+                    [
+                        2002
+                    ]
+                ]
+            }, 
+            "page": "67", 
+            "title": "Smith v. Jones", 
+            "type": "legal_case", 
+            "volume": "56"
+        }
+    ], 
+    "mode": "citation", 
+    "result": ">>[0] Doe v. Roe, 12 U.S. 23, 34 L.Ed. 45 (2001)\n>>[1] Id. at 78, 34 L.Ed. 89\n..[2] Smith v. Jones, 56 U.S. 67 (2002)"
+}

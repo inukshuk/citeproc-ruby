@@ -1,0 +1,64 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <macro name=\"author\">\n    <names variable=\"author\">\n      <name name-as-sort-order=\"first\" sort-separator=\" \"/>\n      <substitute>\n        <names variable=\"editor\" />\n      </substitute>\n    </names>\n  </macro>\n  <macro name=\"theyear\">\n    <date variable=\"issued\">\n      <date-part name=\"year\" />\n    </date>\n  </macro>\n  <citation>\n    <layout>\n      <text value=\"Ignore me\" />\n    </layout>\n  </citation>\n  <bibliography et-al-min=\"3\" et-al-use-first=\"2\" et-al-use-last=\"false\">\n    <sort>\n      <key macro=\"author\" names-min=\"3\" names-use-first=\"1\" names-use-last=\"true\"/>\n      <key macro=\"theyear\" />\n    </sort>\n    <layout>\n      <group delimiter=\" \">\n        <names variable=\"author\">\n          <name/>\n        </names>\n        <text variable=\"title\" />\n        <date variable=\"issued\" date-parts=\"year\" form=\"text\"/>\n      </group>\n    </layout>\n  </bibliography>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Doe", 
+                    "given": "John"
+                }, 
+                {
+                    "family": "Anderson", 
+                    "given": "Alvin"
+                }, 
+                {
+                    "family": "Zotero", 
+                    "given": "Zoe"
+                }
+            ], 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1999"
+                    ]
+                ]
+            }, 
+            "title": "Book Two", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Doe", 
+                    "given": "John"
+                }, 
+                {
+                    "family": "Xerxes", 
+                    "given": "Xavier"
+                }, 
+                {
+                    "family": "Boop", 
+                    "given": "Betty"
+                }
+            ], 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "2000"
+                    ]
+                ]
+            }, 
+            "title": "Book One", 
+            "type": "book"
+        }
+    ], 
+    "mode": "bibliography", 
+    "result": "<div class=\"csl-bib-body\">\n  <div class=\"csl-entry\">John Doe, Xavier Xerxes, et al. Book One 2000</div>\n  <div class=\"csl-entry\">John Doe, Alvin Anderson, et al. Book Two 1999</div>\n</div>"
+}

@@ -1,0 +1,45 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": [
+        [
+            {
+                "id": "ITEM-1"
+            }
+        ], 
+        [
+            {
+                "id": "ITEM-1", 
+                "label": "page", 
+                "locator": "23", 
+                "position": 3
+            }
+        ]
+    ], 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation>\n    <layout suffix=\".\">\n      <choose>\n        <if position=\"ibid-with-locator\">\n          <text term=\"ibid\" />\n          <label form=\"short\" prefix=\" \" strip-periods=\"false\" variable=\"locator\" />\n          <text prefix=\" \" variable=\"locator\" />\n        </if>\n        <else>\n          <group delimiter=\" \">\n            <names variable=\"author\">\n              <name form=\"short\" />\n            </names>\n            <text quotes=\"true\" variable=\"title\" />\n            <date prefix=\"(\" suffix=\")\" variable=\"issued\">\n              <date-part name=\"year\" />\n            </date>\n          </group>\n        </else>\n      </choose>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Appleton", 
+                    "given": "Victor", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1910"
+                    ]
+                ]
+            }, 
+            "title": "Tom Swift and His Electric Runabout", 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "Appleton “Tom Swift and His Electric Runabout” (1910).\nIbid. p. 23."
+}

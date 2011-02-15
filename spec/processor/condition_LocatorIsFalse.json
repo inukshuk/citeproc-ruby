@@ -1,0 +1,32 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": [
+        [
+            {
+                "id": "ITEM-1", 
+                "locator": "1"
+            }, 
+            {
+                "id": "ITEM-2"
+            }
+        ]
+    ], 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation>\n    <layout delimiter=\"; \">\n\t  <text variable=\"title\" suffix=\": \"/>\n      <choose>\n        <if variable=\"locator\">\n          <text value=\"(1) Locator true\"/>\n        </if>\n        <else>\n          <text value=\"(1) Locator false\"/>\n        </else>\n      </choose>\n      <choose>\n        <if variable=\"locator\" match=\"none\">\n          <text value=\" (2) Locator false\"/>\n        </if>\n        <else>\n          <text value=\" (2) Locator true\"/>\n        </else>\n      </choose>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "id": "ITEM-1", 
+            "title": "Book One", 
+            "type": "book"
+        }, 
+        {
+            "id": "ITEM-2", 
+            "title": "Book Two", 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "Book One: (1) Locator true (2) Locator true; Book Two: (1) Locator false (2) Locator false"
+}

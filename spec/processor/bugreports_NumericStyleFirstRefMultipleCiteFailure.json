@@ -1,0 +1,78 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": [
+        [
+            {
+                "citationItems": [
+                    {
+                        "id": 5, 
+                        "label": 0, 
+                        "locator": "", 
+                        "prefix": "", 
+                        "suffix": "", 
+                        "suppress-author": false
+                    }, 
+                    {
+                        "id": 8, 
+                        "label": 0, 
+                        "locator": "", 
+                        "prefix": "", 
+                        "suffix": "", 
+                        "suppress-author": false
+                    }
+                ], 
+                "properties": {
+                    "added": true, 
+                    "index": 0, 
+                    "noteIndex": 0
+                }
+            }, 
+            [], 
+            []
+        ]
+    ], 
+    "csl": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<style xmlns=\"http://purl.org/net/xbiblio/csl\" class=\"numeric\" version=\"1.0\">\n   <info>\n      <title>IEEE</title>\n      <id>http://www.zotero.org/styles/ieee</id>\n      <link href=\"http://www.zotero.org/styles/ieee\" rel=\"self\"/>\n      <author>\n         <name>Michael Berkowitz</name>\n         <email>mberkowi@gmu.edu</email>\n      </author>\n      <contributor>\n         <name>Julian Onions</name>\n         <email>julian.onions@gmail.com</email>\n      </contributor>\n      <contributor>\n         <name>Rintze Zelle</name>\n         <uri>http://forums.zotero.org/account/831/</uri>\n      </contributor>\n      <category field=\"engineering\"/>\n      <category field=\"generic-base\"/>\n      <category citation-format=\"numeric\"/>\n      <updated>2010-02-06T06:35:40+00:00</updated>\n      <link href=\"http://www.ieee.org/portal/cms_docs_iportals/iportals/publications/authors/transjnl/stylemanual.pdf\" rel=\"documentation\"/>\n   </info>\n   <macro name=\"author\">\n      <names variable=\"author\">\n         <name initialize-with=\".\" delimiter=\", \" and=\"text\"/>\n         <label form=\"short\" prefix=\", \" text-case=\"capitalize-first\" suffix=\".\" strip-periods=\"true\"/>\n         <substitute>\n            <names variable=\"editor\"/>\n            <names variable=\"translator\"/>\n         </substitute>\n      </names>\n   </macro>\n   <macro name=\"editor\">\n      <names variable=\"editor\">\n         <name initialize-with=\".\" delimiter=\", \" and=\"text\" name-as-sort-order=\"all\"/>\n         <label form=\"short\" prefix=\", \" text-case=\"capitalize-first\" suffix=\".\" strip-periods=\"true\"/>\n      </names>\n   </macro>\n   <macro name=\"title\">\n      <choose>\n         <if type=\"bill book graphic legal_case motion_picture report song\" match=\"any\">\n            <text variable=\"title\" font-style=\"italic\"/>\n         </if>\n         <else>\n            <text variable=\"title\" quotes=\"true\"/>\n         </else>\n      </choose>\n   </macro>\n   <macro name=\"publisher\">\n      <text variable=\"publisher-place\" suffix=\": \" prefix=\" \"/>\n      <text variable=\"publisher\" suffix=\", \"/>\n      <date variable=\"issued\">\n         <date-part name=\"year\"/>\n      </date>\n   </macro>\n   <macro name=\"access\">\n      <text variable=\"URL\"/>\n   </macro>\n   <macro name=\"page\">\n      <group>\n         <label variable=\"page\" form=\"short\" suffix=\". \" strip-periods=\"true\"/>\n         <text variable=\"page\"/>\n      </group>\n   </macro>\n   <citation et-al-min=\"3\" et-al-use-first=\"1\" collapse=\"citation-number\">\n      <sort>\n         <key variable=\"citation-number\"/>\n      </sort>\n      <layout delimiter=\",\">\n         <text variable=\"citation-number\" prefix=\"[\" suffix=\"]\"/>\n      </layout>\n   </citation>\n   <bibliography entry-spacing=\"0\" second-field-align=\"flush\">\n      <layout suffix=\".\">\n         <text variable=\"citation-number\" prefix=\"[\" suffix=\"]\"/>\n         <text macro=\"author\" prefix=\" \" suffix=\", \"/>\n         <choose>\n            <if type=\"bill book graphic legal_case motion_picture report song\" match=\"any\">\n               <group delimiter=\", \">\n                  <text macro=\"title\"/>\n                  <text macro=\"publisher\"/>\n               </group>\n            </if>\n            <else-if type=\"chapter paper-conference\" match=\"any\">\n               <group delimiter=\", \">\n                  <text macro=\"title\"/>\n                  <text variable=\"container-title\" font-style=\"italic\"/>\n                  <text macro=\"editor\"/>\n                  <text macro=\"publisher\"/>\n                  <text macro=\"page\"/>\n               </group>\n            </else-if>\n            <else-if type=\"patent\">\n               <text macro=\"title\" suffix=\", \"/>\n               <text variable=\"number\" prefix=\"U.S. Patent \"/>\n               <date variable=\"issued\" prefix=\", \">\n                  <date-part name=\"month\" suffix=\" \"/>\n                  <date-part name=\"day\" suffix=\", \"/>\n                  <date-part name=\"year\"/>\n               </date>\n            </else-if>\n            <else-if type=\"thesis\">\n               <group delimiter=\", \">\n                  <text macro=\"title\"/>\n                  <text variable=\"genre\"/>\n                  <text variable=\"publisher\"/>\n                  <date variable=\"issued\">\n                     <date-part name=\"year\"/>\n                  </date>\n               </group>\n            </else-if>\n            <else>\n               <group delimiter=\", \">\n                  <text macro=\"title\"/>\n                  <text variable=\"container-title\" font-style=\"italic\"/>\n                  <text variable=\"volume\" prefix=\" vol. \"/>\n                  <date variable=\"issued\">\n                     <date-part name=\"month\" form=\"short\" suffix=\". \" strip-periods=\"true\"/>\n                     <date-part name=\"year\"/>\n                  </date>\n                  <text macro=\"page\"/>\n               </group>\n            </else>\n         </choose>\n      </layout>\n   </bibliography>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Doe", 
+                    "given": "John"
+                }
+            ], 
+            "id": 5, 
+            "issued": {
+                "date-parts": [
+                    [
+                        "2000"
+                    ]
+                ]
+            }, 
+            "title": "Book A", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Doe", 
+                    "given": "John"
+                }
+            ], 
+            "id": 8, 
+            "issued": {
+                "date-parts": [
+                    [
+                        "2000"
+                    ]
+                ]
+            }, 
+            "title": "Book B", 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": ">>[0] [1],[2]"
+}

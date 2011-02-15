@@ -1,0 +1,58 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation \n         disambiguate-add-givenname=\"true\"\n         givenname-disambiguation-rule=\"primary-name\">\n    <layout delimiter=\"; \">\n      <names delimiter=\", \" variable=\"author\">\n        <name and=\"text\" delimiter-precedes-last=\"never\" form=\"short\" />\n      </names>\n      <group prefix=\" (\" suffix=\")\">\n        <date variable=\"issued\">\n          <date-part name=\"year\" />\n        </date>\n      </group>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Asthma", 
+                    "given": "Aloysius", 
+                    "static-ordering": false
+                }, 
+                {
+                    "family": "Bronchitis", 
+                    "given": "Bosworth", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1980"
+                    ]
+                ]
+            }, 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Asthma", 
+                    "given": "Artemis", 
+                    "static-ordering": false
+                }, 
+                {
+                    "family": "Bronchitis", 
+                    "given": "Beauregarde", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1995"
+                    ]
+                ]
+            }, 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "Aloysius Asthma and Bronchitis (1980); Artemis Asthma and Bronchitis (1995)"
+}

@@ -1,0 +1,27 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\"\n\t   demote-non-dropping-particle=\"never\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation>\n    <layout>\n      <names variable=\"author\">\n        <name name-as-sort-order=\"all\" sort-separator=\", \">\n          <name-part name=\"family\" text-case=\"uppercase\"/>\n        </name>\n      </names>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "dropping-particle": "de", 
+                    "family": "Doe", 
+                    "given": "John", 
+                    "non-dropping-particle": "la", 
+                    "static-ordering": false, 
+                    "uri": "http://people.org/doej"
+                }
+            ], 
+            "id": "ITEM-1", 
+            "title": "His Anonymous Life", 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "LA DOE, John DE"
+}

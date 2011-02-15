@@ -1,0 +1,69 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": [
+        [
+            {
+                "id": "ITEM-1"
+            }, 
+            {
+                "id": "ITEM-2"
+            }, 
+            {
+                "id": "ITEM-3"
+            }
+        ]
+    ], 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation year-suffix-delimiter=\", \">\n    <layout delimiter=\"; \">\n      <group delimiter=\", \">\n        <text variable=\"title\"/>\n        <group delimiter=\" \">\n          <text variable=\"volume\"/>\n          <text variable=\"container-title\"/>\n          <text variable=\"page\"/>\n          <date variable=\"issued\" date-parts=\"year\" form=\"text\" prefix=\"(\" suffix=\")\"/>\n        </group>\n      </group>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "container-title": "U.S.", 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1965"
+                    ]
+                ]
+            }, 
+            "page": "200", 
+            "title": "Smith v. Noakes", 
+            "type": "legal_case", 
+            "volume": "222"
+        }, 
+        {
+            "container-title": "L.Ed.", 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1965"
+                    ]
+                ]
+            }, 
+            "page": "300", 
+            "title": "Smith v. Noakes", 
+            "type": "legal_case", 
+            "volume": "333"
+        }, 
+        {
+            "container-title": "U.S.", 
+            "id": "ITEM-3", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1965"
+                    ]
+                ]
+            }, 
+            "page": "400", 
+            "title": "Jim v. Bob", 
+            "type": "legal_case", 
+            "volume": "444"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "Smith v. Noakes, 222 U.S. 200, 333 L.Ed. 300 (1965); Jim v. Bob, 444 U.S. 400 (1965)"
+}

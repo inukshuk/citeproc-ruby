@@ -1,0 +1,31 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation>\n    <layout>\n      <date prefix=\"(\" suffix=\")\" variable=\"issued\">\n        <date-part name=\"day\" suffix=\" \" />\n        <date-part form=\"long\" name=\"month\" suffix=\" \"/>\n        <date-part name=\"year\" />\n      </date>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        2003, 
+                        8, 
+                        10
+                    ], 
+                    [
+                        2003, 
+                        8, 
+                        23
+                    ]
+                ]
+            }, 
+            "title": "Ignore me", 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "(10–23 August 2003)"
+}

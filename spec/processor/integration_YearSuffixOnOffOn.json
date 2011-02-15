@@ -1,0 +1,144 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": [
+        [
+            {
+                "citationID": "CITATION-1", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-1"
+                    }, 
+                    {
+                        "id": "ITEM-2"
+                    }, 
+                    {
+                        "id": "ITEM-3"
+                    }
+                ], 
+                "properties": {
+                    "index": 0
+                }
+            }, 
+            [], 
+            []
+        ], 
+        [
+            {
+                "citationID": "CITATION-1", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-1"
+                    }, 
+                    {
+                        "id": "ITEM-2"
+                    }
+                ], 
+                "properties": {
+                    "index": 0
+                }
+            }, 
+            [], 
+            []
+        ], 
+        [
+            {
+                "citationID": "CITATION-1", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-1"
+                    }, 
+                    {
+                        "id": "ITEM-2"
+                    }, 
+                    {
+                        "id": "ITEM-3"
+                    }, 
+                    {
+                        "id": "ITEM-4"
+                    }
+                ], 
+                "properties": {
+                    "index": 0
+                }
+            }, 
+            [], 
+            []
+        ]
+    ], 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation \n         et-al-min=\"3\"\n         et-al-use-first=\"1\"\n         disambiguate-add-names=\"true\"\n         disambiguate-add-givenname=\"true\"\n         disambiguate-add-year-suffix=\"true\">\n    <layout delimiter=\"; \">\n      <group delimiter=\" \">\n        <names delimiter=\", \" variable=\"author\">\n          <name and=\"symbol\" delimiter-precedes-last=\"never\" form=\"short\"/>\n        </names>\n        <date variable=\"issued\" prefix=\"(\" suffix=\")\">\n          <date-part name=\"year\"/>\n        </date>\n      </group>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Smith", 
+                    "given": "John"
+                }
+            ], 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        1986
+                    ]
+                ]
+            }, 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Smith", 
+                    "given": "John"
+                }
+            ], 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        1986
+                    ]
+                ]
+            }, 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Smith", 
+                    "given": "John"
+                }
+            ], 
+            "id": "ITEM-3", 
+            "issued": {
+                "date-parts": [
+                    [
+                        1986
+                    ]
+                ]
+            }, 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Smith", 
+                    "given": "John"
+                }
+            ], 
+            "id": "ITEM-4", 
+            "issued": {
+                "date-parts": [
+                    [
+                        1986
+                    ]
+                ]
+            }, 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": ">>[0] Smith (1986a); Smith (1986b); Smith (1986c); Smith (1986d)"
+}

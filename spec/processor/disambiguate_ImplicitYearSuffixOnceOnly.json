@@ -1,0 +1,54 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation \n         disambiguate-add-year-suffix=\"true\">\n    <layout delimiter=\"; \" prefix=\"(\" suffix=\")\">\n      <group delimiter=\" \">\n        <names variable=\"author\">\n          <name form=\"short\"/>\n        </names>\n        <date variable=\"issued\" date-parts=\"year\" form=\"text\"/>\n      </group>\n    </layout>\n  </citation>\n  <bibliography>\n    <layout>\n      <group delimiter=\" \">\n        <date date-parts=\"year\" form=\"text\" variable=\"issued\" prefix=\"[\" suffix=\"]\"/>\n        <group delimiter=\", \">\n          <names variable=\"author\">\n            <name form=\"short\"/>\n          </names>\n          <text variable=\"title\"/>\n        </group>\n        <date form=\"numeric\" variable=\"issued\"/>\n      </group>\n    </layout>\n  </bibliography>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Doe", 
+                    "given": "John", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1990", 
+                        "5", 
+                        "30"
+                    ]
+                ]
+            }, 
+            "title": "Book A", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Doe", 
+                    "given": "John", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1990", 
+                        "5", 
+                        "30"
+                    ]
+                ]
+            }, 
+            "title": "Book B", 
+            "type": "book"
+        }
+    ], 
+    "mode": "bibliography", 
+    "result": "<div class=\"csl-bib-body\">\n  <div class=\"csl-entry\">[1990a] Doe, Book A 05/30/1990</div>\n  <div class=\"csl-entry\">[1990b] Doe, Book B 05/30/1990</div>\n</div>"
+}

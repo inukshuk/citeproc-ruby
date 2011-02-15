@@ -1,0 +1,69 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation \n         collapse=\"year-suffix\"\n         disambiguate-add-year-suffix=\"true\"\n         year-suffix-delimiter=\",\">\n    <layout delimiter=\";\">\n      <group delimiter=\" \">\n        <names variable=\"author\">\n          <name form=\"short\" />\n        </names>\n        <date variable=\"issued\">\n          <date-part name=\"year\" />\n        </date>\n      </group>\n      <text variable=\"year-suffix\" />\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Doe", 
+                    "given": "John", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "2000"
+                    ]
+                ]
+            }, 
+            "title": "Paper 1", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Doe", 
+                    "given": "John", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "2000"
+                    ]
+                ]
+            }, 
+            "title": "Paper 2", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Doe", 
+                    "given": "John", 
+                    "static-ordering": false
+                }
+            ], 
+            "id": "ITEM-3", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "2001"
+                    ]
+                ]
+            }, 
+            "title": "Paper 3", 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "Doe 2000a,b;2001"
+}

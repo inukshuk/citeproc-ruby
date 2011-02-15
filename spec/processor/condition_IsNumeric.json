@@ -1,0 +1,46 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": [
+        [
+            {
+                "id": "ITEM-1"
+            }
+        ], 
+        [
+            {
+                "id": "ITEM-2"
+            }
+        ], 
+        [
+            {
+                "id": "ITEM-3"
+            }
+        ]
+    ], 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation>\n    <layout>\n      <choose>\n        <if is-numeric=\"volume\">\n          <text value=\"Numeric true:\" suffix=\" \"/>\n          <number variable=\"volume\"/>\n        </if>\n        <else>\n          <text value=\"Numeric false:\" suffix=\" \"/>\n          <number variable=\"volume\"/>\n        </else>\n      </choose>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "id": "ITEM-1", 
+            "title": "Work 1", 
+            "type": "book", 
+            "volume": "Volume 2"
+        }, 
+        {
+            "id": "ITEM-2", 
+            "title": "Work 2", 
+            "type": "book", 
+            "volume": "2nd volume"
+        }, 
+        {
+            "id": "ITEM-3", 
+            "title": "Work 3", 
+            "type": "book", 
+            "volume": "Second volume"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "Numeric true: 2\nNumeric true: 2\nNumeric false: Second volume"
+}

@@ -1,0 +1,90 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": [
+        [
+            {
+                "citationID": "CITATION-1", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-0"
+                    }
+                ], 
+                "properties": {
+                    "noteIndex": 1
+                }
+            }, 
+            [], 
+            []
+        ], 
+        [
+            {
+                "citationID": "CITATION-2", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-1"
+                    }
+                ], 
+                "properties": {
+                    "noteIndex": 2
+                }
+            }, 
+            [
+                [
+                    "CITATION-1", 
+                    1
+                ]
+            ], 
+            []
+        ]
+    ], 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"in-text\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation\n    disambiguate-add-year-suffix=\"true\">\n    <layout delimiter=\"; \">\n      <names variable=\"author\">\n        <name initialize-with=\".\"/>\n      </names>\n      <date variable=\"issued\" date-parts=\"year\" form=\"text\" prefix=\" \"/>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Grignon", 
+                    "given": "Cyril"
+                }, 
+                {
+                    "family": "Sentenac", 
+                    "given": "Corey"
+                }
+            ], 
+            "id": "ITEM-0", 
+            "issued": {
+                "date-parts": [
+                    [
+                        2000
+                    ]
+                ]
+            }, 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Grignon", 
+                    "given": "Cyril"
+                }, 
+                {
+                    "family": "Sentenac", 
+                    "given": "Corey"
+                }
+            ], 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        2000
+                    ]
+                ]
+            }, 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": ">>[0] C. Grignon, C. Sentenac 2000a\n>>[1] C. Grignon, C. Sentenac 2000b"
+}

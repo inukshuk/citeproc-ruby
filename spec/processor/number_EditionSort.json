@@ -1,0 +1,36 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": false, 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation>\n    <sort>\n      <key variable=\"edition\"/>\n    </sort>\n    <layout delimiter=\", \">\n      <choose>\n        <if is-numeric=\"edition\">\n          <number variable=\"edition\" form=\"long-ordinal\"/>\n        </if>\n        <else>\n          <text variable=\"edition\"/>\n        </else>\n      </choose>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "edition": "2nd edition", 
+            "id": "ITEM-1", 
+            "title": "Item 1", 
+            "type": "book"
+        }, 
+        {
+            "edition": "3", 
+            "id": "ITEM-2", 
+            "title": "Item 2", 
+            "type": "book"
+        }, 
+        {
+            "edition": "special edition", 
+            "id": "ITEM-3", 
+            "title": "Item 3", 
+            "type": "book"
+        }, 
+        {
+            "edition": "1", 
+            "id": "ITEM-4", 
+            "title": "Item 4", 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "first, second, third, special edition"
+}
