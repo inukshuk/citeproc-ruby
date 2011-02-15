@@ -26,10 +26,20 @@ module CSL
 
     class << self; attr_accessor :path, :default end    
     
-    attr_accessor :language, :region
+    attr_reader :language, :region
 
     def initialize(tag=nil)
       set(tag || Locale.default)
+    end
+    
+    def language=(new_language)
+      @language = new_language
+      match_region
+    end
+    
+    def region=(new_region)
+      @region = new_region
+      match_language
     end
     
     def set(tag)
@@ -75,6 +85,7 @@ module CSL
     # Reloads the XML file. Called automatically whenever the locale changes.
     def reload!
       match_region if @region.nil?
+      match_language if @language.nil?
       
       @options, @date, @terms = nil
       @doc = Nokogiri::XML(File.open(document_path)) { |config| config.strict.noblanks }
@@ -104,6 +115,12 @@ module CSL
     def match_region
       Dir.entries(Locale.path).detect { |l| l.match(%r/^[\w]+-#{@language}-([A-Z]{2})\.xml$/) }
       @region = $1
+    end
+
+    # Set language to first available language for current region.
+    def match_language
+      Dir.entries(Locale.path).detect { |l| l.match(%r/^[\w]+-([a-z]{2})-#{@region}\.xml$/) }
+      @language = $1
     end
     
     def document_path
