@@ -16,30 +16,27 @@
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 #++
 
-$:.unshift(File.dirname(__FILE__)) unless
-  $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
-
-require 'open-uri'
-
-require 'logging'
-require 'nokogiri'
-
-
-module CiteProc
-
-  @log = Logging.logger[self.name]
-  @log.add_appenders(Logging.appenders.stderr)
+module CSL
   
-  @log.level = ENV.has_key?('DEBUG') ? :debug : :info
-  
-  class << self; attr_reader :log; end
-  
+  # A bibliography is an array of bibliographic entries and, optionally,
+  # a list of errors. The bibliography should be format agnostic; it is
+  # simply encapsulates two lists.
+  class Bibliography
+    
+    attr_accessor :data, :errors, :options
+    
+    def initialize
+      @data = []
+      @errors = []
+      @options = {}
+    end
+
+    # @data proxy
+    [:[], :[]=, :<<, :map, :each, :empty?, :push, :pop, :unshift].each do |method_id|
+      define_method method_id do |*args, &block|
+        @data.send(method_id, *args, &block)
+      end
+    end
+    
+  end
 end
-
-require 'citeproc/version'
-
-require 'csl/locale'
-require 'csl/items'
-require 'csl/style'
-require 'csl/bibliography'
-require 'csl/processor'
