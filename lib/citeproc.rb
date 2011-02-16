@@ -38,6 +38,8 @@ end
 
 require 'citeproc/version'
 
+require 'extensions/core'
+
 require 'csl/attributes'
 require 'csl/locale'
 require 'csl/nodes'
