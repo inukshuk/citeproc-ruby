@@ -38,7 +38,9 @@ end
 
 require 'citeproc/version'
 
+require 'csl/attributes'
 require 'csl/locale'
+require 'csl/nodes'
 require 'csl/items'
 require 'csl/converters'
 require 'csl/style'

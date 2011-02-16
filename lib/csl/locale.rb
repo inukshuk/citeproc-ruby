@@ -17,7 +17,7 @@
 #++
 
 module CSL
-
+  
   class Locale
 
     # Class Instance Variables

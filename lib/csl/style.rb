@@ -80,7 +80,7 @@ module CSL
     
     [:citation, :bibliography].each do |method_id|
       define_method method_id do
-        @attributes[method_id] ||= @doc.at_css("style > #{method_id}")
+        @attributes[method_id] ||= Renderer.new(@doc.at_css("style > #{method_id}"), macros)
       end
     end
     
@@ -88,6 +88,7 @@ module CSL
     private
     
     def locate(resource)
+      resource = resource.to_s
       return resource if resource.match(/^<(\?xml|style)/)
       return File.read(resource) if File.exists?(resource)
       

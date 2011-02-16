@@ -16,8 +16,7 @@ describe CSL::Processor do
     it 'passes tests' do
       tests = CSL::Tests.load(:processor)
       @proc.style = tests[0]['csl']
-      @proc.register(tests[0]['input'])
-      puts @proc.registry['ITEM-1'].inspect
+      @proc.import(tests[0]['input'])
     end
   end
 end

@@ -32,11 +32,11 @@ module CSL
     end
 
     # @data proxy
-    [:[], :[]=, :<<, :map, :each, :empty?, :push, :pop, :unshift].each do |method_id|
+    [:[], :[]=, :<<, :map, :each, :empty?, :push, :pop, :unshift, :+, :concat].each do |method_id|
       define_method method_id do |*args, &block|
         @data.send(method_id, *args, &block)
       end
     end
-    
+
   end
 end

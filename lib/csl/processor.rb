@@ -20,7 +20,7 @@ module CSL
 
   class Processor
     
-    attr_reader :style, :bibliography, :abbreviations, :format
+    attr_reader :style, :abbreviations, :format
     attr_accessor :language
     
     def initialize
@@ -34,25 +34,42 @@ module CSL
     def format=(new_format)
     end
 
-    def registry
-      @registry ||= {}
+    def items
+      @items ||= {}
     end
     
-    def register(items)
-      items = [items] unless items.is_a?(Array)
+    def import(items)
+      items = to_a(items)
       items.each do |item|
-        registry[item['id']] = Item.new(item)
+        self.items[item['id']] = Item.new(item)
       end
     end
     
-    def cite
-    end
-
-    def nocite
+    def bibliography
     end
     
-    def compile
+    def cite(ids, options={})
+      ids = to_a(ids).map { |id| items[id] }
+    end
+
+    def nocite(ids, options={})
+      @bibliography + to_a(ids).map { |id| items[id] }
+    end
+
+    alias :make_bibliography :bibliography
+    alias :update_items :cite
+    alias :update_uncited_items :nocite
+    
+    def render(item, layout)
+      
+    end
+    
+    private
+    
+    def to_a(attribute)
+      attribute.is_a?(Array) ? attribute : [attribute]
     end
     
   end
+  
 end
