@@ -58,13 +58,13 @@ describe CSL::Locale do
     
     it 'contains variants for form and number' do
       locale = CSL::Locale.new
-      locale['page']['default'].should == ['page', 'pages']
+      locale['page']['long'] == ['page', 'pages']
       locale['page']['short'].should == ['p.', 'pp.']
     end
     
     it 'returns different values for different languages' do
       [CSL::Locale.new, CSL::Locale.new('de-DE'), CSL::Locale.new('fr')].map do |locale|
-        locale['editor']['default']
+        locale['editor'].to_s
       end.uniq.length.should == 3
     end
   end

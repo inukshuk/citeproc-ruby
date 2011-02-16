@@ -64,7 +64,7 @@ module CSL
           end
           
           define_method [method_id, '?'].join do
-            !!(attributes[field] && !["", [], 0].include?(attributes[field]))
+            !!(attributes[field] && !['', [], 'false'].include?(attributes[field]))
           end
           
         end

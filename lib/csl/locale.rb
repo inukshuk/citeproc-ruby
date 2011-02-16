@@ -18,6 +18,56 @@
 
 module CSL
   
+  # Terms are localized strings. For example, if a style specifies that the
+  # term "and" should be used, the string that appears in the style output
+  # depends on the locale: "and" for English, "und" for German. Terms are
+  # defined using cs:term elements, child elements of cs:terms, itself a child
+  # element of cs:locale. Terms are identified by the value of the name
+  # attribute of cs:term. Two types of terms exist: simple terms, where the
+  # content of the cs:term is the localized string, and compound terms, where
+  # cs:term includes the two child elements cs:single and cs:multiple, which
+  # respectively contain the singular and plural variant of the term (e.g.
+  # "page" and "pages"). Some terms are defined for multiple forms. In these
+  # cases, multiple cs:term element share the same value of name, but differ
+  # in the value of the optional form attribute. The different forms are:
+  #
+  # * "long" - the default, e.g. "editor" and "editors" for the term "editor"
+  # * "short" - e.g. "ed" and "eds" for the term "editor"
+  # * "verb" - e.g. "edited by" for the term "editor"
+  # * "verb-short" - e.g. "ed" for the term "editor"
+  # * "symbol" - e.g. "§" for the term "section"
+  #  
+  # The plural attribute can be set to choose either the singular (value
+  # "false", the default) or plural variant (value "true") of a term. In
+  # addition, the form attribute can be set to select the desired term form
+  # ("long" [default], "short", "verb", "verb-short" or "symbol"). If for a
+  # given term the desired form does not exist, another form may be used:
+  # "verb-short" reverts to "verb", "symbol" reverts to "short", and "verb"
+  # and "short" both revert to "long".
+  #
+  class Term
+    include Attributes
+    
+    def initialize(name)
+      self.name = name
+    end
+      
+    attr_fields %w{ name long short verb verb-short symbol }
+    
+    def to_s(options={})
+      t = case options['form']
+        when 'verb-short' then verb_short || verb || long
+        when 'symbol' then symbol || short || long
+        when 'verb' then verb || long
+        when 'short' then short || long
+        else long
+      end
+      
+      options['plural'] && options['plural'] != 'false' && options['plural'].to_s != '1' ? t[1] : t[0]
+    end
+    
+  end
+  
   class Locale
 
     # Class Instance Variables
@@ -102,10 +152,10 @@ module CSL
     private
     
     def build_terms
-      @terms = Hash.new { |h,k| h[k] = Hash.new({}) }
+      @terms = Hash.new { |h,k| h[k] = Term.new(k) }
       
       @doc.css('terms term').each do |t|
-        @terms[t['name']][t['form'] || 'default'] = t.children.map(&:content)
+        @terms[t['name']][t['form'] || 'long'] = t.children.map(&:content)
       end
       
       @terms
