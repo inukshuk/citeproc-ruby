@@ -67,3 +67,65 @@ describe CSL::Text do
     
   end
 end
+
+describe CSL::Number do
+  
+  before(:each) do
+    @style = CSL::Style.new
+    @locale = CSL::Locale.new
+    @item = CSL::Item.new do |item|
+      item.issue = 1
+      item.volume = 2
+      item.edition = 3
+      item.number = 23
+    end
+  end
+  
+  
+  it 'can be created' do
+    xml = '<number/>'
+    number = CSL::Number.new(Nokogiri::XML(xml).root, @style)
+    number.should_not be nil
+    number.form?.should be false
+    number.variable?.should be false
+  end
+
+  describe 'processing' do
+    it 'returns an empty string by default' do
+      xml = '<number/>'
+      number = CSL::Number.new(Nokogiri::XML(xml).root, @style)
+      number.process(@item, @locale).should == ''
+    end
+  
+    it 'supports variables and return numeric value by default' do
+      xml = '<number variable="edition"/>'
+      number = CSL::Number.new(Nokogiri::XML(xml).root, @style)
+      number.process(@item, @locale).should == '3'
+    end
+
+    it 'supports ordinals and roman numbers' do
+      xml = [
+        '<number variable="issue" form="ordinal"/>',
+        '<number variable="volume" form="ordinal"/>',
+        '<number variable="edition" form="ordinal"/>',
+        '<number variable="number" form="ordinal"/>',
+        '<number variable="issue" form="long-ordinal"/>',
+        '<number variable="volume" form="long-ordinal"/>',
+        '<number variable="edition" form="long-ordinal"/>',
+        '<number variable="issue" form="roman"/>',
+        '<number variable="volume" form="roman"/>',
+        '<number variable="edition" form="roman"/>',
+        '<number variable="number" form="roman"/>']
+        
+      expected = %w{ 1st 2nd 3rd 23rd first second third i ii iii xxiii }
+      
+      result = xml.map do |n|
+        number = CSL::Number.new(Nokogiri::XML(n).root, @style)
+        number.process(@item, @locale)
+      end
+      
+      result.should == expected
+    end
+  
+  end
+end

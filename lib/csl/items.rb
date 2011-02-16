@@ -50,6 +50,7 @@ module CSL
     
     def initialize(attributes={})
       merge(attributes)
+      yield self if block_given?
     end
     
     def merge(attributes)

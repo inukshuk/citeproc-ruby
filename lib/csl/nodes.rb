@@ -245,6 +245,29 @@ module CSL
   class Number < Node
     attr_fields Node.formatting_attributes      
     attr_fields %w{ variable form }
+    
+    def process(item, locale)
+      number = (item[variable] || '').to_s
+      
+      unless number.empty?
+        case form
+        when 'roman' then number = number.to_i.romanize
+        when 'ordinal' then number = number + ordinalize(number.to_i % 10, locale)
+        when 'long-ordinal' then number = ordinalize(number.to_i, locale)
+        else number = number.to_i.to_s
+        end
+        # TODO format
+      end
+      
+      number
+    end
+
+    def ordinalize(number, locale)
+      while number > 0 do
+        ordinal = locale["#{form}-%02d" % number].to_s
+        if ordinal then return ordinal else number = number - 1 end
+      end
+    end
   end
 
   # The cs:names element can be used to display the contents of one or more

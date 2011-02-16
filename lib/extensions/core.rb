@@ -37,7 +37,7 @@ module Extensions
             roman << (code * count)
           end
         end
-        roman
+        roman.downcase
       end
 
     end
