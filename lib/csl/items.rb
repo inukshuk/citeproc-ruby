@@ -69,8 +69,8 @@ module CSL
     class Name
       include Attributes
     
-      attr_fields :given, :family, :literal, :suffix, :dropping_particle,
-        :non_dropping_particle, :comma_suffix, :static_ordering, :parse_names
+      attr_fields %w{ given family literal suffix dropping-particle
+        non-dropping-particle comma-suffix static-ordering parse-names }
 
       [[:last, :family], [:first, :given]].each do |m|
         alias_method m[0], m[1]
@@ -93,13 +93,23 @@ module CSL
     class Date
       include Attributes
 
-      attr_fields :date_parts, :season, :circa, :literal
+      attr_fields %w{ date-parts season circa literal }
 
+      [:year, :month, :day].each_with_index do |method_id, index|
+        
+        define_method method_id do; date_parts[index] end
+        
+        define_method [method_id, '='].join do |value|
+          date_parts[index] = value.to_i
+        end
+        
+      end
+      
       def initialize(attributes={})
         @attributes = {}.merge(attributes)      
         yield self if block_given?
       end
-    
+
       # @param date
       # @param from_date, to_date
       def set(*args)

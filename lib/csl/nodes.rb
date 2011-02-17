@@ -202,30 +202,82 @@ module CSL
     attr_fields Node.formatting_attributes
     attr_fields %w{ variable form date-parts }
 
-    def initialize(node, style)
-      super
-      @node.children.each { |n| parts.push(Node.parse(n, @style)) }
-    end
-    
-    def parts
-      @parts ||= []
-    end
-    
     def process(item, locale)
-      ''
+      date = item[variable]
+      date.nil? ? '' : parts(locale).map { |part| part.process(date, locale) }.join
+    end
+
+    def parts(locale=Locale.new)
+      form? ? collect(DatePart.parse(locale.date[form]), DatePart.parse(@node.children)) : DatePart.parse(@node.children)
     end
     
-    def process_localized(item, locale)
+    # Combines two lists of date-part elements. Attributes in the second
+    # list take precedence over attributes in corresponding elements in the
+    # first list.
+    # 
+    # @returns the consolidated list
+    #
+    def collect(p1, p2)
+      
+      # merge
+      parts = p1.empty? ? p2 : p1.map do |this|
+        that = p2.detect { |part| part.name == this.name }
+        this.attributes = this.attributes.merge(that.attributes) unless that.nil?
+        this
+      end
+      
+      # filter
+      filter = %w{ year month day } & (date_parts? ? date_parts.split(/-/) : %w{ year month day })
+      parts = parts.reject { |part| !filter.include?(part.name) }
     end
-    
-    def process_non_localized(item)
-    end
-    
+
   end
 
   class DatePart < Node
     attr_fields Node.formatting_attributes
-    attr_fields %w{ range-delimiter }
+    attr_fields %w{ name form range-delimiter strip-periods }
+    
+    def self.parse(nodes)
+      return [] if nodes.empty?
+      nodes.map { |n| DatePart.new(n, @style) }
+    end    
+    
+    def process(date, locale)
+      
+      part = case name
+        when 'day'
+          case form
+          when 'ordinal' then locale.ordinalize(date.day)
+          when 'numeric-leading-zeros' then "%02d" % date.day
+          else # 'numeric'
+            date.day.to_s
+          end
+        when 'month'
+          if date.season?
+            date.season
+          else
+            case form
+            when 'numeric' then date.month.to_s
+            when 'numeric-leading-zeros' then "%02d" % date.month
+            else
+              locale["month-%02d" % date.month].to_s(attributes)
+            end
+          end
+        when 'year'
+          case form
+          when 'short' then date.year.abs.to_s[-2..-1] # get the last two characters
+          else # 'long'
+            date.year.abs.to_s
+          end
+        end
+      
+      part = [part, locale['ad']].join if name == 'year' && date.year < 1000
+      part = [part, locale['bc']].join if name == 'year' && date.year < 0
+            
+      # TODO format
+      part
+    end
+    
   end
 
 

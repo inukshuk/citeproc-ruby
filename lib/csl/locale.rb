@@ -120,7 +120,7 @@ module CSL
     # #date(:numeric)['month']['suffix'] => '/'
     def date
       @date ||= Hash[['text', 'numeric'].map { |form|
-        [form, @doc.css("date[form='#{form}'] > date-part").map { |d| [d['name'], Hash[d.to_a]] }]
+        [form, @doc.css("date[form='#{form}'] > date-part")]
       }]
     end
     
