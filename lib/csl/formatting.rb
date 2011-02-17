@@ -29,6 +29,7 @@ module CSL
       def format(formatter)
         formatter = CSL::Format.const_get(formatter.to_s.split(/[\s_-]+/).map(&:capitalize).join)
         
+        # Defines the local format method
         define_method :format do |string|
           Node.formatting_attributes.each do |attribute|
             method_id = ['set', attribute.gsub(/-/, '_')].join('_')
@@ -39,6 +40,21 @@ module CSL
           string
         end
         
+      end
+      
+      # Chains the format method to the given methods
+      def format_on(*args)
+        args = args.shift if args.first.is_a?(Array)
+        args.each do |method_id|
+          
+          # Set up Around Alias Chain
+          original_method = [method_id, 'without_formatting'].join('_')
+          alias_method original_method, method_id
+          
+          define_method method_id do |*args, &block|
+            format(send(original_method, *args, &block))            
+          end
+        end
       end
       
     end    

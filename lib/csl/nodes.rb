@@ -150,17 +150,16 @@ module CSL
     attr_fields %w{ variable form macro term plural value }
     
     def process(item, locale)
-      text = case
-        when value?    then value
-        when macro?    then style.macros[macro].process(item) 
-        when term?     then locale[term].to_s(attributes)
-        when variable? then item[variable] # TODO long/short
-        else ''
+      case
+      when value?    then value
+      when macro?    then style.macros[macro].process(item) 
+      when term?     then locale[term].to_s(attributes)
+      when variable? then item[variable] # TODO long/short
+      else ''
       end
-      
-      format(text)
     end
-    
+  
+    format_on :process
   end
 
 
@@ -206,9 +205,11 @@ module CSL
 
     def process(item, locale)
       date = item[variable]
-      format(date.nil? ? '' : date.literal? ? date.literal : parts(locale).map { |part| part.process(date, locale) }.join(delimiter))
+      date.nil? ? '' : date.literal? ? date.literal : parts(locale).map { |part| part.process(date, locale) }.join(delimiter)
     end
 
+    format_on :process
+    
     def parts(locale=Locale.new)
       form? ? collect(DatePart.parse(locale.date[form]), DatePart.parse(@node.children)) : DatePart.parse(@node.children)
     end
@@ -276,8 +277,10 @@ module CSL
       part = [part, locale['ad']].join if name == 'year' && date.year < 1000
       part = [part, locale['bc']].join if name == 'year' && date.year < 0
             
-      self.format(part)
+      part
     end
+    
+    format_on :process
     
   end
 
@@ -327,9 +330,11 @@ module CSL
           number.to_i.to_s
         end unless number.empty?
         
-      format(number)
+      number
     end
 
+    format_on :process
+    
   end
 
   # The cs:names element can be used to display the contents of one or more
