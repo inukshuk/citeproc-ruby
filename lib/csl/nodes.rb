@@ -24,10 +24,11 @@ module CSL
   # Rendering elements also partly control the formatting of this data.
   class Node      
     include Attributes
+    include Formatting
 
     @formatting_attributes = %w{ prefix suffix delimiter display
       quotes strip-periods text-case font-style font-variant font-weight
-      text-decoration vertical-align }
+      text-decoration vertical-align text-case }
 
     @inheritable_name_attributes = %w{ and delimiter-precedes-last et-al-min
       et-al-use-first et-al-subsequent-min et-al-subsequent-use-first
@@ -35,6 +36,8 @@ module CSL
     
     class << self; attr_reader :formatting_attributes, :inheritable_name_attributes; end
 
+    format :default
+    
     attr_reader :node
     
     def initialize(node, style)
@@ -155,8 +158,7 @@ module CSL
         else ''
       end
       
-      # TODO format
-      text
+      format(text)
     end
     
   end
@@ -204,7 +206,7 @@ module CSL
 
     def process(item, locale)
       date = item[variable]
-      date.nil? ? '' : parts(locale).map { |part| part.process(date, locale) }.join
+      format(date.nil? ? '' : date.literal? ? date.literal : parts(locale).map { |part| part.process(date, locale) }.join(delimiter))
     end
 
     def parts(locale=Locale.new)
@@ -254,7 +256,7 @@ module CSL
           end
         when 'month'
           if date.season?
-            date.season
+            date.season.to_s.match(/[1-4]/) ? locale["season-0#{date.season}"].to_s : date.season.to_s
           else
             case form
             when 'numeric' then date.month.to_s
@@ -274,8 +276,7 @@ module CSL
       part = [part, locale['ad']].join if name == 'year' && date.year < 1000
       part = [part, locale['bc']].join if name == 'year' && date.year < 0
             
-      # TODO format
-      part
+      self.format(part)
     end
     
   end
@@ -326,9 +327,7 @@ module CSL
           number.to_i.to_s
         end unless number.empty?
         
-      # TODO format
-      
-      number
+      format(number)
     end
 
   end
@@ -361,7 +360,7 @@ module CSL
   class Names < Node
     attr_fields Node.formatting_attributes
     attr_fields %w{ variable }
-    
+        
     def elements
       @elements ||= []
     end

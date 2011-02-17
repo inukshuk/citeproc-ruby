@@ -130,7 +130,7 @@
         expected:
         - 'Mar. 7, 1983'
         - 'March 7, 1983'
-        - '7, 1983'
+        - 'Mar. 1983'
         - '1983'
     non-localized processing:
       returns an empty string by default:
@@ -149,7 +149,7 @@
         input:
         - <date variable="issued"/>
         - <date variable="issued"><date-part name="year" form="long" suffix="-"/><date-part name="month" form="numeric" suffix="-"/><date-part name="day" form="numeric"/></date>
-        - <date variable="issued"><date-part name="year" form="long" suffix="-"/><date-part name="month" form="numeric-leading-zeros" suffix="-"/></date>
+        - <date variable="issued"><date-part name="year" form="long" suffix="-"/><date-part name="month" form="numeric-leading-zeros" suffix=""/></date>
         - <date variable="issued"><date-part name="year"/><date>
         - <date variable="issued"><date-part name="year" form="short" suffix=" "/><date-part name="month" form="long" suffix=" "/><date-part name="day" form="ordinal"/></date>
         expected:

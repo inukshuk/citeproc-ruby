@@ -42,6 +42,7 @@ require 'extensions/core'
 
 require 'csl/attributes'
 require 'csl/locale'
+require 'csl/formatting'
 require 'csl/nodes'
 require 'csl/items'
 require 'csl/converters'
