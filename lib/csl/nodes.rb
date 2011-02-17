@@ -53,6 +53,7 @@ module CSL
       'TODO'
     end
     
+    
     protected
     
     def parse_attributes
@@ -147,9 +148,9 @@ module CSL
     
     def process(item, locale)
       text = case
-        when value? then value
-        when macro? then style.macros[macro].process(item) 
-        when term? then locale[term].to_s(attributes)
+        when value?    then value
+        when macro?    then style.macros[macro].process(item) 
+        when term?     then locale[term].to_s(attributes)
         when variable? then item[variable] # TODO long/short
         else ''
       end
@@ -201,9 +202,25 @@ module CSL
     attr_fields Node.formatting_attributes
     attr_fields %w{ variable form date-parts }
 
+    def initialize(node, style)
+      super
+      @node.children.each { |n| parts.push(Node.parse(n, @style)) }
+    end
+    
     def parts
       @parts ||= []
     end
+    
+    def process(item, locale)
+      ''
+    end
+    
+    def process_localized(item, locale)
+    end
+    
+    def process_non_localized(item)
+    end
+    
   end
 
   class DatePart < Node
@@ -247,27 +264,21 @@ module CSL
     attr_fields %w{ variable form }
     
     def process(item, locale)
-      number = (item[variable] || '').to_s
+      number = item[variable] || ''
       
-      unless number.empty?
-        case form
-        when 'roman' then number = number.to_i.romanize
-        when 'ordinal' then number = number + ordinalize(number.to_i % 10, locale)
-        when 'long-ordinal' then number = ordinalize(number.to_i, locale)
-        else number = number.to_i.to_s
-        end
-        # TODO format
-      end
+      number = case form
+        when 'roman'        then number.to_i.romanize
+        when 'ordinal'      then locale.ordinalize(number, attributes)
+        when 'long-ordinal' then locale.ordinalize(number, attributes)
+        else 
+          number.to_i.to_s
+        end unless number.empty?
+        
+      # TODO format
       
       number
     end
 
-    def ordinalize(number, locale)
-      while number > 0 do
-        ordinal = locale["#{form}-%02d" % number].to_s
-        if ordinal then return ordinal else number = number - 1 end
-      end
-    end
   end
 
   # The cs:names element can be used to display the contents of one or more

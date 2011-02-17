@@ -55,7 +55,7 @@ module CSL
     
     def merge(hash)
       hash.map do |key, value|
-        attributes[key] = Item.date_fields.include?(key) ? Variables::Date.new(value) : Item.name_fields.include?(key) ? Variables::Name.new(value) : value
+        attributes[key] = Item.date_fields.include?(key) ? Variables::Date.new(value) : Item.name_fields.include?(key) ? Variables::Name.new(value) : value.to_s
       end
     end
   

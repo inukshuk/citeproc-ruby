@@ -25,7 +25,7 @@
     processing:
       returns an empty string by default:
         input:
-        - <text/>
+        - <number/>
         expected:
         - ""
         item: {}
@@ -66,3 +66,95 @@
         - ii
         - iii
         - xxiii
+- class: CSL::Date
+  describe:
+    localized processing:
+      returns an empty string by default for numeric:
+        item: {}
+        input:
+        - <date form="numeric"/>
+        expected:
+        - ""
+      returns an empty string by default for text:
+        item: {}
+        input:
+        - <date form="text"/>
+        expected:
+        - ""
+      returns numeric result given date-parts:
+        item:
+          issued:
+            date-parts:
+            - 1983
+            - 3
+            - 12
+        input:
+        - <date variable="issued" form="numeric"/>
+        - <date variable="issued" form="numeric" date-parts="year-month-day"/>
+        - <date variable="issued" form="numeric" date-parts="year-month"/>
+        - <date variable="issued" form="numeric" date-parts="year"/>
+        expected:
+        - '03/12/1983'
+        - '03/12/1983'
+        - '03/1983'
+        - '1983'
+      returns text result given date-parts:
+        item:
+          issued:
+            date-parts:
+            - 1983
+            - 3
+            - 7
+        input:
+        - <date variable="issued" form="text"/>
+        - <date variable="issued" form="text" date-parts="year-month-day"/>
+        - <date variable="issued" form="text" date-parts="year-month"/>
+        - <date variable="issued" form="text" date-parts="year"/>
+        expected:
+        - 'March 07, 1983'
+        - 'March 07, 1983'
+        - '07, 1983'
+        - '1983'
+      returns text result given date-parts and overrule:
+        item:
+          issued:
+            date-parts:
+            - 1983
+            - 3
+            - 7
+        input:
+        - <date variable="issued" form="text"><date-part name="month" form="short"/><date-part name="day" form="numeric"/></date>
+        - <date variable="issued" form="text" date-parts="year-month-day"><date-part name="month" form="verb-short"/><date-part name="day" form="numeric"/></date>
+        - <date variable="issued" form="text" date-parts="year-month"><date-part name="month" form="short"/><date-part name="day" form="numeric"/></date>
+        - <date variable="issued" form="text" date-parts="year"><date-part name="month" form="short"/><date-part name="day" form="numeric"/></date>
+        expected:
+        - 'Mar. 7, 1983'
+        - 'March 7, 1983'
+        - '7, 1983'
+        - '1983'
+    non-localized processing:
+      returns an empty string by default:
+        item: {}
+        input:
+        - <date/>
+        expected:
+        - ""
+      returns result given date-parts:
+        item:
+          issued:
+            date-parts:
+            - 1983
+            - 3
+            - 12
+        input:
+        - <date variable="issued"/>
+        - <date variable="issued"><date-part name="year" form="long" suffix="-"/><date-part name="month" form="numeric" suffix="-"/><date-part name="day" form="numeric"/></date>
+        - <date variable="issued"><date-part name="year" form="long" suffix="-"/><date-part name="month" form="numeric-leading-zero" suffix="-"/></date>
+        - <date variable="issued"><date-part name="year"/><date>
+        - <date variable="issued"><date-part name="year" form="short" suffix=" "/><date-part name="month" form="long" suffix=" "/><date-part name="day" form="ordinal"/></date>
+        expected:
+        - ''
+        - '1983-3-12'
+        - '1983-03'
+        - '1983'
+        - '83 March 12th'

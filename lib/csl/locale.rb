@@ -55,15 +55,15 @@ module CSL
     attr_fields %w{ name long short verb verb-short symbol }
     
     def to_s(options={})
-      t = case options['form']
+      term = case options['form']
         when 'verb-short' then verb_short || verb || long
-        when 'symbol' then symbol || short || long
-        when 'verb' then verb || long
-        when 'short' then short || long
+        when 'symbol'     then symbol || short || long
+        when 'verb'       then verb || long
+        when 'short'      then short || long
         else long
-      end
+      end || []
       
-      options['plural'] && options['plural'] != 'false' && options['plural'].to_s != '1' ? t[1] : t[0]
+      options['plural'] && options['plural'] != 'false' && options['plural'].to_s != '1' ? term.last.to_s : term.first.to_s
     end
     
   end
@@ -118,8 +118,10 @@ module CSL
 
     # @example
     # #date(:numeric)['month']['suffix'] => '/'
-    def date(form=:text)
-      @date ||= Hash[@doc.css("date[form='#{form}'] > date-part").map { |d| [d['name'], Hash[d.to_a]] }]
+    def date
+      @date ||= Hash[['text', 'numeric'].map { |form|
+        [form, @doc.css("date[form='#{form}'] > date-part").map { |d| [d['name'], Hash[d.to_a]] }]
+      }]
     end
     
     # Around Alias Chains to call reload whenver locale changes
@@ -146,6 +148,30 @@ module CSL
         @language, @region = Locale.default.split(/-/)
         retry
       end
+    end
+
+    # Returns an ordinalized number according to the rules specified in the
+    # given locale. Does not conform to CSL 1.0 in order to work around some
+    # shortcomings in the schema: this version tries several useful fall-backs
+    # if there is no direct hit in the locale (e.g., if 21 is not specified,
+    # we will try with 21 and then with 1).
+    #
+    # TODO: long-ordinals may be influenced by gender in some locales
+    #
+    # @param number a Fixnum
+    # @param options the options hash; should contain a 'form' attribute
+    # @returns a string, e.g., '1st'
+    #
+    def ordinalize(number, options={})
+      number = number.to_i
+      
+      options['form'] ||= 'ordinal'
+      key = [options['form'], '%02d'].join('-')
+      
+      ordinal = self[key % number].to_s 
+      ordinal = self[key % (number % 10)].to_s if ordinal.empty?
+      
+      options['form'] == 'ordinal' ? [number, ordinal].join : ordinal
     end
 
     

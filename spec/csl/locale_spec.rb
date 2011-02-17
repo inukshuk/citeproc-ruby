@@ -68,4 +68,34 @@ describe CSL::Locale do
       end.uniq.length.should == 3
     end
   end
+  
+  describe '#ordinalize' do
+    it 'works in English' do
+      locale = CSL::Locale.new
+      
+      result = (1..13).map do |i|
+        locale.ordinalize(i)
+      end
+      
+      expected = %w{ 1st 2nd 3rd 4th 5th 6th 7th 8th 9th 10th 11th 12th 13th }
+
+      result.should == expected
+      
+      result = [20, 21, 22, 23, 24, 100, 101, 102, 103, 104].map do |i|
+        locale.ordinalize(i)
+      end
+
+      expected = %w{ 20th 21st 22nd 23rd 24th 100th 101st 102nd 103rd 104th }
+
+      result.should == expected
+
+      result = (1..10).map do |i|
+        locale.ordinalize(i, 'form' => 'long-ordinal')
+      end
+      
+      expected = %w{ first second third fourth fifth sixth seventh eighth ninth tenth }
+
+      result.should == expected
+    end
+  end
 end
