@@ -1,0 +1,68 @@
+--- 
+- class: CSL::Text
+  describe:
+    processing:
+      returns an empty string by default:
+        input:
+        - <text/>
+        expected:
+        - ""
+        item: {}
+      handles terms correctly:
+        item: {}
+        input:
+        - <text term="editorial-director" plural="false" />
+        - <text term="editorial-director" plural="true" />
+        - <text term="section" form="symbol" plural="false" />
+        - <text term="section" form="symbol" plural="true" />
+        expected:
+        - editor
+        - editors
+        - §
+        - §§
+- class: CSL::Number
+  describe:
+    processing:
+      returns an empty string by default:
+        input:
+        - <text/>
+        expected:
+        - ""
+        item: {}
+      supports variables and return numeric value by default:
+        item:
+          edition: '3'
+        input:
+        - <number variable="edition"/>
+        expected:
+        - '3'
+      supports ordinals and roman numbers:
+        item:
+          issue: '1'
+          volume: '2'
+          edition: '3'
+          number: '23'
+        input:
+        - <number variable="issue" form="ordinal"/>
+        - <number variable="volume" form="ordinal"/>
+        - <number variable="edition" form="ordinal"/>
+        - <number variable="number" form="ordinal"/>
+        - <number variable="issue" form="long-ordinal"/>
+        - <number variable="volume" form="long-ordinal"/>
+        - <number variable="edition" form="long-ordinal"/>
+        - <number variable="issue" form="roman"/>
+        - <number variable="volume" form="roman"/>
+        - <number variable="edition" form="roman"/>
+        - <number variable="number" form="roman"/>
+        expected:
+        - 1st
+        - 2nd
+        - 3rd
+        - 23rd
+        - first
+        - second
+        - third
+        - i
+        - ii
+        - iii
+        - xxiii

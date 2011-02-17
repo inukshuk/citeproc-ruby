@@ -53,10 +53,9 @@ module CSL
       yield self if block_given?
     end
     
-    def merge(attributes)
-      attributes.map do |key, value|
-        key = convert(key)
-        self.attributes[key] = Item.date_fields.include?(key) ? Variables::Date.new(value) : Item.name_fields.include?(key) ? Variables::Name.new(value) : value
+    def merge(hash)
+      hash.map do |key, value|
+        attributes[key] = Item.date_fields.include?(key) ? Variables::Date.new(value) : Item.name_fields.include?(key) ? Variables::Name.new(value) : value
       end
     end
   

@@ -1,4 +1,38 @@
-# encoding: utf-8
+
+CSL::Tests::NodeFixtures.each do |fixture|
+  
+  describe fixture['class'] do
+    before(:each) do
+      @style = CSL::Style.new
+      @locale = CSL::Locale.new
+    end
+
+    fixture['describe'].keys.each do |part|
+      describe part do
+        fixture['describe'][part].keys.each do |feature|
+          it feature do
+            
+            item = CSL::Item.new(fixture['describe'][part][feature]['item'])
+            
+            input = fixture['describe'][part][feature]['input']
+            
+            expected = fixture['describe'][part][feature]['expected']
+            
+            result = input.map do |xml|
+              node = CSL.const_get(fixture['class'].split(/::/).last).new(Nokogiri::XML(xml).root, @style)
+              node.process(item, @locale)
+            end
+            
+            result.should == expected
+            
+          end
+        end
+      end
+    end
+    
+  end
+  
+end
 
 describe CSL::Text do
   
@@ -38,34 +72,7 @@ describe CSL::Text do
       result.should == expected
     end
   end
-  
-  describe 'processing' do
-    it 'returns an empty string by default' do
-      xml = '<text/>'
-      item = CSL::Item.new
-      text = CSL::Text.new(Nokogiri::XML(xml).root, @style)
-      text.process(item, @locale).should == ''
-    end
-    
-    it 'handles terms correctly' do
-      xml = [
-        '<text term="editorial-director" plural="false" />',
-        '<text term="editorial-director" plural="true" />',
-        '<text term="section" form="symbol" plural="false" />',
-        '<text term="section" form="symbol" plural="true" />']
 
-      expected = [ 'editor', 'editors', '§', '§§' ]
-      
-      result = xml.map { |t|
-        item = CSL::Item.new
-        text = CSL::Text.new(Nokogiri::XML(t).root, @style)
-        text.process(item, @locale)
-      }
-      
-      result.should == expected
-    end
-    
-  end
 end
 
 describe CSL::Number do
@@ -90,42 +97,4 @@ describe CSL::Number do
     number.variable?.should be false
   end
 
-  describe 'processing' do
-    it 'returns an empty string by default' do
-      xml = '<number/>'
-      number = CSL::Number.new(Nokogiri::XML(xml).root, @style)
-      number.process(@item, @locale).should == ''
-    end
-  
-    it 'supports variables and return numeric value by default' do
-      xml = '<number variable="edition"/>'
-      number = CSL::Number.new(Nokogiri::XML(xml).root, @style)
-      number.process(@item, @locale).should == '3'
-    end
-
-    it 'supports ordinals and roman numbers' do
-      xml = [
-        '<number variable="issue" form="ordinal"/>',
-        '<number variable="volume" form="ordinal"/>',
-        '<number variable="edition" form="ordinal"/>',
-        '<number variable="number" form="ordinal"/>',
-        '<number variable="issue" form="long-ordinal"/>',
-        '<number variable="volume" form="long-ordinal"/>',
-        '<number variable="edition" form="long-ordinal"/>',
-        '<number variable="issue" form="roman"/>',
-        '<number variable="volume" form="roman"/>',
-        '<number variable="edition" form="roman"/>',
-        '<number variable="number" form="roman"/>']
-        
-      expected = %w{ 1st 2nd 3rd 23rd first second third i ii iii xxiii }
-      
-      result = xml.map do |n|
-        number = CSL::Number.new(Nokogiri::XML(n).root, @style)
-        number.process(@item, @locale)
-      end
-      
-      result.should == expected
-    end
-  
-  end
 end
