@@ -54,6 +54,7 @@
         - <number variable="volume" form="roman"/>
         - <number variable="edition" form="roman"/>
         - <number variable="number" form="roman"/>
+        - <number variable="number" form="roman" text-case="uppercase"/>
         expected:
         - 1st
         - 2nd
@@ -66,6 +67,7 @@
         - ii
         - iii
         - xxiii
+        - XXIII
 - class: CSL::Date
   describe:
     localized processing:
@@ -97,6 +99,60 @@
         - '03/12/1983'
         - '03/12/1983'
         - '03/1983'
+        - '1983'
+      returns numeric season correctly:
+        item:
+          issued:
+            date-parts:
+            - 1983
+            - 3
+            - 12
+            season: 1
+        input:
+        - <date variable="issued" form="numeric"/>
+        - <date variable="issued" form="numeric" date-parts="year-month-day"/>
+        - <date variable="issued" form="numeric" date-parts="year-month"/>
+        - <date variable="issued" form="numeric" date-parts="year"/>
+        expected:
+        - 'Spring/12/1983'
+        - 'Spring/12/1983'
+        - 'Spring/1983'
+        - '1983'
+      returns string-numeric season correctly:
+        item:
+          issued:
+            date-parts:
+            - 1983
+            - 3
+            - 12
+            season: '2'
+        input:
+        - <date variable="issued" form="numeric"/>
+        - <date variable="issued" form="numeric" date-parts="year-month-day"/>
+        - <date variable="issued" form="numeric" date-parts="year-month"/>
+        - <date variable="issued" form="numeric" date-parts="year"/>
+        expected:
+        - 'Summer/12/1983'
+        - 'Summer/12/1983'
+        - 'Summer/1983'
+        - '1983'
+      returns literal season correctly:
+        item:
+          issued:
+            date-parts:
+            - 1983
+            - 3
+            - 12
+            season: 'THE SEASON'
+        input:
+        - <date variable="issued" form="numeric"/>
+        - <date variable="issued" form="numeric" date-parts="year-month-day"/>
+        - <date variable="issued" form="numeric" date-parts="year-month"/>
+        - <date variable="issued" form="numeric" date-parts="year"/>
+        expected:
+        - 'THE SEASON/12/1983'
+        - 'THE SEASON/12/1983'
+        - 'THE SEASON/1983'
         - '1983'
       returns text result given date-parts:
         item:
