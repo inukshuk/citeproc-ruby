@@ -19,4 +19,5 @@ describe CSL::Processor do
       @proc.import(tests[0]['input'])
     end
   end
+  
 end

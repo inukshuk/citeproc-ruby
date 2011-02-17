@@ -365,9 +365,52 @@ module CSL
   class Names < Node
     attr_fields Node.formatting_attributes
     attr_fields %w{ variable }
-        
+    
+    def initialize(node, style)
+      super
+      @node.children.each do |node|
+        node = Node.parse(node, style)
+        node.parent = self
+        elements.push(node)
+      end
+    end
+    
     def elements
       @elements ||= []
+    end
+
+    def options
+      @options ||= {}
+    end
+    
+    def process(item, locale)
+      names = items(item)
+
+      # handle editor-translator special case
+      if names.map(&:first).sort.join.match(/editortranslator/)
+
+        editors = names.detect { |name| name.first == 'editor' }
+        translators = names.detect { |name| name.first == 'translator' }
+        
+        if editors == translators
+          editors.first = 'editortranslator'
+          names.delete(translators)
+        end
+        
+      end
+      
+      # TODO not sure whether format is applied only once or on each name item individually
+      
+      names.map { |item|
+        elements.map { |element| element.process(item, locale) }.join(delimiter)
+      }.join
+    end
+    
+    format_on :process
+    # @returns a list of all name variables covered by this node indexed by their role
+    def items(item)
+      return [] unless variable?
+      variable.split(/\s+/).map { |variable| [variable, item[variable]] }
     end
   end
   
@@ -478,10 +521,47 @@ module CSL
     attr_fields Node.inheritable_name_attributes
     attr_fields %w{ form }
   
+    attr_accessor :parent
+    
+    def initialize(node, style)
+      super
+    end
+    
     def parts
       @parts ||= []
     end
     
+    def process(item, locale)
+      names = truncate(item.last)
+      
+      join(names.map { |name| }, locale)
+    end
+    
+    format_on :process
+    
+    def join(names, locale)
+      case
+      when names.length < 2
+        names
+        
+      when names.length == 2
+        names.join((delimiter_precedes_last? ? delimiter : '') + (self.and == 'symbol' ? '&' : locale[self.and].to_s(attributes)))
+        
+      else
+        [names[0..-2].join(delimiter), names[-2..-1].join((delimiter_precedes_last? ? delimiter : '') + (self.and == 'symbol' ? '&' : locale[self.and].to_s(attributes)))].join
+      end
+    end
+    
+    def truncate(names)
+      if et_al_min? && names.length < et_al_min
+        names = names[0..et_al_use_first]
+        parent.options['truncate'] = true
+      else
+        parent.options['truncate'] = false
+      end
+      
+      names
+    end
   end
 
   # The cs:name element may include one or two cs:name-part child elements.
@@ -521,6 +601,15 @@ module CSL
   class EtAl < Node
     attr_fields Node.formatting_attributes
     attr_fields %w{ term }
+    
+    attr_accessor :parent
+
+    def process(item, locale)
+      parent.options['truncate'] ? locale[term].to_s(attributes) : ''
+    end
+    
+    format_on :process
+    
   end
   
   # The optional cs:substitute element, which should be included as the last
@@ -549,9 +638,15 @@ module CSL
   #
   class Substitute < Node
     
+    attr_accessor :parent
+    
     def elements
       @elements ||= elements
     end
+    
+    def process(names, locale)
+    end
+    
   end
   
   # The cs:label element, used to output text terms whose pluralization
@@ -576,6 +671,21 @@ module CSL
   class Label < Node
     attr_fields Node.formatting_attributes      
     attr_fields %w{ variable form plural }
+    
+    attr_accessor :parent
+    
+    def process(item, locale)
+  
+      if parent.nil?
+        locale[variable].to_s(attributes.merge('plural' => item[variable].length))
+      else
+        locale[item.first].to_s(attributes.merge( 'plural' => item.last.length))
+      end
+      
+    end
+    
+    format_on :process
+    
   end
 
   # The cs:group element may contain one or more rendering elements (not

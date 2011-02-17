@@ -31,12 +31,15 @@ module CSL
         
         # Defines the local format method
         define_method :format do |string|
+          return string if string.to_s.empty?
+
           Node.formatting_attributes.each do |attribute|
             method_id = ['set', attribute.gsub(/-/, '_')].join('_')
             if attributes.has_key?(attribute) && formatter.respond_to?(method_id)
               string = formatter.send(method_id, string, attributes[attribute])
             end
           end
+          
           string
         end
         

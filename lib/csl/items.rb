@@ -55,7 +55,7 @@ module CSL
     
     def merge(hash)
       hash.map do |key, value|
-        attributes[key] = Item.date_fields.include?(key) ? Variables::Date.new(value) : Item.name_fields.include?(key) ? Variables::Name.new(value) : value.to_s
+        attributes[key] = Item.date_fields.include?(key) ? Variables::Date.new(value) : Item.name_fields.include?(key) ? Variables::Name.parse(value) : value.to_s
       end
     end
   
@@ -67,6 +67,7 @@ module CSL
   
   module Variables
     class Name
+      include Comparable
       include Attributes
     
       attr_fields %w{ given family literal suffix dropping-particle
@@ -75,7 +76,12 @@ module CSL
       [[:last, :family], [:first, :given]].each do |m|
         alias_method m[0], m[1]
       end
-    
+
+      def self.parse(names)
+        names = [names] unless names.is_a?(Array)
+        names.map { |name| Name.new(name) }
+      end
+      
       def initialize(attributes={})
         set(attributes)
         yield self if block_given?
@@ -84,9 +90,38 @@ module CSL
       def set(name)
         name.is_a?(String) ? literal = name : merge(name)
       end
-    
+
+      def display_order(options={})
+        case
+        when options['form'] == 'long' && options['name-as-sort-order'] == 'false'
+          return [given, dropping_particle, non_dropping_particle, [family, comma_suffix? && suffix ? ',' : ''].join, suffix]
+
+        when options['form'] == 'long' && options['name-as-sort-order'] == 'true' && ['never', 'sort-only'].include?(options['demote-non-dropping-particle'])
+          return [non_dropping_particle, family, given, dropping_particle, suffix]
+      
+        when options['form'] == 'long' && options['name-as-sort-order'] == 'true' && options['demote-non-dropping-particle'] == 'display-and-sort'
+          return [family, given, dropping_particle, non_dropping_particle, suffix]
+      
+        else # options['form'] == 'short'
+          return [non_dropping_particle, family]
+        end
+      end
+      
+      def sort_order(options={})
+        case
+        when options['demote-non-dropping-particle'] == 'never'
+          return [[non_droppping_particle, family].reject(&:nil?).join(' '), dropping_particle, given, suffix]
+        else
+          return [family, [non_dropping_particle, dropping_particle].reject(&:nil?).join(' '), given, suffix]
+        end
+      end
+      
       def to_s
         literal || [given, non_dropping_particle || dropping_particle, [family, comma_suffix? && suffix ? ',' : ''].join, suffix].reject(&:nil?).join(' ')
+      end
+      
+      def <=>(other)
+        self.to_s <=> other.to_s
       end
     end
 
