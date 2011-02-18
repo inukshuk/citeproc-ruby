@@ -47,11 +47,15 @@ require 'csl/variables'
 require 'csl/locale'
 require 'csl/formatting'
 require 'csl/nodes'
-require 'csl/filters'
 require 'csl/style'
 
 # load available output formats
 Dir.glob("#{File.expand_path('..', __FILE__)}/csl/formats/*.rb").each do |format|
+  require format
+end
+
+# load available input filters
+Dir.glob("#{File.expand_path('..', __FILE__)}/csl/filters/*.rb").each do |format|
   require format
 end
 
