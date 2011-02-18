@@ -16,7 +16,7 @@
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 #++
 
-module CSL
+module CiteProc
 
   class Processor
     
@@ -28,7 +28,7 @@ module CSL
     end
 
     def style=(resource)
-      @style = Style.new(resource)
+      @style = CSL::Style.new(resource)
     end
     
     def format=(new_format)

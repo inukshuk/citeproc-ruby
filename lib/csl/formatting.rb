@@ -40,7 +40,7 @@ module CSL
       formatter = format.new
       formatter.input = input
 
-      Node.formatting_attributes.each do |attribute|
+      Nodes.formatting_attributes.each do |attribute|
         method_id = ['set', attribute.gsub(/-/, '_')].join('_')
 
         if attributes.has_key?(attribute) && formatter.respond_to?(method_id)

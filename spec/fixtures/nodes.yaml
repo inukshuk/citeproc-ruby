@@ -1,5 +1,5 @@
 ---
-- class: CSL::Text
+- class: CSL::Nodes::Text
   describe:
     processing:
       returns an empty string by default:
@@ -22,7 +22,7 @@
         - editors
         - §
         - §§
-- class: CSL::Number
+- class: CSL::Nodes::Number
   describe:
     processing:
       returns an empty string by default:
@@ -73,7 +73,7 @@
         - iii
         - xxiii
         - XXIII
-- class: CSL::Date
+- class: CSL::Nodes::Date
   describe:
     localized processing:
       returns an empty string by default for numeric:
@@ -95,9 +95,9 @@
         item:
           issued:
             date-parts:
-            - 1983
-            - 3
-            - 12
+            - - 1983
+              - 3
+              - 12
         input:
         - <date variable="issued" form="numeric"/>
         - <date variable="issued" form="numeric" date-parts="year-month-day"/>
@@ -113,9 +113,9 @@
         item:
           issued:
             date-parts:
-            - 1983
-            - 3
-            - 12
+            - - 1983
+              - 3
+              - 12
             season: 1
         input:
         - <date variable="issued" form="numeric"/>
@@ -132,9 +132,9 @@
         item:
           issued:
             date-parts:
-            - 1983
-            - 3
-            - 12
+            - - 1983
+              - 3
+              - 12
             season: '2'
         input:
         - <date variable="issued" form="numeric"/>
@@ -151,9 +151,9 @@
         item:
           issued:
             date-parts:
-            - 1983
-            - 3
-            - 12
+            - - 1983
+              - 3
+              - 12
             season: 'THE SEASON'
         input:
         - <date variable="issued" form="numeric"/>
@@ -170,9 +170,9 @@
         item:
           issued:
             date-parts:
-            - 1983
-            - 3
-            - 7
+            - - 1983
+              - 3
+              - 7
         input:
         - <date variable="issued" form="text"/>
         - <date variable="issued" form="text" date-parts="year-month-day"/>
@@ -188,9 +188,9 @@
         item:
           issued:
             date-parts:
-            - 1983
-            - 3
-            - 7
+            - - 1983
+              - 3
+              - 7
         input:
         - <date variable="issued" form="text"><date-part name="month" form="short"/><date-part name="day" form="numeric"/></date>
         - <date variable="issued" form="text" date-parts="year-month-day"><date-part name="month" form="verb-short"/><date-part name="day" form="numeric"/></date>
@@ -206,9 +206,9 @@
         item:
           issued:
             date-parts:
-            - 1983
-            - 3
-            - 7
+            - - 1983
+              - 3
+              - 7
         input:
         - <date variable="issued" form="text"><date-part name="month" form="short"/><date-part name="day" form="numeric"/></date>
         - <date variable="issued" form="text" date-parts="year-month-day"><date-part name="month" form="verb-short" text-case="uppercase"/><date-part name="day" form="numeric"/></date>
@@ -228,9 +228,9 @@
         item:
           issued:
             date-parts:
-            - 1983
-            - 3
-            - 12
+            - - 1983
+              - 3
+              - 12
         input:
         - <date variable="issued"/>
         - <date variable="issued"><date-part name="year" form="long" suffix="-"/><date-part name="month" form="numeric" suffix="-"/><date-part name="day" form="numeric"/></date>

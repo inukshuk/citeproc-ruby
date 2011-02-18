@@ -36,21 +36,26 @@ module CiteProc
   
 end
 
-require 'citeproc/version'
+# Load debugger
+require 'ruby-debug'
+Debugger.start
 
 require 'extensions/core'
+require 'extensions/attributes'
 
-require 'csl/attributes'
+require 'csl/variables'
 require 'csl/locale'
 require 'csl/formatting'
 require 'csl/nodes'
-require 'csl/items'
-require 'csl/converters'
+require 'csl/filters'
 require 'csl/style'
-require 'csl/bibliography'
-require 'csl/processor'
 
 # load available output formats
 Dir.glob("#{File.expand_path('..', __FILE__)}/csl/formats/*.rb").each do |format|
   require format
 end
+
+require 'citeproc/version'
+require 'citeproc/item'
+require 'citeproc/bibliography'
+require 'citeproc/processor'

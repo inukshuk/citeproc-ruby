@@ -1,7 +1,7 @@
-describe CSL::Processor do
+describe CiteProc::Processor do
   
   before(:each) do
-    @proc = CSL::Processor.new
+    @proc = CiteProc::Processor.new
   end
   
   describe '#style' do

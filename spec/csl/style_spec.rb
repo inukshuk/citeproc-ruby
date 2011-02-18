@@ -41,19 +41,19 @@ describe CSL::Style do
     it 'initialises a macros hash' do
       @style.open 'apa'
       @style.macros.keys.sort.should == ["access", "author", "author-short", "citation-locator", "container-contributors", "edition", "event", "issued", "issued-year", "locators", "publisher", "secondary-contributors", "title"]
-      @style.macros.values.map(&:class).uniq.should == [CSL::Macro]
+      @style.macros.values.map(&:class).uniq.should == [CSL::Nodes::Macro]
     end
   end
   
   describe 'citation renderer' do
     it 'initialises the citation renderer' do
       @style.open 'apa'
-      @style.citation.class.name.should == 'CSL::Renderer'
+      @style.citation.class.name.should == 'CSL::Nodes::Renderer'
     end
     
     it 'contains a layout section' do
       @style.open 'apa'
-      @style.citation.layout.class.name.should == 'CSL::Layout'
+      @style.citation.layout.class.name.should == 'CSL::Nodes::Layout'
     end
     
   end
@@ -61,7 +61,7 @@ describe CSL::Style do
   describe 'bibliography renderer' do
     it 'initialises the bibliography renderer' do
       @style.open 'apa'
-      @style.bibliography.class.name.should == 'CSL::Renderer'
+      @style.bibliography.class.name.should == 'CSL::Nodes::Renderer'
     end
   end
   

@@ -1,11 +1,11 @@
-describe CSL::Variables::Name do
+describe CSL::Name do
   CSL::Test::Fixtures::Names.keys.each do |feature|
     describe feature do
 
       CSL::Test::Fixtures::Names[feature].each do |test|
 
         it test['it'] do
-          names = CSL::Variables::Name.parse(test['names'])
+          names = CSL::Variable.parse(test['names'], 'author')
           expected = test['expected']
           options = test['options']
         

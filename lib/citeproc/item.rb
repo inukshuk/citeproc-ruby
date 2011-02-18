@@ -16,27 +16,23 @@
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 #++
 
-module CSL
-  
-  # A bibliography is an array of bibliographic entries and, optionally,
-  # a list of errors. The bibliography should be format agnostic; it is
-  # simply encapsulates two lists.
-  class Bibliography
+module CiteProc
     
-    attr_accessor :data, :errors, :options
+  class Item
+    include Attributes
     
-    def initialize
-      @data = []
-      @errors = []
-      @options = {}
+    attr_fields CSL::Variable.fields
+    
+    def initialize(attributes={})
+      self.merge!(attributes)
+      yield self if block_given?
     end
-
-    # @data proxy
-    [:[], :[]=, :<<, :map, :each, :empty?, :push, :pop, :unshift, :+, :concat].each do |method_id|
-      define_method method_id do |*args, &block|
-        @data.send(method_id, *args, &block)
-      end
+    
+    def merge!(arguments)
+      arguments = [arguments] unless arguments.is_a?(Array)
+      arguments.each { |argument| argument.map { |key, value| self.attributes[key] = CSL::Variable.parse(value, key) }}
     end
-
+    
   end
+
 end

@@ -12,14 +12,14 @@ CSL::Test::Fixtures::Nodes.each do |fixture|
         fixture['describe'][part].keys.each do |feature|
           it feature do
             
-            item = CSL::Item.new(fixture['describe'][part][feature]['item'])
+            item = CiteProc::Item.new(fixture['describe'][part][feature]['item'])
             
             input = fixture['describe'][part][feature]['input']
             
             expected = fixture['describe'][part][feature]['expected']
             
             result = input.map do |xml|
-              node = CSL.const_get(fixture['class'].split(/::/).last).new(Nokogiri::XML(xml).root, @style)
+              node = CSL::Nodes.const_get(fixture['class'].split(/::/).last).new(Nokogiri::XML(xml).root, @style)
               node.process(item, @locale, fixture['describe'][part][feature]['format'])
             end
             
@@ -34,7 +34,7 @@ CSL::Test::Fixtures::Nodes.each do |fixture|
   
 end
 
-describe CSL::Text do
+describe CSL::Nodes::Text do
   
   before(:each) do
     @style = CSL::Style.new
@@ -44,7 +44,7 @@ describe CSL::Text do
   
   it 'can be created' do
     xml = '<text/>'
-    text = CSL::Text.new(Nokogiri::XML(xml).root, @style)
+    text = CSL::Nodes::Text.new(Nokogiri::XML(xml).root, @style)
     text.should_not be nil
     text.variable?.should be false
     text.macro?.should be false
@@ -64,8 +64,8 @@ describe CSL::Text do
         true, 'section', true, 'symbol', true, 'true']
 
       result = xml.map { |t|
-        item = CSL::Item.new
-        text = CSL::Text.new(Nokogiri::XML(t).root, @style)
+        item = CiteProc::Item.new
+        text = CSL::Nodes::Text.new(Nokogiri::XML(t).root, @style)
         [text.term?, text.term, text.form?, text.form, text.plural?, text.plural]
       }.flatten
 
@@ -75,12 +75,12 @@ describe CSL::Text do
 
 end
 
-describe CSL::Number do
+describe CSL::Nodes::Number do
   
   before(:each) do
     @style = CSL::Style.new
     @locale = CSL::Locale.new
-    @item = CSL::Item.new do |item|
+    @item = CiteProc::Item.new do |item|
       item.issue = 1
       item.volume = 2
       item.edition = 3
@@ -91,7 +91,7 @@ describe CSL::Number do
   
   it 'can be created' do
     xml = '<number/>'
-    number = CSL::Number.new(Nokogiri::XML(xml).root, @style)
+    number = CSL::Nodes::Number.new(Nokogiri::XML(xml).root, @style)
     number.should_not be nil
     number.form?.should be false
     number.variable?.should be false
