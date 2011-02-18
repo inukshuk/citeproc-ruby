@@ -20,8 +20,8 @@ module CiteProc
 
   class Processor
     
-    attr_reader :style, :abbreviations, :format
-    attr_accessor :language
+    attr_reader :style
+    attr_writer :format
     
     def initialize
       @bibliography = Bibliography.new
@@ -30,10 +30,27 @@ module CiteProc
     def style=(resource)
       @style = CSL::Style.new(resource)
     end
-    
-    def format=(new_format)
-    end
 
+    def language=(language)
+      self.locale.set(language).language
+    end
+    
+    def language
+      self.locale.language
+    end
+    
+    def locale
+      @locale ||= CSL::Locale.new
+    end
+    
+    def abbreviations
+      @abbreviations ||= {}
+    end
+    
+    def format
+      @format ||= :default
+    end
+    
     def items
       @items ||= {}
     end
@@ -48,8 +65,21 @@ module CiteProc
     def bibliography
     end
     
-    def cite(ids, options={})
-      ids = to_a(ids).map { |id| items[id] }
+    #
+    # @param argument Symbol :all / or id of item
+    # @param argument String  id of item
+    # @param argument Array list of ids or items
+    # @param id Hash must contain 'id'; optional: :label, :locator
+    #
+    # @returns a list of lists; [[1, 'Doe, 2000, p. 1'], ...]
+    #
+    def cite(argument)
+      ids = extract_ids(argument)
+      
+      ids.map do |data|
+        citation = @style.citation.process(items[data['id']], locale, format)
+        [register(citation), citation]
+      end
     end
 
     def nocite(ids, options={})
@@ -60,14 +90,29 @@ module CiteProc
     alias :update_items :cite
     alias :update_uncited_items :nocite
     
-    def render(item, layout)
-      
-    end
-    
+        
     private
+    
+    def register(id)
+      1
+    end
     
     def to_a(attribute)
       attribute.is_a?(Array) ? attribute : [attribute]
+    end
+    
+    # @returns a list of hashes [{ 'id' => 'id1' }, ... ]
+    def extract_ids(argument)
+      case
+      when argument == :all
+        self.items.keys.map { |id| { 'id' => id } }
+      when argument.is_a?(Hash)
+        argument.has_key?('id') ? [argument] : []
+      when argument.is_a?(Array)
+        argument.map { |element| extract_ids(element) }.flatten
+      else
+        self.items.has_key?(argument.to_s) ? [{ 'id' => argument.to_s }] : []
+      end
     end
     
   end

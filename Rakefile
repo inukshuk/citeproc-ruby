@@ -23,6 +23,12 @@ RSpec::Core::RakeTask.new(:spec) do |t|
   t.pattern = 'spec/**/*_spec.rb'
 end
 
+desc "Run the citeproc-test suite"
+RSpec::Core::RakeTask.new(:test) do |t|
+  t.rspec_opts = ['-c', '-f progress', '-r ./spec/spec_helper.rb']
+  t.pattern = 'spec/**/*_test.rb'
+end
+
 
 Rake::RDocTask.new(:rdoc_task) do |rd|
   rd.main = 'README.md'

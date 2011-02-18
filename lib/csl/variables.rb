@@ -80,6 +80,37 @@ module CSL
     end
   end
   
+
+  # == Name Variables
+  #
+  # When present in the item data, CSL name variables must be delivered as a
+  # list of JavaScript arrays, with one array for each name represented by the
+  # variable. Simple personal names are composed of family and given elements,
+  # containing respectively the family and given name of the individual.
+  #
+  # { "author" : [
+  #     { "family" : "Doe", "given" : "Jonathan" },
+  #     { "family" : "Roe", "given" : "Jane" }
+  #   ],
+  #   "editor" : [
+  #     { "family" : "Saunders",
+  #       "given" : "John Bertrand de Cusance Morant" }
+  #   ]
+  # }
+  #
+  # Institutional and other names that should always be presented literally
+  # (such as "The Artist Formerly Known as Prince", "Banksy", or "Ramses IV")
+  # should be delivered as a single literal element in the name array:
+  # 
+  # { "author" : [
+  #     { "literal" : "Society for Putting Things on Top of Other Things" }
+  #   ]
+  # }
+  #
+  # If the name is spelled using a 'byzantine' alphabet (i.e., latin or
+  # cyrillic) its sort and display order is computed according to the given
+  # arguments.
+  #
   class Name < Variable
   
     attr_fields %w{ given family literal suffix dropping-particle
@@ -93,6 +124,13 @@ module CSL
       Hash[*%w{ form long name-as-sort-order false demote-non-dropping-particle never }]
     end
     
+    def is_oriental?
+      false # TODO
+    end
+    
+    
+    # @returns a list of strings, representing a given order of the individual
+    # tokens when displaying the name.
     def display_order(options={})
       options = defaults.merge(options)
       case
@@ -113,6 +151,8 @@ module CSL
       end
     end
     
+    # @returns a list of strings, representing the order of precedence of the
+    # individual tokens when sorting the name.
     def sort_order(options={})
       options = defaults.merge(options)
       case
@@ -126,12 +166,18 @@ module CSL
       end
     end
     
+    # @returns a string representing the name according to the given set of
+    # display order options.
     def display(options={})
       self.display_order(options).map { |part| attributes[part] }.reject(&:nil?).join(' ')
     end
     
     def to_s
       self.display
+    end
+    
+    def to_json
+      self.attributes.to_json
     end
     
     def literal_as_sort_order
@@ -154,12 +200,22 @@ module CSL
     end
   end
 
+
+  # == Date Variables
+  #
+  # Date objects wrap an underlying JavaScript object, within which the
+  # "date-parts" element is a nested JavaScript array containing a start date
+  # and optional end date, each of which consists of a year, an optional month
+  # and an optional day, in that order if present. Additionally, the string
+  # fields "season", "literal", as well as the boolean field "circa" are
+  # supported. 
+  #
   class Date < Variable
 
     attr_fields %w{ date-parts season circa literal }
 
     [:year, :month, :day].each_with_index do |method_id, index|
-      define_method method_id do; date_parts[0][index] end
+      define_method method_id do; date_parts[0][index].to_i end
       
       define_method [method_id, '='].join do |value|
         date_parts[0][index] = value.to_i
@@ -170,7 +226,7 @@ module CSL
       attributes['date-parts'] ||= [[]]
     end
     
-    def range?
+    def is_range?
       date_parts.length > 1
     end
     
@@ -186,5 +242,12 @@ module CSL
       literal || attributes.inspect
     end
   
+    def to_json
+      self.attributes.to_json
+    end
+    
+    def <=>(other)
+      self.from <=> other.from
+    end
   end
 end

@@ -68,15 +68,6 @@ module CSL
     # Represents a cs:citation or cs:bibliography element.
     class Renderer < Node
     
-      # Citation specific attributes
-      attr_fields %w{ collapse year-suffix-delimiter after-collapse-delimiter
-        near-note-distance disambiguate-add-names disambiguate-add-given-name
-        given-name-disambiguation-rule disambiguate-add-year-suffix }
-      
-      # Bibliography specific attributes
-      attr_fields %w{ hanging-indent second-field-align line-spacing
-        entry-spacing subsequent-author-substitute }
-      
       attr_fields Nodes.inheritable_name_attributes
 
       attr_reader :layout
@@ -89,9 +80,24 @@ module CSL
       def sort
         # TODO
       end
-    
+
+      def process(item, locale=Locale.new, format=:default)
+        @layout.process(item, locale, format)
+      end
+      
     end
 
+    class Bibliography < Renderer
+      attr_fields %w{ hanging-indent second-field-align line-spacing
+        entry-spacing subsequent-author-substitute }
+    end
+
+    class Citation < Renderer
+      attr_fields %w{ collapse year-suffix-delimiter after-collapse-delimiter
+        near-note-distance disambiguate-add-names disambiguate-add-given-name
+        given-name-disambiguation-rule disambiguate-add-year-suffix }
+    end
+    
     # All the rendering elements that should appear in the citations and
     # bibliography should be nested inside the cs:layout element. Itself a
     # rendering element, cs:layout accepts both affixes and formatting
@@ -108,6 +114,12 @@ module CSL
       def elements
         @elements ||= []
       end
+
+      def process(item, locale=Locale.new, format=:default)
+        @elements.map { |element| element.process(item, locale, format) }
+      end
+
+      format_on :process
     end
   
     class Macro < Layout
@@ -154,7 +166,7 @@ module CSL
       
         text = case
           when value?    then value
-          when macro?    then style.macros[macro].process(item, locale, format) 
+          when macro?    then @style.macros[macro].process(item, locale, format) 
           when term?     then locale[term].to_s(attributes)
           when variable? then item[variable] # TODO long/short
           else
