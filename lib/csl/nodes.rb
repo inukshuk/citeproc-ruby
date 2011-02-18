@@ -27,7 +27,7 @@ module CSL
     include Formatting
 
     @formatting_attributes = %w{ prefix suffix delimiter display
-      quotes strip-periods text-case font-style font-variant font-weight
+      strip-periods text-case font-style font-variant font-weight
       text-decoration vertical-align text-case }
 
     @inheritable_name_attributes = %w{ and delimiter-precedes-last et-al-min
@@ -145,18 +145,23 @@ module CSL
   # strip-periods and text-case may be applied to cs:text.    
   class Text < Node
     attr_fields Node.formatting_attributes
-    attr_fields %w{ variable form macro term plural value }
+    attr_fields %w{ variable form macro term plural value quotes }
     
     def process(item, locale=Locale.new, format=:default)
       super
       
-      case
-      when value?    then value
-      when macro?    then style.macros[macro].process(item, locale, format) 
-      when term?     then locale[term].to_s(attributes)
-      when variable? then item[variable] # TODO long/short
-      else ''
-      end
+      text = case
+        when value?    then value
+        when macro?    then style.macros[macro].process(item, locale, format) 
+        when term?     then locale[term].to_s(attributes)
+        when variable? then item[variable] # TODO long/short
+        else
+          ''
+        end
+        
+      text = [locale['open-quote'], text, locale['close-quote']].join if quotes?
+      
+      text
     end
   
     format_on :process
