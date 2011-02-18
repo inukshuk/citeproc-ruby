@@ -17,7 +17,7 @@
 #++
 
 module CiteProc
-    
+
   class Item
     include Attributes
     

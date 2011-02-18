@@ -65,19 +65,21 @@ module CiteProc
     def bibliography
     end
     
+    
+
     #
-    # @param argument Symbol :all / or id of item
-    # @param argument String  id of item
-    # @param argument Array list of ids or items
-    # @param id Hash must contain 'id'; optional: :label, :locator
+    # @param data Symbol :all / or id of item
+    # @param data String  id of item
+    # @param data Array list of ids or citation data
+    # @param data Hash citation data or citation items
     #
     # @returns a list of lists; [[1, 'Doe, 2000, p. 1'], ...]
     #
-    def cite(argument)
-      ids = extract_ids(argument)
+    def cite(data)
+      data = extract_data(data) unless data.kind_of?(Data)
       
-      ids.map do |data|
-        citation = @style.citation.process(items[data['id']], locale, format)
+      data.map do |item|
+        citation = @style.citation.process(items[item['id']], locale, format)
         [register(citation), citation]
       end
     end
@@ -101,17 +103,17 @@ module CiteProc
       attribute.is_a?(Array) ? attribute : [attribute]
     end
     
-    # @returns a list of hashes [{ 'id' => 'id1' }, ... ]
-    def extract_ids(argument)
+    # @returns a citation data object
+    def extract_data(argument)
       case
       when argument == :all
-        self.items.keys.map { |id| { 'id' => id } }
-      when argument.is_a?(Hash)
-        argument.has_key?('id') ? [argument] : []
+        Data.new('citation-items' => self.items.keys.map { |id| { 'id' => id } })
       when argument.is_a?(Array)
-        argument.map { |element| extract_ids(element) }.flatten
+        Data.new('citation-items' => argument.map { |id| { 'id' => id } })
+      when argument.is_a?(Hash)
+        Data.new(argument)
       else
-        self.items.has_key?(argument.to_s) ? [{ 'id' => argument.to_s }] : []
+        self.items.has_key?(argument.to_s) ? Data.new('citation-items' => [{ 'id' => argument.to_s }]) : Data.new
       end
     end
     

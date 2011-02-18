@@ -41,6 +41,7 @@ module Attributes
     argument.each { |argument| self.attributes.merge!(argument) }
   end
   
+  
   alias_method :to_hash, :attributes
   
   [:empty?, :map].each do |method_id|

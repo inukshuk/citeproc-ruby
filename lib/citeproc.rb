@@ -60,6 +60,7 @@ Dir.glob("#{File.expand_path('..', __FILE__)}/csl/filters/*.rb").each do |format
 end
 
 require 'citeproc/version'
+require 'citeproc/data'
 require 'citeproc/item'
 require 'citeproc/bibliography'
 require 'citeproc/processor'
