@@ -36,8 +36,6 @@ module CSL
     
     class << self; attr_reader :formatting_attributes, :inheritable_name_attributes; end
 
-    format :default
-    
     attr_reader :node
     
     def initialize(node, style)
@@ -52,8 +50,8 @@ module CSL
       klass.new(node, style)
     end
  
-    def process(item, locale)
-      'TODO'
+    def process(item, locale=Locale.new, format=:default)
+      self.format = format
     end
     
     
@@ -149,10 +147,12 @@ module CSL
     attr_fields Node.formatting_attributes
     attr_fields %w{ variable form macro term plural value }
     
-    def process(item, locale)
+    def process(item, locale=Locale.new, format=:default)
+      super
+      
       case
       when value?    then value
-      when macro?    then style.macros[macro].process(item) 
+      when macro?    then style.macros[macro].process(item, locale, format) 
       when term?     then locale[term].to_s(attributes)
       when variable? then item[variable] # TODO long/short
       else ''
@@ -203,9 +203,10 @@ module CSL
     attr_fields Node.formatting_attributes
     attr_fields %w{ variable form date-parts }
 
-    def process(item, locale)
+    def process(item, locale=Locale.new, format=:default)
+      super
       date = item[variable]
-      date.nil? ? '' : date.literal? ? date.literal : parts(locale).map { |part| part.process(date, locale) }.join(delimiter)
+      date.nil? ? '' : date.literal? ? date.literal : parts(locale).map { |part| part.process(date, locale, format) }.join(delimiter)
     end
 
     format_on :process
@@ -245,7 +246,8 @@ module CSL
       nodes.map { |n| DatePart.new(n, @style) }
     end    
     
-    def process(date, locale)
+    def process(date, locale=Locale.new, format=:default)
+      super
       
       part = case name
         when 'day'
@@ -319,7 +321,9 @@ module CSL
     attr_fields Node.formatting_attributes      
     attr_fields %w{ variable form }
     
-    def process(item, locale)
+    def process(item, locale=Locale.new, format=:default)
+      super
+      
       number = item[variable] || ''
       
       number = case form
@@ -383,7 +387,9 @@ module CSL
       @options ||= {}
     end
     
-    def process(item, locale)
+    def process(item, locale=Locale.new, format=:default)
+      super
+      
       names = items(item)
 
       # handle editor-translator special case
@@ -402,7 +408,7 @@ module CSL
       # TODO not sure whether format is applied only once or on each name item individually
       
       names.map { |item|
-        elements.map { |element| element.process(item, locale) }.join(delimiter)
+        elements.map { |element| element.process(item, locale, format) }.join(delimiter)
       }.join
     end
     
@@ -531,7 +537,8 @@ module CSL
       @parts ||= []
     end
     
-    def process(item, locale)
+    def process(item, locale=Locale.new, format=:default)
+      super
       names = truncate(item.last)
       
       join(names.map { |name| }, locale)
@@ -604,7 +611,8 @@ module CSL
     
     attr_accessor :parent
 
-    def process(item, locale)
+    def process(item, locale=Locale.new, format=:default)
+      super
       parent.options['truncate'] ? locale[term].to_s(attributes) : ''
     end
     
@@ -644,7 +652,8 @@ module CSL
       @elements ||= elements
     end
     
-    def process(names, locale)
+    def process(names, locale=Locale.new, format=:default)
+      super
     end
     
   end
@@ -674,7 +683,7 @@ module CSL
     
     attr_accessor :parent
     
-    def process(item, locale)
+    def process(item, locale=Locale.new, format=:default)
   
       if parent.nil?
         locale[variable].to_s(attributes.merge('plural' => item[variable].length))

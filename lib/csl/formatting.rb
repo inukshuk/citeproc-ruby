@@ -24,27 +24,35 @@ module CSL
       base.extend(ClassMethods)
     end
     
-    module ClassMethods
-      
-      def format(formatter)
-        formatter = CSL::Format.const_get(formatter.to_s.split(/[\s_-]+/).map(&:capitalize).join)
-        
-        # Defines the local format method
-        define_method :format do |string|
-          return string if string.to_s.empty?
+    def format
+      @format || CSL::Format::Default
+    end
 
-          Node.formatting_attributes.each do |attribute|
-            method_id = ['set', attribute.gsub(/-/, '_')].join('_')
-            if attributes.has_key?(attribute) && formatter.respond_to?(method_id)
-              string = formatter.send(method_id, string, attributes[attribute])
-            end
-          end
-          
-          string
+    def format=(formatter)
+      @format = CSL::Format.const_get(formatter.to_s.split(/[\s_-]+/).map(&:capitalize).join)
+    rescue Exception => e
+      CiteProc.log.warn "failed to set format to #{formatter}: #{e.message}."
+    end
+    
+    def apply_format(input)
+      return input if input.to_s.empty?
+      
+      formatter = format.new
+      formatter.input = input
+
+      Node.formatting_attributes.each do |attribute|
+        method_id = ['set', attribute.gsub(/-/, '_')].join('_')
+
+        if attributes.has_key?(attribute) && formatter.respond_to?(method_id)
+          formatter.send(method_id, attributes[attribute])
         end
-        
       end
       
+      formatter.finalize
+    end
+
+    module ClassMethods
+          
       # Chains the format method to the given methods
       def format_on(*args)
         args = args.shift if args.first.is_a?(Array)
@@ -55,7 +63,7 @@ module CSL
           alias_method original_method, method_id
           
           define_method method_id do |*args, &block|
-            format(send(original_method, *args, &block))            
+            apply_format(send(original_method, *args, &block))            
           end
         end
       end
@@ -66,65 +74,80 @@ module CSL
   module Format
     
     class Default
+
+      attr_accessor :input
       
-      def self.set_prefix(string, prefix)
-        [prefix, string].join
+      def finalize
+        @input
+      end
+      
+      def set_prefix(prefix)
+        @input = [prefix, @input].join
       end
 
-      def self.set_suffix(string, suffix)
-        [string, suffix].join
+      def set_suffix(suffix)
+        @input = [@input, suffix].join
+      end
+      
+      def set_quotes(quotes)
       end
       
       # @param display 'block', 'left-margin', 'right-inline', 'inline'
-      def self.set_display(string, display)
-        string
+      def set_display(display)
       end
       
-      def self.set_strip_periods(string, strip)
-        strip && strip != 'false' ? string.gsub(/\./, '') : string
+      def set_strip_periods(strip)
+        @input = strip && strip != 'false' ? @input.gsub(/\./, '') : @input
       end
             
       # @param style 'normal', 'italic', 'oblique' 
-      def self.set_font_style(string, style='normal')
-        string
+      def set_font_style(style='normal')
       end
       
       # @param variant 'normal', 'small-caps'
-      def self.set_font_variant(string, variant='normal')
-        variant == 'small-caps' ? string.upcase : string
+      def set_font_variant(variant='normal')
+        @input = variant == 'small-caps' ? @input.upcase : @input
       end
    
       # @param weight 'normal', 'bold', 'light' 
-      def self.set_font_weight(string, weight='normal')
-        string
+      def set_font_weight(weight='normal')
       end
 
       # @param decoration 'none', 'underline'
-      def self.set_text_decoration(string, decoration='none')
-        string
+      def set_text_decoration(decoration='none')
       end
 
       # @param align 'baseline', 'sub', 'sup' 
-      def self.set_vertical_align(string, align='baseline')
-        string
+      def set_vertical_align(align='baseline')
       end
 
       # @param case 'lowercase', 'uppercase', 'capitalize-first', 'capitalize-all', 'title', 'sentence'
-      def self.set_text_case(string, text_case)
+      def set_text_case(text_case)
         case text_case
-        when 'lowercase' then string.downcase
-        when 'uppercase' then string.upcase
-        when 'capitalize-first' then string.capitalize
-        when 'capitalize-all' then string.split(/(\s+)/).map(&:capitalize).join
-          # TODO 'title' must be localized
-        when 'title' then string.capitalize.split(/(\s+)/).map { |word| word.match(/^(and|of|in|is|a|an|the)$/) ? word : word.capitalize }.join
-          # TODO
-        when 'sentence' then string.capitalize
+        when 'lowercase'
+          @input = @input.downcase
+          
+        when 'uppercase'
+          @input = @input.upcase
+          
+        when 'capitalize-first'
+          @input = @input.capitalize
+          
+        when 'capitalize-all'
+          @input = @input.split(/(\s+)/).map(&:capitalize).join
+          
+        # TODO 'title' must be localized
+        when 'title'
+          @input = @input.capitalize.split(/(\s+)/).map { |word| word.match(/^(and|of|in|is|a|an|the)$/) ? word : word.capitalize }.join
+
+        # TODO
+        when 'sentence'
+          @input = @input.capitalize
         else
-          string
+          # nothing
         end
       end
-         
+
     end
     
   end
