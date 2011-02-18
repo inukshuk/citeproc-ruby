@@ -89,9 +89,6 @@ module CSL
         @input = [@input, suffix].join
       end
       
-      def set_quotes(quotes)
-      end
-      
       # @param display 'block', 'left-margin', 'right-inline', 'inline'
       def set_display(display)
       end

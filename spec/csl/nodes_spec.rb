@@ -1,5 +1,5 @@
 
-CSL::Tests::NodeFixtures.each do |fixture|
+CSL::Test::Fixtures::Nodes.each do |fixture|
   
   describe fixture['class'] do
     before(:each) do

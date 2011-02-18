@@ -82,6 +82,14 @@ module CSL
         names.map { |name| Name.new(name) }
       end
       
+      def defaults
+        Hash[*%w{
+          form long
+          name-as-sort-order false
+          demote-non-dropping-particle never
+        }]
+      end
+      
       def initialize(attributes={})
         set(attributes)
         yield self if block_given?
@@ -92,36 +100,63 @@ module CSL
       end
 
       def display_order(options={})
+        options = defaults.merge(options)
         case
+        when literal?
+          return %w{ literal }
+          
         when options['form'] == 'long' && options['name-as-sort-order'] == 'false'
-          return [given, dropping_particle, non_dropping_particle, [family, comma_suffix? && suffix ? ',' : ''].join, suffix]
+          return %w{ given dropping-particle non-dropping-particle family suffix }
 
         when options['form'] == 'long' && options['name-as-sort-order'] == 'true' && ['never', 'sort-only'].include?(options['demote-non-dropping-particle'])
-          return [non_dropping_particle, family, given, dropping_particle, suffix]
+          return %w{ non-dropping-particle family given dropping-particle suffix }
       
         when options['form'] == 'long' && options['name-as-sort-order'] == 'true' && options['demote-non-dropping-particle'] == 'display-and-sort'
-          return [family, given, dropping_particle, non_dropping_particle, suffix]
+          return %w{ family given dropping-particle non-dropping-particle suffix }
       
         else # options['form'] == 'short'
-          return [non_dropping_particle, family]
+          return %w{ non-dropping-particle family}
         end
       end
       
       def sort_order(options={})
+        options = defaults.merge(options)
         case
+        when literal?
+          return %w{ literal }
+          
         when options['demote-non-dropping-particle'] == 'never'
-          return [[non_droppping_particle, family].reject(&:nil?).join(' '), dropping_particle, given, suffix]
+          return %w{ non-dropping-particle+family dropping-particle given suffix }
         else
-          return [family, [non_dropping_particle, dropping_particle].reject(&:nil?).join(' '), given, suffix]
+          return %w{ family non-dropping-particle+dropping-particle given suffix }
         end
       end
       
+      def display(options={})
+        self.display_order(options).map { |part| attributes[part] }.reject(&:nil?).join(' ')
+      end
+      
       def to_s
-        literal || [given, non_dropping_particle || dropping_particle, [family, comma_suffix? && suffix ? ',' : ''].join, suffix].reject(&:nil?).join(' ')
+        self.display
+      end
+      
+      def literal_as_sort_order
+        literal.gsub(/^(the|an?|der|die|das|eine?|l[ae])\s+/i, '')
       end
       
       def <=>(other)
-        self.to_s <=> other.to_s
+        tests = self.sort_order.zip(other.sort_order).map do |pair|
+          this, that = pair.map { |token| token.gsub(/[\s-]+/,'_').gsub(/literal/, 'literal_sort_order') }          
+
+          this = this.split(/\+/).map { |token| self.send(token) }.join.downcase
+          that = that.split(/\+/).map { |token| other.send(token) }.join.downcase
+
+          # TODO should we ignore '' here?
+          this <=> that
+        end
+        
+        tests = tests.reject(&:nil?)
+        tests[tests.take_while(&:zero?).length]
       end
     end
 
