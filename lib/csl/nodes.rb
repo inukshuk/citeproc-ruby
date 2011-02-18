@@ -116,7 +116,7 @@ module CSL
       end
 
       def process(item, locale=Locale.new, format=:default)
-        @elements.map { |element| element.process(item, locale, format) }
+        @elements.map { |element| element.process(item, locale, format) }.join(delimiter)
       end
 
       format_on :process
@@ -168,7 +168,7 @@ module CSL
           when value?    then value
           when macro?    then @style.macros[macro].process(item, locale, format) 
           when term?     then locale[term].to_s(attributes)
-          when variable? then item[variable] # TODO long/short
+          when variable? then item[variable].to_s # TODO long/short
           else
             ''
           end
@@ -426,10 +426,14 @@ module CSL
         end
       
         # TODO not sure whether format is applied only once or on each name item individually
-      
-        names.map { |item|
-          elements.map { |element| element.process(item, locale, format) }.join(delimiter)
+
+        names = names.map { |item|
+          x = elements.map { |element| element.process(item, locale, format) }
+          # debugger  
+          x.join(delimiter)
         }.join
+        
+        names
       end
     
       format_on :process
@@ -563,9 +567,10 @@ module CSL
     
       def process(item, locale=Locale.new, format=:default)
         super
-      
+
         names = truncate(item.last)
-        collect(names.map { |name| }, locale)
+        names = collect(names, locale)
+        names
       end
     
       format_on :process

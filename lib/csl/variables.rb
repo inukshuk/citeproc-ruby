@@ -70,7 +70,13 @@ module CSL
     def set(argument)
       argument.is_a?(Hash) || argument.is_a?(Array) ?  self.merge!(argument) : self.literal = argument.to_s
     end
-
+    
+    # @param form e.g. long/short for title
+    # TODO where is this specified? (seen in text node docs)
+    def value(form=nil)
+      self.literal
+    end
+    
     def to_s
       self.literal.to_s
     end

@@ -12,8 +12,8 @@ end
 # to stay sane while the Processor is not feature complete!
 #
 def filter(file, fixture)
-  ['affix_InterveningEmpty.json'].include?(File.basename(file))
-  # fixture['mode'] == 'citation' && !fixture['citations'] && !fixture['citation-items']
+  # ['affix_InterveningEmpty.json'].include?(File.basename(file))
+  fixture['mode'] == 'citation' && !fixture['citations'] && !fixture['citation-items']
 end
 
 describe 'citeproc-test' do

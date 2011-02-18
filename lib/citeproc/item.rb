@@ -23,9 +23,13 @@ module CiteProc
     
     attr_fields CSL::Variable.fields
     
-    def initialize(attributes={})
+    def initialize(attributes={}, filter=nil)
       self.merge!(attributes)
       yield self if block_given?
+    end
+    
+    def self.filter(attributes, filter)
+      # TODO
     end
     
     def merge!(arguments)
