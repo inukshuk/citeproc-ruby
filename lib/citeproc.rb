@@ -49,3 +49,8 @@ require 'csl/converters'
 require 'csl/style'
 require 'csl/bibliography'
 require 'csl/processor'
+
+# load available output formats
+Dir.glob("#{File.expand_path('..', __FILE__)}/csl/formats/*.rb").each do |format|
+  require format
+end

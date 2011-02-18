@@ -8,8 +8,10 @@
         expected:
         - ""
         item: {}
+        format: default
       handles terms correctly:
         item: {}
+        format: default
         input:
         - <text term="editorial-director" plural="false" />
         - <text term="editorial-director" plural="true" />
@@ -24,12 +26,14 @@
   describe:
     processing:
       returns an empty string by default:
+        format: default
         input:
         - <number/>
         expected:
         - ""
         item: {}
       supports variables and return numeric value by default:
+        format: default
         item:
           edition: '3'
         input:
@@ -37,6 +41,7 @@
         expected:
         - '3'
       supports ordinals and roman numbers:
+        format: default
         item:
           issue: '1'
           volume: '2'
@@ -72,18 +77,21 @@
   describe:
     localized processing:
       returns an empty string by default for numeric:
+        format: default
         item: {}
         input:
         - <date form="numeric"/>
         expected:
         - ""
       returns an empty string by default for text:
+        format: default
         item: {}
         input:
         - <date form="text"/>
         expected:
         - ""
       returns numeric result given date-parts:
+        format: default
         item:
           issued:
             date-parts:
@@ -101,6 +109,7 @@
         - '03/1983'
         - '1983'
       returns numeric season correctly:
+        format: default
         item:
           issued:
             date-parts:
@@ -119,6 +128,7 @@
         - 'Spring/1983'
         - '1983'
       returns string-numeric season correctly:
+        format: default
         item:
           issued:
             date-parts:
@@ -137,6 +147,7 @@
         - 'Summer/1983'
         - '1983'
       returns literal season correctly:
+        format: default
         item:
           issued:
             date-parts:
@@ -155,6 +166,7 @@
         - 'THE SEASON/1983'
         - '1983'
       returns text result given date-parts:
+        format: default
         item:
           issued:
             date-parts:
@@ -172,6 +184,7 @@
         - 'March 1983'
         - '1983'
       returns text result given date-parts and overrule:
+        format: default
         item:
           issued:
             date-parts:
@@ -188,14 +201,30 @@
         - 'March 7, 1983'
         - 'Mar. 1983'
         - '1983'
+      returns text result given date-parts and overrule in HTML:
+        format: html
+        item:
+          issued:
+            date-parts:
+            - 1983
+            - 3
+            - 7
+        input:
+        - <date variable="issued" form="text"><date-part name="month" form="short"/><date-part name="day" form="numeric"/></date>
+        - <date variable="issued" form="text" date-parts="year-month-day"><date-part name="month" form="verb-short" text-case="uppercase"/><date-part name="day" form="numeric"/></date>
+        expected:
+        - 'Mar. 7, 1983'
+        - '<span style="text-transform: uppercase">March </span>7, 1983'
     non-localized processing:
       returns an empty string by default:
+        format: default
         item: {}
         input:
         - <date/>
         expected:
         - ""
       returns result given date-parts:
+        format: default
         item:
           issued:
             date-parts:
