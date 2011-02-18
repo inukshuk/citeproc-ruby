@@ -1,0 +1,72 @@
+---
+display:
+  - it: returns an empty string by default
+    names:
+    - {}
+    expected:
+    - ""
+    options: {}
+  - it: returns a name in the correct default order
+    names:
+    - given: John
+    - family: Plato
+    - given: Edgar Allen
+      family: Poe
+    - given: Gérard
+      dropping-particle: de
+      non-dropping-particle: la
+      family: Martinière
+      suffix: III
+    expected:
+    - "John"
+    - "Plato"
+    - "Edgar Allen Poe"
+    - "Gérard de la Martinière III"
+    options: {}
+  - it: returns a name in correct order
+    names:
+    - given: John
+    - family: Plato
+    - given: Edgar Allen
+      family: Poe
+    - given: Gérard
+      dropping-particle: de
+      non-dropping-particle: la
+      family: Martinière
+      suffix: III
+    expected:
+    - "John"
+    - "Plato"
+    - "Poe Edgar Allen"
+    - "la Martinière Gérard de III"
+    options:
+      name-as-sort-order: "true"
+      demote-non-dropping-particle: "never"
+sort:
+  - it: sorts an empty list
+    names: []
+    expected: []
+    options: {}
+  - it: sorts a list containing only a single element
+    names:
+    - {}
+    expected:
+    - ""
+    options: {}
+  - it: sorts a list containing multiple elements
+    names:
+    - given: John
+    - family: Plato
+    - given: Edgar Allen
+      family: Poe
+    - given: Gérard
+      dropping-particle: de
+      non-dropping-particle: la
+      family: Martinière
+      suffix: III
+    expected:
+    - "John"
+    - "Gérard de la Martinière III"
+    - "Plato"
+    - "Edgar Allen Poe"
+    options: {}
