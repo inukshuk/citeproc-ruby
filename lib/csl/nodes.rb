@@ -168,7 +168,7 @@ module CSL
           when value?    then value
           when macro?    then @style.macros[macro].process(data, item, locale, format) 
           when term?     then locale[term].to_s(attributes)
-          when variable? then (data[variable] || item[variable]).to_s # TODO long/short
+          when variable? then (data[variable] || item[variable]).to_s # TODO long/short -> abbreviations!
           else
             ''
           end
@@ -913,21 +913,88 @@ module CSL
     # * "none": the element only tests "true" when none of the conditions test "true" for any given test value
     #
     class Choose < Node
-    
-      def blocks
-        @blocks ||= []
+
+      def initialize(node, style)
+        super
+        @node.children.each { |node| self.elements.push(ConditionalBlock.new(node, style)) }
       end
+    
+      def elements
+        @elements ||= []
+      end
+      
+      def process(data, item, locale=Locale.new, format=:default)
+        elements.each do |element|
+          return element.process(data, item, locale, format) if element.evaluate?(data, item)
+        end
+        return ''
+      end
+      
     end
   
     class ConditionalBlock < Node
-      attr_fields %{ disambiguate is-numeric is-uncertain-date locator
-        position type variable }
+      attr_fields %w{ disambiguate is-numeric is-uncertain-date locator
+        position type variable match }
+      
+      attr_reader :type
+      
+      def initialize(node, style)
+        super
+        @type = @node.name
+        @node.children.each { |node| self.elements.push(Node.parse(node, style)) }
+      end
       
       def elements
         @elements ||= []
       end
+      
+      def process(data, item, locale=Locale.new, format=:default)
+        @elements.map { |element| element.process(data, item, locale, format) }.join
+      end
+      
+      def evaluate?(data, item)
+        case
+        when self.disambiguate?
+          false
+        
+        when self.is_numeric?
+          false
+        
+        when self.is_uncertain_date?
+          false
+          
+        when self.locator?
+          false
+
+        when self.position?
+          false
+          
+        when type?
+          self.is_match?(item['type'], type.split(/\s+/))
+          
+        when self.variable?
+          self.is_empty?(item, variable.split(/\s+/))
+
+        when @type == 'else'
+          true
+          
+        else
+          false
+        end
+      end
+      
+      # does a match any/all/none b in bs?
+      def is_match?(a, bs)
+        m = bs.map { |b| a == b }.inject { |a, b| self.match == 'any' ? a || b : a && b }
+        self.match == 'none' ? !m : m
+      end
+      
+      # is any/all/none v in vs non-empty?
+      def is_empty?(item, vs)
+        m = vs.map { |v| !item[v].nil? }.inject { |a, b| self.match == 'any' ? a || b : a && b }
+        self.match == 'none' ? !m : m
+      end
     end
-  
-  
+
   end
 end
