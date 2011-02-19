@@ -122,7 +122,7 @@ module CSL
       format_on :process
     end
   
-    class Macro < Node
+    class Macro < Layout
       attr_fields :name
     end
 
@@ -166,9 +166,9 @@ module CSL
       
         text = case
           when value?    then value
-          when macro?    then @style.macros[macro].process(item, locale, format) 
+          when macro?    then @style.macros[macro].process(data, item, locale, format) 
           when term?     then locale[term].to_s(attributes)
-          when variable? then item[variable].to_s # TODO long/short
+          when variable? then (data[variable] || item[variable]).to_s # TODO long/short
           else
             ''
           end
@@ -343,7 +343,7 @@ module CSL
       def process(data, item, locale=Locale.new, format=:default)
         super
       
-        number = item[variable].to_s || ''
+        number = (data[variable] || item[variable] || '').to_s
 
         number = case form
           when 'roman'        then number.to_i.romanize
@@ -590,7 +590,7 @@ module CSL
     
       def truncate(names)
         if et_al_min? && names.length < et_al_min.to_i
-          names = names[0..et_al_use_first]
+          names = names[0..et_al_use_first.to_i]
           parent.options['truncate'] = true
         else
           parent.options['truncate'] = false
@@ -714,18 +714,31 @@ module CSL
     
       def process(data, item, locale=Locale.new, format=:default)
   
-        # TODO is there a more elegantly pleasing way to distinguish?
-        if parent.nil?
-          # TODO!
-          locale[variable].to_s(attributes.merge('plural' => item[variable].length))
+        if self.variable?
+          # TODO how does this work exactly?
+          locale[data['label']].to_s(attributes.merge(is_plural?(data, item)))
         else
-          locale[item.first].to_s(attributes.merge( 'plural' => item.last.length))
+          locale[item.first].to_s(attributes.merge(is_plural?(data, item)))
         end
       
       end
     
       format_on :process
     
+      private
+      
+      def is_plural?(data, item)
+        {
+          'plural' => case
+            when variable == 'locator'
+              data[variable].to_s.match(/\d+f|\d+\-\d+/) ? 'true' : 'false'
+            when !parent.nil?
+              item.last.length > 1 ? 'true' : 'false'
+            else
+              'false'
+            end
+        }
+      end
     end
 
     # The cs:group element may contain one or more rendering elements (not

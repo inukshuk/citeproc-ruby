@@ -75,10 +75,10 @@ module CiteProc
     #
     # @returns a list of lists; [[1, 'Doe, 2000, p. 1'], ...]
     #
-    def cite(argument)
-      citation_data = extract_citation_data(argument) unless argument.kind_of?(CitationData)
-      
-      citation_data.map do |data|
+    def cite(data)
+      data = extract_citation_data(data) unless data.kind_of?(CitationData)
+
+      data.map do |data|
         item = self.items[data['id']]
         CiteProc.log.warn "no item available for citation data #{datum.inspect}" unless item
         

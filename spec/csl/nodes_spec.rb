@@ -20,7 +20,7 @@ CSL::Test::Fixtures::Nodes.each do |fixture|
             
             result = input.map do |xml|
               node = CSL::Nodes.const_get(fixture['class'].split(/::/).last).new(Nokogiri::XML(xml).root, @style)
-              node.process(item, @locale, fixture['describe'][part][feature]['format'])
+              node.process({}, item, @locale, fixture['describe'][part][feature]['format'])
             end
             
             result.should == expected

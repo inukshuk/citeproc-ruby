@@ -103,6 +103,13 @@ module CiteProc
       yield self if block_given?
     end
     
+    # @returns a list of citation data
+    def self.parse(argument)
+      return [] if argument.nil?
+      argument = [argument] unless argument.kind_of?(Array)
+      argument.map { |d| CitationData.new(d) }
+    end
+    
     #
     # Merges the argument into the citation data. The argument can be a list
     # of citation items (hashes), a single citation item (hash), another
@@ -141,7 +148,7 @@ module CiteProc
       alias_method "#{a}?", "#{m}?"
     end
     
-    [:each, :map].each do |method_id|
+    [:each, :map, :empty?].each do |method_id|
       define_method method_id do |*args, &block|
         self.items.send(method_id, *args, &block)
       end
