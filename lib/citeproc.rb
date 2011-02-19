@@ -23,6 +23,7 @@ require 'open-uri'
 
 require 'logging'
 require 'nokogiri'
+require 'json'
 
 
 module CiteProc

@@ -86,17 +86,45 @@ module CiteProc
   #   style should be suspended for this citation. When true, cites are
   #   rendered in the order in which they are presented in citationItems.
   #
-  class Data
+  class CitationData
     include Attributes
     
-    attr_fields %w{ citation-items properites }
+    attr_fields %w{ citation-id citation-items properites sorted-items }
+
     
-    def initialize(attributes={}, filter=nil)
+    def initialize(attributes={})
+
+      self.key_filter = Hash.new do |hash, key|
+        hash[key] = key.to_s.gsub(/([[:lower:]])([[:upper:]])/, '\1-\2').downcase
+      end
+
       self.merge!(attributes)
+      
       yield self if block_given?
     end
+    
+    #
+    # Merges the argument into the citation data. The argument can be a list
+    # of citation items (hashes), a single citation item (hash), another
+    # citation data instance or hash, or a single id of a citation item.
+    #
+    def merge!(argument)
+      case
+      when argument.is_a?(Array)
+        super('citation-items' => argument)
+      
+      when argument.is_a?(Hash)
+        argument.has_key?('id') ? super('citation-items' => [argument]) : super(argument)
         
-    def self.parse(argument)
+      when argument.is_a?(String) || argument.is_a?(Symbol)
+        super('citation-items' => [{ 'id' => argument.to_s }])
+
+      when argument.is_a?(CitationData)
+        super(argument.attributes)
+
+      else
+        raise(ArgumentError, "unable to merge #{argument.inspect} into citation data")
+      end
     end
     
     def citation_items
@@ -107,8 +135,12 @@ module CiteProc
       self.attributes['properties'] ||= {}
     end
     
-    alias :items :citation_items
-
+    [[:items, :citation_items], [:id, :citation_id]].each do |a, m|
+      alias_method a, m
+      alias_method "#{a}=", "#{m}="
+      alias_method "#{a}?", "#{m}?"
+    end
+    
     [:each, :map].each do |method_id|
       define_method method_id do |*args, &block|
         self.items.send(method_id, *args, &block)

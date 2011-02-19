@@ -76,7 +76,7 @@ module CiteProc
     # @returns a list of lists; [[1, 'Doe, 2000, p. 1'], ...]
     #
     def cite(data)
-      data = extract_data(data) unless data.kind_of?(Data)
+      data = extract_citation_data(data) unless data.kind_of?(CitationData)
       
       data.map do |item|
         citation = @style.citation.process(items[item['id']], locale, format)
@@ -104,16 +104,16 @@ module CiteProc
     end
     
     # @returns a citation data object
-    def extract_data(argument)
+    def extract_citation_data(argument)
       case
       when argument == :all
-        Data.new('citation-items' => self.items.keys.map { |id| { 'id' => id } })
+        CitationData.new('citation-items' => self.items.keys.map { |id| { 'id' => id } })
       when argument.is_a?(Array)
-        Data.new('citation-items' => argument.map { |id| { 'id' => id } })
+        CitationData.new('citation-items' => argument.map { |id| { 'id' => id } })
       when argument.is_a?(Hash)
-        Data.new(argument)
+        CitationData.new(argument)
       else
-        self.items.has_key?(argument.to_s) ? Data.new('citation-items' => [{ 'id' => argument.to_s }]) : Data.new
+        self.items.has_key?(argument.to_s) ? CitationData.new('citation-items' => [{ 'id' => argument.to_s }]) : CitationData.new
       end
     end
     
