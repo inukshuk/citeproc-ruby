@@ -52,7 +52,7 @@ module CSL
         klass.new(node, style)
       end
  
-      def process(item, locale=Locale.new, format=:default)
+      def process(data, item, locale=Locale.new, format=:default)
         self.format = format
       end
     
@@ -81,8 +81,8 @@ module CSL
         # TODO
       end
 
-      def process(item, locale=Locale.new, format=:default)
-        @layout.process(item, locale, format)
+      def process(data, item, locale=Locale.new, format=:default)
+        @layout.process(data, item, locale, format)
       end
       
     end
@@ -115,14 +115,14 @@ module CSL
         @elements ||= []
       end
 
-      def process(item, locale=Locale.new, format=:default)
-        @elements.map { |element| element.process(item, locale, format) }.join(delimiter)
+      def process(data, item, locale=Locale.new, format=:default)
+        @elements.map { |element| element.process(data, item, locale, format) }.join(delimiter)
       end
 
       format_on :process
     end
   
-    class Macro < Layout
+    class Macro < Node
       attr_fields :name
     end
 
@@ -161,7 +161,7 @@ module CSL
       attr_fields Nodes.formatting_attributes
       attr_fields %w{ variable form macro term plural value quotes }
     
-      def process(item, locale=Locale.new, format=:default)
+      def process(data, item, locale=Locale.new, format=:default)
         super
       
         text = case
@@ -222,10 +222,10 @@ module CSL
       attr_fields Nodes.formatting_attributes
       attr_fields %w{ variable form date-parts }
 
-      def process(item, locale=Locale.new, format=:default)
+      def process(data, item, locale=Locale.new, format=:default)
         super
         date = item[variable]
-        date.nil? ? '' : date.literal? ? date.literal : parts(locale).map { |part| part.process(date, locale, format) }.join(delimiter)
+        date.nil? ? '' : date.literal? ? date.literal : parts(locale).map { |part| part.process(data, date, locale, format) }.join(delimiter)
       end
 
       format_on :process
@@ -265,7 +265,7 @@ module CSL
         nodes.map { |n| DatePart.new(n, @style) }
       end    
     
-      def process(date, locale=Locale.new, format=:default)
+      def process(data, date, locale=Locale.new, format=:default)
         super
 
         part = case name
@@ -340,7 +340,7 @@ module CSL
       attr_fields Nodes.formatting_attributes      
       attr_fields %w{ variable form }
     
-      def process(item, locale=Locale.new, format=:default)
+      def process(data, item, locale=Locale.new, format=:default)
         super
       
         number = item[variable].to_s || ''
@@ -407,7 +407,7 @@ module CSL
         @options ||= {}
       end
     
-      def process(item, locale=Locale.new, format=:default)
+      def process(data, item, locale=Locale.new, format=:default)
         super
       
         names = fetch_variables(item)
@@ -428,7 +428,7 @@ module CSL
         # TODO not sure whether format is applied only once or on each name item individually
 
         names = names.map { |item|
-          x = elements.map { |element| element.process(item, locale, format) }
+          x = elements.map { |element| element.process(data, item, locale, format) }
           # debugger  
           x.join(delimiter)
         }.join
@@ -565,7 +565,7 @@ module CSL
         @parts ||= []
       end
     
-      def process(item, locale=Locale.new, format=:default)
+      def process(data, item, locale=Locale.new, format=:default)
         super
 
         names = truncate(item.last)
@@ -589,7 +589,7 @@ module CSL
       end
     
       def truncate(names)
-        if et_al_min? && names.length < et_al_min
+        if et_al_min? && names.length < et_al_min.to_i
           names = names[0..et_al_use_first]
           parent.options['truncate'] = true
         else
@@ -640,7 +640,7 @@ module CSL
     
       attr_accessor :parent
 
-      def process(item, locale=Locale.new, format=:default)
+      def process(data, item, locale=Locale.new, format=:default)
         super
         parent.options['truncate'] ? locale[term].to_s(attributes) : ''
       end
@@ -681,7 +681,7 @@ module CSL
         @elements ||= elements
       end
     
-      def process(names, locale=Locale.new, format=:default)
+      def process(data, names, locale=Locale.new, format=:default)
         super
       end
     
@@ -712,9 +712,11 @@ module CSL
     
       attr_accessor :parent
     
-      def process(item, locale=Locale.new, format=:default)
+      def process(data, item, locale=Locale.new, format=:default)
   
+        # TODO is there a more elegantly pleasing way to distinguish?
         if parent.nil?
+          # TODO!
           locale[variable].to_s(attributes.merge('plural' => item[variable].length))
         else
           locale[item.first].to_s(attributes.merge( 'plural' => item.last.length))
@@ -751,10 +753,46 @@ module CSL
     class Group < Node
       attr_fields Nodes.formatting_attributes      
 
-      # Can contain other nodes (except Layout).
+      def initialize(node, style)
+        super
+        
+        collect_formatting_attributes(%w{ delimiter suffix prefix })
+        
+        @node.children.each do |node|
+          node = Node.parse(node, @style)
+          apply_formatting_attributes(node)
+          
+          elements.push(node)
+        end
+      end
+
       def elements
         @elements ||= []
       end
+
+      def process(data, item, locale=Locale.new, format=:default)
+        processed = @elements.map { |element| element.process(data, item, locale, format) }
+        processed.include?('') ? '' : apply_format(processed.join(delimiter))
+      end
+
+      
+      protected
+      
+      def collect_formatting_attributes(exceptions=[])
+        @formatting_attributes = {}
+        (Nodes.formatting_attributes - exceptions).each do |key|
+          @formatting_attributes[key] = self[key]
+          self.attributes.delete(key)
+        end
+        @formatting_attributes
+      end
+      
+      def apply_formatting_attributes(node)
+        @formatting_attributes.each_pair do |key, value|
+          node[key] ||= value
+        end
+      end
+      
     end
 
     # Similarly to the conditional statements encountered in programming
