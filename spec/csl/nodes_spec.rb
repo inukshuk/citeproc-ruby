@@ -1,38 +1,39 @@
 
-CSL::Test::Fixtures::Nodes.each do |fixture|
-  
-  describe fixture['class'] do
-    before(:each) do
-      @style = CSL::Style.new
-      @locale = CSL::Locale.new
-    end
-
-    fixture['describe'].keys.each do |part|
-      describe part do
-        fixture['describe'][part].keys.each do |feature|
-          it feature do
-            
-            item = CiteProc::Item.new(fixture['describe'][part][feature]['item'])
-            
-            input = fixture['describe'][part][feature]['input']
-            
-            expected = fixture['describe'][part][feature]['expected']
-            
-            result = input.map do |xml|
-              node = CSL::Nodes.const_get(fixture['class'].split(/::/).last).new(Nokogiri::XML(xml).root, @style)
-              node.process({}, item, @locale, fixture['describe'][part][feature]['format'])
-            end
-            
-            result.should == expected
-            
-          end
-        end
-      end
-    end
-    
-  end
-  
-end
+# CSL::Test::Fixtures::Nodes.each do |fixture|
+#   
+#   describe fixture['class'] do
+#     before(:each) do
+#       @proc = CiteProc::Processor.new
+#       @proc.style = CSL::Style.new
+#       @proc.locale = CSL::Locale.new
+#     end
+# 
+#     fixture['describe'].keys.each do |part|
+#       describe part do
+#         fixture['describe'][part].keys.each do |feature|
+#           it feature do
+#             
+#             item = CiteProc::Item.new(fixture['describe'][part][feature]['item'])
+#             
+#             input = fixture['describe'][part][feature]['input']
+#             
+#             expected = fixture['describe'][part][feature]['expected']
+#             
+#             result = input.map do |xml|
+#               node = CSL::Nodes.const_get(fixture['class'].split(/::/).last).new(Nokogiri::XML(xml).root, @proc.style, @proc)
+#               node.process({}, item, @locale, fixture['describe'][part][feature]['format'])
+#             end
+#             
+#             result.should == expected
+#             
+#           end
+#         end
+#       end
+#     end
+#     
+#   end
+#   
+# end
 
 describe CSL::Nodes::Text do
   

@@ -198,12 +198,13 @@ module CSL
           when self.value?
             self.value
           when self.macro?
-            @style.macros[macro].process(data, processor) 
+            @style.macros[macro].process(data, @processor) 
           when self.term?
             self.locale[term].to_s(attributes)
           when self.variable?
              # TODO long/short -> abbreviations!
-            (data[variable] || self.item(data['id'])[variable]).to_s
+            value = (data[variable] || self.item(data['id'])[variable]).to_s
+            self.form == 'short' ? @processor.abbreviate(variable, value) : value
           else
             ''
           end
@@ -966,15 +967,16 @@ module CSL
 
       def initialize(node, style, processor=nil)
         super
-        @node.children.each { |node| self.elements.push(ConditionalBlock.new(node, style, processor)) }
+        @node.children.each { |node| self.elements.push(ConditionalBlock.new(node, style, @processor)) }
       end
     
       def elements
         @elements ||= []
       end
       
-      def process(data, processor)
-
+      def process(data, processor=nil)
+        super
+        
         elements.each do |element|
           return element.process(data, processor) if element.evaluate?(item(data['id']))
         end
@@ -988,12 +990,12 @@ module CSL
       attr_fields %w{ disambiguate is-numeric is-uncertain-date locator
         position type variable match }
       
-      attr_reader :type
+      attr_reader :name
       
       def initialize(node, style, processor=nil)
         super
-        @type = @node.name
-        @node.children.each { |node| self.elements.push(Node.parse(node, style, processor)) }
+        @name = @node.name
+        @node.children.each { |node| self.elements.push(Node.parse(node, style, @processor)) }
       end
       
       def elements
@@ -1001,7 +1003,8 @@ module CSL
       end
       
       def process(data, processor=nil)
-        self.elements.map { |element| element.process(data, processor) }.join
+        super
+        self.elements.map { |element| element.process(data, @processor) }.join
       end
       
       def evaluate?(item)
@@ -1017,10 +1020,10 @@ module CSL
         when self.position?
           false
         when type?
-          self.is_match?(item['type'], type.split(/\s+/))
+          self.is_match?(item['type'].to_s, type.split(/\s+/))
         when self.variable?
           self.is_empty?(item, variable.split(/\s+/))
-        when @type == 'else'
+        when @name == 'else'
           true
         else
           false

@@ -43,8 +43,31 @@ module CiteProc
       @locale ||= CSL::Locale.new
     end
     
+    # @returns the abbreviations, a self-recording hash.
     def abbreviations
-      @abbreviations ||= {}
+      @abbreviations ||= new_abbreviations
+    end
+    
+    alias :transfrom :abbreviations
+    
+    def abbreviations=(abbreviations)
+      @abbreviations = new_abbreviations
+      add_abbreviations(abbreviations)
+    end
+    
+    def add_abbreviations(abbreviations)
+      abbreviations.keys.each do |list|
+        abbreviations[list].keys.each do |category|
+          abbreviations[list][category].each_pair do |long, short|
+            self.abbreviations[list] ||= new_self_recording_hash
+            self.abbreviations[list][category][long] = short
+          end
+        end
+      end
+    end
+        
+    def abbreviate(category, name, list='default')
+      self.abbreviations[list][category][name]
     end
     
     def format
@@ -121,6 +144,13 @@ module CiteProc
       end
     end
     
+    def new_abbreviations
+      { 'default' => new_self_recording_hash }
+    end
+    
+    def new_self_recording_hash
+      Hash.new { |h,k| h[k] = Hash.new { |h,k| h[k] = k } }
+    end
   end
   
 end

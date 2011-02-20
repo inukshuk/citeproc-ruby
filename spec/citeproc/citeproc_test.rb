@@ -14,6 +14,7 @@ end
 def filter(file, fixture)
   # ['affix_InterveningEmpty.json'].include?(File.basename(file))
   # File.basename(file) =~ /parallel_suppressyear/i
+  # File.basename(file) =~ /variables_shortform/i
   fixture['mode'] == 'citation' && !fixture['citations']
 end
 
@@ -29,6 +30,8 @@ describe 'citeproc-test' do
       @proc.style = fixture['csl']
       @proc.import(fixture['input'])
       
+      @proc.add_abbreviations(fixture['abbreviations']) if fixture['abbreviations']
+      
       case fixture['mode']
         
       when 'citation'
@@ -36,10 +39,11 @@ describe 'citeproc-test' do
         # citation_items || :all => make_citation_cluster
         data = CiteProc::CitationData.parse(fixture['citation_items'] || nil)
         
-        # what to do with multiple elements?
-        
-        result = @proc.cite(data.empty? ? :all : data.first)
-        result = result.map { |d| d[1] }.join(', ')
+        if data.empty?
+          result = @proc.cite(:all).map { |d| d[1] }.join(', ')
+        else
+          result = data.map { |d| @proc.cite(d).map { |c| c[1] }.join(', ') }.join("\n")
+        end
         
       when 'bibliography'
         not_implemented
