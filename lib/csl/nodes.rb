@@ -20,9 +20,8 @@ module CSL
 
   class Nodes
 
-    @formatting_attributes = %w{ prefix suffix delimiter display
-      strip-periods text-case font-style font-variant font-weight
-      text-decoration vertical-align text-case }
+    @formatting_attributes = %w{ text-case font-style font-variant font-weight
+      text-decoration vertical-align prefix suffix delimiter display strip-period  }
 
     @inheritable_name_attributes = %w{ and delimiter-precedes-last et-al-min
       et-al-use-first et-al-subsequent-min et-al-subsequent-use-first

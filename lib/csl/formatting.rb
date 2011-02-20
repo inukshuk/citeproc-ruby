@@ -94,7 +94,7 @@ module CSL
       end
       
       def set_strip_periods(strip)
-        @input = strip && strip != 'false' ? @input.gsub(/\./, '') : @input
+        @input.gsub!(/\./, '') if strip && strip != 'false'
       end
             
       # @param style 'normal', 'italic', 'oblique' 
@@ -103,7 +103,7 @@ module CSL
       
       # @param variant 'normal', 'small-caps'
       def set_font_variant(variant='normal')
-        @input = variant == 'small-caps' ? @input.upcase : @input
+        # @input.upcase! if variant == 'small-caps'
       end
    
       # @param weight 'normal', 'bold', 'light' 
@@ -120,29 +120,37 @@ module CSL
 
       # @param case 'lowercase', 'uppercase', 'capitalize-first', 'capitalize-all', 'title', 'sentence'
       def set_text_case(text_case)
+        # TODO this is in desparate need of refactoring
+        # TODO where is this kind of special treatment specified?
+        # For now we're ignoring nocase spans and stripping them out at the end
+        # as this seems to be what the unit tests expect.
+        tokens = @input.split(/(<span[^>]+class=['"][^'"]*nocase[^'"]*['"][^>]*>[^<]*<\/span>)/i)
         case text_case
         when 'lowercase'
-          @input = @input.downcase
+          tokens.map! { |token| token.start_with?('<') ? token : token.downcase }
           
         when 'uppercase'
-          @input = @input.upcase
+          tokens.map! { |token| token.start_with?('<') ? token : token.upcase }
           
         when 'capitalize-first'
-          @input = @input.capitalize
+          tokens.detect { |token| !token.start_with?('<') }.capitalize!
           
         when 'capitalize-all'
-          @input = @input.split(/(\s+)/).map(&:capitalize).join
+          tokens.map! { |token| token.start_with?('<') ? token : token.split(/(\s+)/).map(&:capitalize).join }
           
-        # TODO 'title' must be localized
+        # TODO exact specification?
         when 'title'
-          @input = @input.capitalize.split(/(\s+)/).map { |word| word.match(/^(and|of|in|is|a|an|the)$/) ? word : word.capitalize }.join
+          tokens.map! { |token| token.start_with?('<') ? token : token.split(/(\s+)/).map { |word| word.match(/^(and|of|a|an|the)$/i) ? word : word.capitalize }.join }
 
-        # TODO
+        # TODO exact specification?
         when 'sentence'
-          @input = @input.capitalize
+          tokens.map! { |token| token.start_with?('<') ? token : token.split(/(\s+)/).map(&:downcase).join }
+          tokens.detect { |token| !token.start_with?('<') }.capitalize!
+
         else
           # nothing
         end
+        @input = tokens.map { |token| token.start_with?('<') ? token.gsub(/<\/?span[^>]*>/i, '') : token }.join
       end
 
     end
