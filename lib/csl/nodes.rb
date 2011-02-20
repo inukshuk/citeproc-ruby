@@ -21,7 +21,7 @@ module CSL
   class Nodes
 
     @formatting_attributes = %w{ text-case font-style font-variant font-weight
-      text-decoration vertical-align prefix suffix display strip-period  }
+      text-decoration vertical-align prefix suffix display strip-periods  }
 
     @inheritable_name_attributes = %w{ and delimiter-precedes-last et-al-min
       et-al-use-first et-al-subsequent-min et-al-subsequent-use-first
