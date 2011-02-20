@@ -117,7 +117,7 @@ module CiteProc
     #
     def merge!(argument)
       case
-      when argument.is_a?(Array)
+      when argument.is_a?(Array) && argument.map(&:class).uniq == [Hash]
         super('citation-items' => argument)
       
       when argument.is_a?(Hash)

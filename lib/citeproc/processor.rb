@@ -79,10 +79,10 @@ module CiteProc
       data = extract_citation_data(data) unless data.kind_of?(CitationData)
 
       data.map do |data|
-        item = self.items[data['id']]
-        CiteProc.log.warn "no item available for citation data #{datum.inspect}" unless item
+        # item = self.items[data['id']]
+        # CiteProc.log.warn "no item available for citation data #{datum.inspect}" unless item
         
-        citation = @style.citation.process(data, item, locale, format)
+        citation = @style.citation.process(data, self)
         
         [register(citation), citation]
       end

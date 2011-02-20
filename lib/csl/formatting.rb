@@ -133,7 +133,8 @@ module CSL
           tokens.map! { |token| token.start_with?('<') ? token : token.upcase }
           
         when 'capitalize-first'
-          tokens.detect { |token| !token.start_with?('<') }.capitalize!
+          tokens.map! { |token| token.start_with?('<') ? token : token.split(/(\s+)/).map(&:capitalize).join }
+          tokens.detect { |token| !token.start_with?('<') }.scapitalize!
           
         when 'capitalize-all'
           tokens.map! { |token| token.start_with?('<') ? token : token.split(/(\s+)/).map(&:capitalize).join }
@@ -141,6 +142,7 @@ module CSL
         # TODO exact specification?
         when 'title'
           tokens.map! { |token| token.start_with?('<') ? token : token.split(/(\s+)/).map { |word| word.match(/^(and|of|a|an|the)$/i) ? word : word.capitalize }.join }
+          
 
         # TODO exact specification?
         when 'sentence'
