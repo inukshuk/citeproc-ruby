@@ -134,7 +134,7 @@ module CSL
           
         when 'capitalize-first'
           tokens.map! { |token| token.start_with?('<') ? token : token.split(/(\s+)/).map(&:capitalize).join }
-          tokens.detect { |token| !token.start_with?('<') }.scapitalize!
+          tokens.detect { |token| !token.start_with?('<') }.capitalize!
           
         when 'capitalize-all'
           tokens.map! { |token| token.start_with?('<') ? token : token.split(/(\s+)/).map(&:capitalize).join }
