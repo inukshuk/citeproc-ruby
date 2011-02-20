@@ -395,7 +395,7 @@ module CSL
         @node.children.each do |node|
           node = Node.parse(node, style)
           node.parent = self
-          elements.push(node)
+          node.is_a?(Substitute) ? @substitute = node : self.elements.push(node)
         end
       end
     
@@ -412,28 +412,32 @@ module CSL
       
         names = fetch_variables(item)
 
-        # handle editor-translator special case
-        if names.map(&:first).sort.join.match(/editortranslator/)
+        unless names.empty?
+          # handle editor-translator special case
+          if names.map(&:first).sort.join.match(/editortranslator/)
 
-          editors = names.detect { |name| name.first == 'editor' }
-          translators = names.detect { |name| name.first == 'translator' }
+            editors = names.detect { |name| name.first == 'editor' }
+            translators = names.detect { |name| name.first == 'translator' }
         
-          if editors == translators
-            editors.first = 'editortranslator'
-            names.delete(translators)
+            if editors == translators
+              editors.first = 'editortranslator'
+              names.delete(translators)
+            end
+        
           end
-        
-        end
       
-        # TODO not sure whether format is applied only once or on each name item individually
+          # TODO not sure whether format is applied only once or on each name item individually
 
-        names = names.map { |item|
-          x = elements.map { |element| element.process(data, item, locale, format) }
-          # debugger  
-          x.join(delimiter)
-        }.join
+          names = names.map { |item|
+            x = elements.map { |element| element.process(data, item, locale, format) }
+            # debugger  
+            x.join(delimiter)
+          }.join
         
-        names
+          names
+        else
+          @substitute.nil? ? '' : @substitute.process(data, item, locale, format)
+        end
       end
     
       format_on :process
@@ -677,12 +681,21 @@ module CSL
     
       attr_accessor :parent
     
-      def elements
-        @elements ||= elements
+      def initialize(node, style)
+        super
+        @node.children.each { |node| self.elements.push(Node.parse(node, style)) }
       end
     
-      def process(data, names, locale=Locale.new, format=:default)
-        super
+      def elements
+        @elements ||= []
+      end
+      
+      def process(data, item, locale=Locale.new, format=:default)
+        elements.each do |element|
+          processed = element.process(data, item, locale, format)
+          return processed unless processed == ''
+        end
+        return ''
       end
     
     end
