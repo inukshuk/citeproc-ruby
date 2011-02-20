@@ -773,19 +773,30 @@ module CSL
     
       def process(data, processor=nil)
         super
-        locale[data['label']].to_s(attributes.merge({ 'plural' =>  plural? || is_plural?(data) ? 'true' : 'false' }))
+        locale[data['label']].to_s(attributes.merge({ 'plural' =>  is_plural?(data, 0) ? 'true' : 'false' }))
       end
     
       def process_names(role, number, processor=nil)
         self.processor = processor unless processor.nil?
-        locale[role].to_s(attributes.merge({ 'plural' => plural? || number > 1 ? 'true' : 'false' }))        
+        locale[role].to_s(attributes.merge({ 'plural' => is_plural?(nil, number) ? 'true' : 'false' }))        
       end
         
       format_on :process
       format_on :process_names
       
-      def is_plural?(data)
-        (variable == 'locator' || variable == 'page') && data[variable].to_s.match(/\d+f|\d+\-\d+/)
+      def is_plural?(data, number)
+        case
+        when plural == 'always'
+          true
+        when plural == 'never'
+          false
+        when number > 1
+          true
+        when ['locator', 'page'].include?(variable)
+          data[variable].to_s.match(/\d+f|\d+\-\d+/)
+        else
+          false
+        end
       end
     end
 
