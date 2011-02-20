@@ -14,8 +14,8 @@ end
 def filter(file, fixture)
   # ['affix_InterveningEmpty.json'].include?(File.basename(file))
   # File.basename(file) =~ /parallel_suppressyear/i
-  # File.basename(file) =~ /variables_shortform/i
-  fixture['mode'] == 'citation' && !fixture['citations']
+  File.basename(file) =~ /plural_/i
+  # fixture['mode'] == 'citation' && !fixture['citations']
 end
 
 describe 'citeproc-test' do

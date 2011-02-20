@@ -768,16 +768,16 @@ module CSL
     #  
     class Label < Node
       attr_fields Nodes.formatting_attributes      
-      attr_fields %w{ variable form }
+      attr_fields %w{ variable plural form }
     
       def process(data, processor=nil)
         super
-        locale[data['label']].to_s(attributes.merge({ 'plural' =>  is_plural?(data) ? 'true' : 'false' }))
+        locale[data['label']].to_s(attributes.merge({ 'plural' =>  plural? || is_plural?(data) ? 'true' : 'false' }))
       end
     
       def process_names(role, number, processor=nil)
         self.processor = processor unless processor.nil?
-        locale[role].to_s(attributes.merge({ 'plural' => number > 1 ? 'true' : 'false' }))        
+        locale[role].to_s(attributes.merge({ 'plural' => plural? || number > 1 ? 'true' : 'false' }))        
       end
         
       format_on :process
