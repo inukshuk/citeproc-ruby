@@ -636,14 +636,15 @@ module CSL
           names = [names[0..-2].join(delimiter), names.last]
         end
 
-        names.join(last_delimiter)
+        names.join(ampersand)
       end
 
       format_on :process_names
 
-      def last_delimiter
+      def ampersand
         ampersand = self.and == 'symbol' ? '&' : locale[self.and == 'text' ? 'and' : self.and].to_s(attributes)
-        delimiter_precedes_last? ? [delimiter, ampersand].join : ampersand
+        ampersand = delimiter_precedes_last? ? [delimiter, ampersand].join : ampersand
+        ampersand.center(ampersand.length + 2)
       end
 
     end
