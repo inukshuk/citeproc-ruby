@@ -27,6 +27,7 @@ display:
     names:
     - given: John
     - family: Plato
+      suffix: II
     - given: Edgar Allen
       family: Poe
     - given: Gérard
@@ -36,9 +37,9 @@ display:
       suffix: III
     expected:
     - "John"
-    - "Plato"
-    - "Poe Edgar Allen"
-    - "la Martinière Gérard de III"
+    - "Plato, II"
+    - "Poe, Edgar Allen"
+    - "la Martinière, Gérard de, III"
     options:
       name-as-sort-order: "true"
       demote-non-dropping-particle: "never"

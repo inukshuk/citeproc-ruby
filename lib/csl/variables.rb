@@ -127,13 +127,24 @@ module CSL
     end
     
     def defaults
-      Hash[*%w{ form long name-as-sort-order false demote-non-dropping-particle never }]
+      Hash['form', 'long', 'name-as-sort-order', 'false', 'demote-non-dropping-particle', 'never']
+    end
+    
+    def is_personal?
+      self.family?
     end
     
     def is_oriental?
       false # TODO
     end
     
+    def comma_suffix
+      self.comma_suffix? && self.suffix? ? comma : nil
+    end
+    
+    def comma
+      ','
+    end
     
     # @returns a list of strings, representing a given order of the individual
     # tokens when displaying the name.
@@ -144,13 +155,13 @@ module CSL
         return %w{ literal }
         
       when options['form'] == 'long' && options['name-as-sort-order'] == 'false'
-        return %w{ given dropping-particle non-dropping-particle family suffix }
+        return %w{ given dropping-particle non-dropping-particle family comma-suffix suffix }
 
       when options['form'] == 'long' && options['name-as-sort-order'] == 'true' && ['never', 'sort-only'].include?(options['demote-non-dropping-particle'])
-        return %w{ non-dropping-particle family given dropping-particle suffix }
+        return %w{ non-dropping-particle family comma given dropping-particle comma suffix }
     
       when options['form'] == 'long' && options['name-as-sort-order'] == 'true' && options['demote-non-dropping-particle'] == 'display-and-sort'
-        return %w{ family given dropping-particle non-dropping-particle suffix }
+        return %w{ family comma given dropping-particle non-dropping-particle comma suffix }
     
       else # options['form'] == 'short'
         return %w{ non-dropping-particle family}
@@ -175,7 +186,15 @@ module CSL
     # @returns a string representing the name according to the given set of
     # display order options.
     def display(options={})
-      self.display_order(options).map { |part| attributes[part] }.reject(&:nil?).join(' ')
+      tokens = self.display_order(options).map { |token| self.send(token.gsub(/-/,'_')) }.reject(&:nil?)
+      string = tokens.inject('') do |string, token|
+        if token == comma
+          string.empty? ? '' : string + token
+        else
+          string.empty? ? token : [string, token].join(' ')
+        end
+      end
+      string.gsub(/,,/, ',').gsub(/,$/, '')
     end
     
     def to_s
