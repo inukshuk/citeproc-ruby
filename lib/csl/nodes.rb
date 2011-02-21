@@ -194,20 +194,29 @@ module CSL
       def process(data, processor=nil)
         super
 
-        text = case
-          when self.value?
-            self.value
-          when self.macro?
-            @style.macros[macro].process(data, @processor) 
-          when self.term?
-            self.locale[term].to_s(attributes)
-          when self.variable?
-             # TODO long/short -> abbreviations!
-            value = (data[variable] || self.item(data['id'])[variable]).to_s
-            self.form == 'short' ? @processor.abbreviate(variable, value) : value
-          else
-            ''
+        case
+        when self.value?
+          text = self.value
+        when self.macro?
+          text = @style.macros[macro].process(data, @processor) 
+        when self.term?
+          text = self.locale[term].to_s(attributes)
+        when self.variable?
+          text = (data[variable] || self.item(data['id'])[variable]).to_s
+          
+          if self.form == 'short'
+            text = abbreviate(text)
           end
+          
+          if self.variable == 'page' && @style.options.has_key?('page-range-format')
+            text = format_page_range(text, @style.options['page-range-format'])
+          end
+          
+        else
+          ''
+        end
+
+
         
         # Add localized quotes
         text = [self.locale['open-quote'], text, self.locale['close-quote']].join if quotes?
@@ -216,6 +225,68 @@ module CSL
       end
   
       format_on :process
+      
+      protected
+      
+      def abbreviate(value)
+        @processor.abbreviate(variable, value)
+      end
+
+      
+      # The page abbreviation rules for the different values of the
+      # page-range-format attribute on cs:style are:
+      # 
+      # * "minimum": All digits repeated in the second number are left out:
+      #   42-5, 321-8, 2787-816
+      # * "expanded": Abbreviated page ranges are expanded to their
+      #   non-abbreviated form: 42-45, 321-328, 2787-2816
+      # * "chicago": Page ranges are abbreviated according to the link Chicago
+      #   Manual of Style-rules
+      #     
+      def format_page_range(value, format)
+        return value unless value.match(/([a-z]*)(\d+)\s*\D\s*([a-z]*)(\d+)/i)
+
+        tokens = [$1, $2, "\u2013", $3, $4]
+
+        # normalize page range to expanded form
+        f, t = tokens[1].chars.to_a, tokens[4].chars.to_a
+        d = t.length - f.length
+        d > 0 ? d.times { f.unshift('0') } : t = f.take(d.abs) + t
+        
+        # TODO handle prefixes correctly
+        # TODO handle multiple ranges
+        
+        case format
+        when /mini/
+          tokens[4] = f.zip(t).map { |f, t| f == t ? nil : t }.reject(&:nil?).join
+          tokens[3] = nil if tokens[3] == tokens[0]
+        when 'expanded'
+          tokens[4] = t
+          tokens[3] = tokens[0] if tokens[3].nil? || tokens[3].empty?
+        when 'chicago'
+          case
+          when f.length < 3 || f.length < 4 && f.join.to_i % 100 == 0
+            tokens[4] = t
+            tokens[3] = tokens[0] if tokens[3].nil? || tokens[3].empty?            
+          when f.length < 4 && f.join.to_i % 100 < 10
+            tokens[4] = f.zip(t).map { |f, t| f == t ? nil : t }.reject(&:nil?).join
+            tokens[3] = nil if tokens[3] == tokens[0]
+          when f.length < 4
+            # TODO use at least two digits in second number
+            tokens[4] = f.zip(t).map { |f, t| f == t ? nil : t }.reject(&:nil?).join
+          else
+            # TODO use at least two digits, and all if three or more change
+            tokens[4] = t
+            tokens[3] = tokens[0] if tokens[3].nil? || tokens[3].empty?            
+          end
+        else
+          value
+        end
+        tokens.join
+      end
+      
+      def normalize_page_range(value)
+      end
     end
 
 

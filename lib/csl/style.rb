@@ -45,6 +45,7 @@ module CSL
       @attributes[:schema] ||= Nokogiri::XML::RelaxNG(File.open(Style.schema))
     end
     
+    
     # Validates the current style's source document against the CSL defintion.
     def validate
       schema.validate(@doc)
@@ -58,6 +59,10 @@ module CSL
     # Updates the current style using the URI returned by #link.
     def update!
       open(link)
+    end
+    
+    def options
+      @attributes[:options] ||= Hash[@doc.root.attributes.values.map { |a| [a.name, a.value] }]
     end
     
     def info
