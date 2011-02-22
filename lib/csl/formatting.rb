@@ -94,7 +94,7 @@ module CSL
       end
       
       def set_strip_periods(strip)
-        @input.gsub!(/\./, '') if strip && strip != 'false'
+        @input.gsub!(/\./, '') if strip == 'true'
       end
             
       # @param style 'normal', 'italic', 'oblique' 

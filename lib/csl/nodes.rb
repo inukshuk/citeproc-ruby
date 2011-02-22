@@ -89,7 +89,40 @@ module CSL
       def parse_attributes
         node.attributes.values.each { |a| attributes[a.name] = a.value }
       end
-    
+
+      # Attributes for the cs:names and cs:name elements may also be set on
+      # cs:style, cs:citation and cs:bibliography. This eliminates the need to
+      # repeat the same attributes and attribute values for every occurrence
+      # of the cs:names and cs:name elements.
+      #
+      # The available inheritable attributes for cs:name are and,
+      # delimiter-precedes-last, et-al-min, et-al-use-first,
+      # et-al-subsequent-min, et-al-subsequent-use-first, initialize-with,
+      # name-as-sort-order and sort-separator. The attributes name-form and
+      # name-delimiter accompany the form and delimiter attributes on cs:name.
+      # Similarly, names-delimiter, the only inheritable attribute available
+      # for cs:names, accompanies the delimiter attribute on cs:names.
+      #
+      # When an inheritable name attribute is set on cs:style, cs:citation or
+      # cs:bibliography, its value is used for all cs:names elements within
+      # the element carrying the attribute. When an element lower in the
+      # hierarchy includes the same attribute with a different value, this
+      # latter value will override the value(s) specified higher in the
+      # hierarchy.
+      #
+      # This mehtod traverses a nodes ancestor chain and inherits all
+      # specified attributes from each parent that matches a name in names.
+      #
+      def inherit_attributes_from(nodes=[], attributes=[], prefix='')
+        return unless @node
+        
+        parent = @node.parent        
+        until parent.name == 'document' do
+          attributes.each { |attribute| self[attribute] ||= parent[[prefix, attribute].join] } if nodes.include?(parent.name)
+          parent = parent.parent
+        end
+
+      end
     end
 
     # Represents a cs:citation or cs:bibliography element.
@@ -215,8 +248,6 @@ module CSL
         else
           ''
         end
-
-
         
         # Add localized quotes
         text = [self.locale['open-quote'], text, self.locale['close-quote']].join if quotes?
@@ -265,21 +296,23 @@ module CSL
           tokens[3] = tokens[0] if tokens[3].nil? || tokens[3].empty?
         when 'chicago'
           case
-          when f.length < 3 || f.length < 4 && f.join.to_i % 100 == 0
+          when f.length < 3 || f.join.to_i % 100 == 0
+            # use all digits
             tokens[4] = t
             tokens[3] = tokens[0] if tokens[3].nil? || tokens[3].empty?            
-          when f.length < 4 && f.join.to_i % 100 < 10
+          when f.join.to_i % 100 < 10
+            # use changed part only
             tokens[4] = f.zip(t).map { |f, t| f == t ? nil : t }.reject(&:nil?)
             tokens[3] = nil if tokens[3] == tokens[0]
-          when f.length < 4
-            # TODO use at least two digits in second number
-            tokens[4] = f[0..-3].zip(t[0..-3]).map { |f, t| f == t ? nil : t }.reject(&:nil?) + t[-2..-1]
-            tokens[3] = nil if tokens[3] == tokens[0]
-          else
-            # TODO use at least two digits, and all if three or more change
+          when f.length == 4
+            # use at least two digits, and all if three or more change
             match = f[0..-3].zip(t[0..-3]).map { |f, t| f == t ? nil : t }.reject(&:nil?) + t[-2..-1]
             tokens[4] = match.length > 2 ? t : match
-            tokens[3] = tokens[0] if tokens[3].nil? || tokens[3].empty?            
+            tokens[3] = tokens[0] if tokens[3].nil? || tokens[3].empty?
+          else
+            # use at least two digits in second number
+            tokens[4] = f[0..-3].zip(t[0..-3]).map { |f, t| f == t ? nil : t }.reject(&:nil?) + t[-2..-1]
+            tokens[3] = nil if tokens[3] == tokens[0]
           end
         else
           value
@@ -364,14 +397,14 @@ module CSL
       
         # merge
         parts = p1.empty? ? p2 : p1.map do |this|
-          that = p2.detect { |part| part.name == this.name }
+          that = p2.detect { |part| part['name'] == this['name'] }
           this.attributes = this.attributes.merge(that.attributes) unless that.nil?
           this
         end
       
         # filter
         filter = %w{ year month day } & (date_parts? ? date_parts.split(/-/) : %w{ year month day })
-        parts = parts.reject { |part| !filter.include?(part.name) }
+        parts = parts.reject { |part| !filter.include?(part['name']) }
       end
 
     end
@@ -388,7 +421,7 @@ module CSL
       def process(date, processor=nil)
         super
         
-        part = case name
+        part = case self['name']
           when 'day'
             case form
             when 'ordinal' then locale.ordinalize(date.day)
@@ -415,8 +448,8 @@ module CSL
             end
           end
       
-        part = [part, locale['ad']].join if name == 'year' && date.year < 1000
-        part = [part, locale['bc']].join if name == 'year' && date.year < 0
+        part = [part, locale['ad']].join if self['name'] == 'year' && date.year < 1000
+        part = [part, locale['bc']].join if self['name'] == 'year' && date.year < 0
             
         part
       end
@@ -514,6 +547,8 @@ module CSL
       def initialize(node, style, processor=nil)
         super
       
+        inherit_attributes
+        
         # collect the child nodes (name, et-al, substitute, label)
         node.children.each do |node|
           name = node.name.downcase.gsub(/-/,'_') + '='
@@ -545,28 +580,37 @@ module CSL
 
           names = names.map do |role, names|
             processed = []
-            processed << self.name.process_names(role, names, processor)
-            processed << self.et_al.process(data, processor) if !self.et_al.nil? && self.name.truncated?
-            processed << self.label.process_names(role, names.length, processor) unless self.label.nil?
-            processed.join(delimiter)
+            processed << self.name.process_names(role, names, @processor)
+            if self.name.truncated?
+              processed << ' '
+              processed << (self.et_al.nil? ? locale['et-al'].to_s : self.et_al.process(data, @processor))
+            end
+            processed << self.label.process_names(role, names.length, @processor) unless self.label.nil?
+            processed.join
           end
-        
-          names.join
+
+          names.join(delimiter)
         else
           @substitute.nil? ? '' : @substitute.process(data, processor)
         end
       end
     
       format_on :process
-    
+
+      private
+      
       # @returns a list of all name variables covered by this node; each list
       # is wrapped in a list containing the lists role (e.g., 'editor')
       # followed by the list proper.
       def collect_names(item)
         return [] unless self.variable?
-        self.variable.split(/\s+/).map { |variable| [variable, item[variable]] }
+        self.variable.split(/\s+/).map { |variable| [variable, item[variable] || []] }
       end
     
+      def inherit_attributes
+        inherit_attributes_from(['citation', 'bibliography', 'style'], ['delimiter'], 'names-')
+      end
+      
     end
   
     # The cs:name element is a required child element of cs:names, and describes
@@ -678,6 +722,9 @@ module CSL
         
       def initialize(node, style, processor=nil)
         super
+        inherit_attributes
+        attributes['delimiter'] ||= ', '
+        attributes['delimiter-precedes-last'] ||= 'true'
       end
     
       def parts
@@ -687,21 +734,22 @@ module CSL
       def truncated?
         @truncated || false
       end
-      
+            
       def process_names(role, names, processor=nil)
         self.processor = processor unless processor.nil?
 
         # truncate names
-        if et_al_min? && names.length < et_al_min.to_i
-          names = names[0..et_al_use_first.to_i]
+        if et_al_min? && names.length <= et_al_min.to_i
+          names = names[0, et_al_use_first.to_i]
           @truncated = true
         else
           @truncated = false
         end
-        
-        # render names
-        names = names.map! { |name| name.display(attributes) }
-        
+
+        # set display options
+        names = names.each { |name| name.options = attributes }
+        names.first.options['name-as-sort-order'] = 'true' if name_as_sort_order == 'first'
+
         # join names
         if names.length > 2
           names = [names[0..-2].join(delimiter), names.last]
@@ -712,12 +760,25 @@ module CSL
 
       format_on :process_names
 
+      private      
+
+      # @returns the delimiter to be used between the penultimate and last
+      # name in the list.
       def ampersand
-        ampersand = self.and == 'symbol' ? '&' : locale[self.and == 'text' ? 'and' : self.and].to_s(attributes)
-        ampersand = delimiter_precedes_last? ? [delimiter, ampersand].join : ampersand
-        ampersand.center(ampersand.length + 2)
+        if self.and?
+          ampersand = self.and == 'symbol' ? '&' : locale[self.and == 'text' ? 'and' : self.and].to_s(attributes)
+          ampersand = delimiter_precedes_last? ? [delimiter, ampersand].join : ampersand
+          ampersand.center(ampersand.length + 2)
+        else
+          delimiter_precedes_last? ? delimiter : ' '
+        end
       end
 
+      def inherit_attributes
+        inherit_attributes_from(['citation', 'bibliography', 'style'], Nodes.inheritable_name_attributes)
+        inherit_attributes_from(['citation', 'bibliography', 'style'], ['form', 'delimiter'], 'name-')
+      end
+      
     end
 
     # The cs:name element may include one or two cs:name-part child elements.

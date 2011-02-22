@@ -95,19 +95,24 @@ module Attributes
 
     def attr_fields(*args)
       args = args.shift if args.first.is_a?(Array)
+      
+      @attr_fields ||= []
+      
       args.each do |field|
         field = field.to_s
-        method_id = field.downcase.gsub(/[-\s]+/,'_')
+        method_id = field.downcase.gsub(/[-\s]+/, '_')
         
-        define_method method_id do; self[field]; end
+        @attr_fields << field
+        
+        define_method method_id do; self[field]; end unless self.respond_to?(method_id)
         
         define_method [method_id, '='].join do |value|
           self[field] = value
-        end
+        end unless self.respond_to?([method_id, '='].join)
         
         define_method [method_id, '?'].join do
-          !!(self[field] && !['', [], 'false'].include?(attributes[field]))
-        end
+          ![nil, '', [], 'false', 'no', 'never'].include?(self[field])
+        end unless self.respond_to?([method_id, '?'].join)
         
       end
     end

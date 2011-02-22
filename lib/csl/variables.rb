@@ -130,6 +130,14 @@ module CSL
       Hash['form', 'long', 'name-as-sort-order', 'false', 'demote-non-dropping-particle', 'never']
     end
     
+    def options
+      @options ||= defaults
+    end
+    
+    def options=(options)
+      options.each_pair { |key, value| self.options[key] = value unless value.nil? }
+    end
+    
     def is_personal?
       self.family?
     end
@@ -146,32 +154,42 @@ module CSL
       ','
     end
     
+    def is_sort_order?
+      ['all', 'true', 'yes', 'always'].include?(options['name-as-sort-order'])
+    end
+    
     # @returns a list of strings, representing a given order of the individual
     # tokens when displaying the name.
-    def display_order(options={})
-      options = defaults.merge(options)
+    def display_order(opts={})
+      self.options = opts
+
       case
       when literal?
         return %w{ literal }
+      
+      when is_oriental?
+        return %w{ family given }
         
-      when options['form'] == 'long' && options['name-as-sort-order'] == 'false'
+      when options['form'] != 'short' && !is_sort_order?
         return %w{ given dropping-particle non-dropping-particle family comma-suffix suffix }
 
-      when options['form'] == 'long' && options['name-as-sort-order'] == 'true' && ['never', 'sort-only'].include?(options['demote-non-dropping-particle'])
+      when options['form'] != 'short' && is_sort_order? && ['never', 'sort-only'].include?(options['demote-non-dropping-particle'])
         return %w{ non-dropping-particle family comma given dropping-particle comma suffix }
     
-      when options['form'] == 'long' && options['name-as-sort-order'] == 'true' && options['demote-non-dropping-particle'] == 'display-and-sort'
+      when options['form'] != 'short' && is_sort_order? && options['demote-non-dropping-particle'] == 'display-and-sort'
         return %w{ family comma given dropping-particle non-dropping-particle comma suffix }
     
       else # options['form'] == 'short'
         return %w{ non-dropping-particle family}
       end
+      
     end
     
     # @returns a list of strings, representing the order of precedence of the
     # individual tokens when sorting the name.
-    def sort_order(options={})
-      options = defaults.merge(options)
+    def sort_order(opts={})
+      self.options = opts
+
       case
       when literal?
         return %w{ literal }
@@ -185,8 +203,9 @@ module CSL
     
     # @returns a string representing the name according to the given set of
     # display order options.
-    def display(options={})
-      tokens = self.display_order(options).map { |token| self.send(token.gsub(/-/,'_')) }.reject(&:nil?)
+    def display(opts={})
+      tokens = self.display_order(opts).map { |token| self.send(token.gsub(/-/,'_')) }.reject(&:nil?)
+
       string = tokens.inject('') do |string, token|
         if token == comma
           string.empty? ? '' : string + token
@@ -194,6 +213,7 @@ module CSL
           string.empty? ? token : [string, token].join(' ')
         end
       end
+      
       string.gsub(/,,/, ',').gsub(/,$/, '')
     end
     

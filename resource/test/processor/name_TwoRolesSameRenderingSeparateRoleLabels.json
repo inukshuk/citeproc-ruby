@@ -4,7 +4,7 @@
     "bibsection": false, 
     "citation_items": false, 
     "citations": false, 
-    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <locale xml:lang=\"en\">\n    <terms>\n      <term form=\"short\" name=\"editortranslator\">\n        <single>ed. &amp; trans.</single>\n        <multiple>eds. &amp; trans.</multiple>\n      </term>\n    </terms>\n  </locale>\n  <citation \n         et-al-min=\"3\"\n         et-al-use-first=\"1\">\n    <layout delimiter=\"; \">\n      <names delimiter=\", \" variable=\"editor translator\">\n        <name delimiter=\", \" />\n        <label form=\"short\" prefix=\" (\" suffix=\".)\" />\n      </names>\n    </layout>\n  </citation>\n</style>", 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <locale xml:lang=\"en\">\n    <terms>\n      <term form=\"short\" name=\"editortranslator\">\n        <single>ed. &amp; trans.</single>\n        <multiple>eds. &amp; trans.</multiple>\n      </term>\n    </terms>\n  </locale>\n  <citation \n         et-al-min=\"3\"\n         et-al-use-first=\"1\">\n    <layout delimiter=\"; \">\n      <names delimiter=\", \" variable=\"editor translator\">\n        <name delimiter=\", \" />\n        <label form=\"short\" prefix=\" (\" suffix=\")\" />\n      </names>\n    </layout>\n  </citation>\n</style>", 
     "input": [
         {
             "editor": [

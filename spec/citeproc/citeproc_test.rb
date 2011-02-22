@@ -14,8 +14,9 @@ end
 def filter(file, fixture)
   # ['affix_InterveningEmpty.json'].include?(File.basename(file))
   # File.basename(file) =~ /parallel_suppressyear/i
-  File.basename(file) =~ /page_/i
-  # fixture['mode'] == 'citation' && !fixture['citations']
+  # File.basename(file) =~ /page_/i
+  # File.basename(file) =~ /name_/i
+  fixture['mode'] == 'citation' && !fixture['citations']
 end
 
 describe 'citeproc-test' do
@@ -29,6 +30,7 @@ describe 'citeproc-test' do
     it File.basename(file) do
       @proc.style = fixture['csl']
       @proc.import(fixture['input'])
+      # @proc.format = :html
       
       @proc.add_abbreviations(fixture['abbreviations']) if fixture['abbreviations']
       
