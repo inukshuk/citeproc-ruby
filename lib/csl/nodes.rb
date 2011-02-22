@@ -258,7 +258,7 @@ module CSL
         
         case format
         when /mini/
-          tokens[4] = f.zip(t).map { |f, t| f == t ? nil : t }.reject(&:nil?).join
+          tokens[4] = f.zip(t).map { |f, t| f == t ? nil : t }.reject(&:nil?)
           tokens[3] = nil if tokens[3] == tokens[0]
         when 'expanded'
           tokens[4] = t
@@ -269,14 +269,16 @@ module CSL
             tokens[4] = t
             tokens[3] = tokens[0] if tokens[3].nil? || tokens[3].empty?            
           when f.length < 4 && f.join.to_i % 100 < 10
-            tokens[4] = f.zip(t).map { |f, t| f == t ? nil : t }.reject(&:nil?).join
+            tokens[4] = f.zip(t).map { |f, t| f == t ? nil : t }.reject(&:nil?)
             tokens[3] = nil if tokens[3] == tokens[0]
           when f.length < 4
             # TODO use at least two digits in second number
-            tokens[4] = f.zip(t).map { |f, t| f == t ? nil : t }.reject(&:nil?).join
+            tokens[4] = f[0..-3].zip(t[0..-3]).map { |f, t| f == t ? nil : t }.reject(&:nil?) + t[-2..-1]
+            tokens[3] = nil if tokens[3] == tokens[0]
           else
             # TODO use at least two digits, and all if three or more change
-            tokens[4] = t
+            match = f[0..-3].zip(t[0..-3]).map { |f, t| f == t ? nil : t }.reject(&:nil?) + t[-2..-1]
+            tokens[4] = match.length > 2 ? t : match
             tokens[3] = tokens[0] if tokens[3].nil? || tokens[3].empty?            
           end
         else
@@ -285,8 +287,6 @@ module CSL
         tokens.join
       end
       
-      def normalize_page_range(value)
-      end
     end
 
 
