@@ -219,8 +219,14 @@ module CSL
     
     # @returns a string representing the name according to the given set of
     # display order options.
-    def display(opts={})
-      tokens = self.display_order(opts).map { |token| self.send(token.gsub(/-/,'_')) }.reject(&:nil?)
+    def display(opts={}, filters={})
+      tokens = self.display_order(opts).map do |token|
+        part = self.send(token.gsub(/-/,'_'))
+        part = filters[token].apply_format(part) if filters.has_key?(token)
+        part
+      end
+      
+      tokens.reject!(&:nil?)
 
       string = tokens.inject('') do |string, token|
         if token == comma

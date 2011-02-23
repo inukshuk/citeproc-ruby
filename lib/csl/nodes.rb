@@ -726,10 +726,15 @@ module CSL
         inherit_attributes
         attributes['delimiter'] ||= ', '
         attributes['delimiter-precedes-last'] ||= 'true'
+        node.children.each do |node|
+          names = [node['name']]
+          names << 'dropping-particle' << 'non-dropping-particle' if names.first == 'family'
+          names.each { |name| self.parts[name] = Node.parse(node, style, processor) }
+        end
       end
     
       def parts
-        @parts ||= []
+        @parts ||= {}
       end
   
       def truncated?
@@ -751,6 +756,9 @@ module CSL
         names = names.each { |name| name.options = attributes }
         names.first.options['name-as-sort-order'] = 'true' if name_as_sort_order == 'first'
 
+        # name-part formatting
+        names.map! { |name| name.display({}, self.parts) }
+        
         # join names
         if names.length > 2
           names = [names[0..-2].join(delimiter), names.last]
@@ -801,6 +809,7 @@ module CSL
     #
     class NamePart < Node
       attr_fields Nodes.formatting_attributes
+      attr_fields %w{ name }
     end
   
     # Et-al abbreviation, controlled via the et-al attributes on cs:name (see
