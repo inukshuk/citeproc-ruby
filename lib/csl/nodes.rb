@@ -742,7 +742,10 @@ module CSL
       end
             
       def process_names(role, names, processor=nil)
-        self.processor = processor unless processor.nil?
+        unless processor.nil?
+          self.processor = processor
+          self.parts.values.each { |part| part.processor = processor }
+        end
 
         # truncate names
         if et_al_min? && names.length <= et_al_min.to_i
