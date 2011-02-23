@@ -57,8 +57,8 @@ module CSL
       end
 
       def parse(variables, type=nil)
-        parser = lambda { |variable| CSL.const_get(Variable.parser[type]).new(variable) }
-        variables.is_a?(Array) ? variables.map { |v| parser.call(v) } : parser.call(variables)
+        parser = lambda { |variable, type| CSL.const_get(Variable.parser[type]).new(variable) }
+        variables.is_a?(Array) ? variables.map { |v| parser.call(v, type) } : parser.call(variables, type)
       end
       
     end

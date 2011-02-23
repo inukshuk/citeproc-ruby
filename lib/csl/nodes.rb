@@ -366,7 +366,7 @@ module CSL
 
       def process(data, processor=nil)
         super
-        date = self.item(data['id'])[variable]
+        date = self.item(data['id'])[variable].clone
         
         case
         when date.nil?
@@ -561,9 +561,9 @@ module CSL
     
       def process(data, processor=nil)
         super
-      
-        names = collect_names(item(data['id']))
 
+        names = collect_names(item(data['id']))
+        
         unless names.empty? || names.map(&:last).flatten.empty?
   
           # handle the editor-translator special case
@@ -605,7 +605,7 @@ module CSL
       # followed by the list proper.
       def collect_names(item)
         return [] unless self.variable?
-        self.variable.split(/\s+/).map { |variable| [variable, item[variable] || []] }
+        self.variable.split(/\s+/).map { |variable| [variable, (item[variable] || []).map(&:clone)] }
       end
     
       def inherit_attributes
