@@ -235,7 +235,8 @@ module CSL
         when self.term?
           text = self.locale[term].to_s(attributes)
         when self.variable?
-          text = (data[variable] || self.item(data['id'])[variable]).to_s
+          item = self.item(data['id'])
+          text = (data[variable] || item["short#{variable.capitalize}"] || item[['short', variable].join('-')] || item[variable]).to_s
           
           if self.form == 'short'
             text = abbreviate(text)

@@ -111,7 +111,7 @@ module Attributes
         end unless self.respond_to?([method_id, '='].join)
         
         define_method [method_id, '?'].join do
-          ![nil, '', [], 'false', 'no', 'never'].include?(self[field])
+          ![nil, false, '', [], 'false', 'no', 'never'].include?(self[field])
         end unless self.respond_to?([method_id, '?'].join)
         
       end

@@ -118,7 +118,9 @@ module CSL
   # arguments.
   #
   class Name < Variable
-  
+
+    ROMANESQUE = /^[a-zA-Z\u0080-\u017f\u0400-\u052f\u0386-\u03fb\u1f00-\u1ffe]*$/
+    
     attr_fields %w{ given family literal suffix dropping-particle
       non-dropping-particle comma-suffix static-ordering parse-names }
 
@@ -142,8 +144,14 @@ module CSL
       self.family?
     end
     
+    def is_romanesque?
+      (given.nil? || given.match(ROMANESQUE)) && (family.nil? || family.match(ROMANESQUE))
+    end
+    
+    alias :is_byzantine? :is_romanesque?
+    
     def is_oriental?
-      false # TODO
+      !is_romanesque?
     end
     
     def comma_suffix
@@ -152,6 +160,14 @@ module CSL
     
     def comma
       ','
+    end
+    
+    def delimiter
+      is_romanesque? ? ' ' : ''
+    end
+    
+    def is_static_order?
+      static_ordering? || !is_romanesque?
     end
     
     def is_sort_order?
@@ -167,7 +183,7 @@ module CSL
       when literal?
         return %w{ literal }
       
-      when is_oriental?
+      when is_static_order?
         return %w{ family given }
         
       when options['form'] != 'short' && !is_sort_order?
@@ -210,7 +226,7 @@ module CSL
         if token == comma
           string.empty? ? '' : string + token
         else
-          string.empty? ? token : [string, token].join(' ')
+          string.empty? ? token : [string, token].join(delimiter)
         end
       end
       
