@@ -129,7 +129,7 @@ module CSL
     end
     
     def defaults
-      Hash['form', 'long', 'name-as-sort-order', 'false', 'demote-non-dropping-particle', 'never']
+      Hash['form', 'long', 'name-as-sort-order', 'false', 'demote-non-dropping-particle', 'display-and-sort']
     end
     
     def options
@@ -159,7 +159,7 @@ module CSL
     end
     
     def comma
-      ','
+      options['sort-separator'] || ','
     end
     
     def delimiter

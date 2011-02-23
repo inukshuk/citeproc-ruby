@@ -553,7 +553,7 @@ module CSL
         # collect the child nodes (name, et-al, substitute, label)
         node.children.each do |node|
           name = node.name.downcase.gsub(/-/,'_') + '='
-          node = Node.parse(node, style, processor)
+          node = node.name.match(/substitute/i) ? Substitute.new(node, style, processor, self) : Node.parse(node, style, processor)
           send(name, node)
         end
         
@@ -564,7 +564,7 @@ module CSL
       
         names = collect_names(item(data['id']))
 
-        unless names.empty?
+        unless names.empty? || names.map(&:last).flatten.empty?
   
           # handle the editor-translator special case
           if names.map(&:first).sort.join.match(/editortranslator/)
@@ -592,7 +592,7 @@ module CSL
 
           names.join(delimiter)
         else
-          @substitute.nil? ? '' : @substitute.process(data, processor)
+          @substitute.nil? ? '' : @substitute.process(data, @processor)
         end
       end
     
@@ -789,6 +789,7 @@ module CSL
       def inherit_attributes
         inherit_attributes_from(['citation', 'bibliography', 'style'], Nodes.inheritable_name_attributes)
         inherit_attributes_from(['citation', 'bibliography', 'style'], ['form', 'delimiter'], 'name-')
+        inherit_attributes_from(['style'], ['demote-non-dropping-particle'])
       end
       
     end
@@ -869,17 +870,26 @@ module CSL
     #
     class Substitute < Node
     
-      attr_accessor :parent
-    
-      def initialize(node, style, processor=nil)
-        super
-        node.children.each { |node| self.elements.push(Node.parse(node, style, processor)) }
+      def initialize(node, style, processor=nil, names)
+        super(node, style, processor)
+        
+        node.children.each do |node|
+          node = Node.parse(node, style, processor)
+          
+          if node.is_a?(Names)
+            node.name ||= names.name
+            node.et_al ||= names.et_al
+            node.label ||= names.label
+          end 
+          
+          self.elements.push(node)
+        end
       end
     
       def elements
         @elements ||= []
       end
-      
+
       def process(data, processor=nil)
         super
         
