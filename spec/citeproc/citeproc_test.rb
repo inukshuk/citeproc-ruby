@@ -27,42 +27,49 @@ describe 'citeproc-test' do
 
   CiteProc::Test::Fixtures::Processor.each_pair do |file, fixture|
 
-    it File.basename(file) do
-      @proc.style = fixture['csl']
-      @proc.import(fixture['input'])
-      # @proc.format = :html
+    tokens = File.basename(file).split(/_|\.json/)
+    
+    describe tokens[0].downcase do
       
-      @proc.add_abbreviations(fixture['abbreviations']) if fixture['abbreviations']
+      name = tokens[1].gsub(/([[:lower:]])([[:upper:]])/, '\1 \2').downcase
       
-      case fixture['mode']
+      it name do
+        @proc.style = fixture['csl']
+        @proc.import(fixture['input'])
+        @proc.format = :html
+      
+        @proc.add_abbreviations(fixture['abbreviations']) if fixture['abbreviations']
+      
+        case fixture['mode']
         
-      when 'citation'
-        # citations => process_citation_cluster
-        # citation_items || :all => make_citation_cluster
-        data = CiteProc::CitationData.parse(fixture['citation_items'] || nil)
+        when 'citation'
+          # citations => process_citation_cluster
+          # citation_items || :all => make_citation_cluster
+          data = CiteProc::CitationData.parse(fixture['citation_items'] || nil)
         
-        if data.empty?
-          result = @proc.cite(:all).map { |d| d[1] }.join(', ')
+          if data.empty?
+            result = @proc.cite(:all).map { |d| d[1] }.join(', ')
+          else
+            result = data.map { |d| @proc.cite(d).map { |c| c[1] }.join(', ') }.join("\n")
+          end
+        
+        when 'bibliography'
+          not_implemented
+        
+        when 'bibliography-header'
+          not_implemented
+        
+        when 'bibliography-nosort'
+          not_implemented
+        
         else
-          result = data.map { |d| @proc.cite(d).map { |c| c[1] }.join(', ') }.join("\n")
+          CiteProc.log.warn "unkown processor mode: #{fixture['mode']}"
+          not_implemented
         end
-        
-      when 'bibliography'
-        not_implemented
-        
-      when 'bibliography-header'
-        not_implemented
-        
-      when 'bibliography-nosort'
-        not_implemented
-        
-      else
-        CiteProc.log.warn "unkown processor mode: #{fixture['mode']}"
-        not_implemented
+      
+        result.should == fixture['result']
+      
       end
-      
-      result.should == fixture['result']
-      
     end if filter(file, fixture)
   
   end

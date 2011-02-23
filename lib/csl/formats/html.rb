@@ -19,76 +19,51 @@
 module CSL::Format
   class Html < Default
 
-    attr_reader :input
-    
-    def input=(input)
-      @input = input
-      @style = {}
+    def initialize
+      super
       @container = :span
+      @mode = :individual
     end
-
+    
     def finalize
-      @style.empty? ? @input : %Q{<#{@container} style="#{@style.map { |k,v| [k,v].join(': ') }.join('; ') }">#{@input}</#{@container}>}
+      content = super
+      if @styles.empty?
+        content
+      else
+        @mode == :combined ? content_tag(@container, content, @styles) : individual_tags(content)
+      end
     end
 
 
     # @param display 'block', 'left-margin', 'right-inline', 'inline'
     def set_display(display)
-      #TODO
+      super
+      @container = :div if !display.nil? && display != 'inline'
     end
 
-    # @param style 'normal', 'italic', 'oblique' 
-    def set_font_style(style='normal')
-      @style['font-style'] = style
+
+    protected
+
+    def individual_tags(content)
+      @styles.each_pair do |style, value|
+        case
+        when style == 'font-weight' && value == 'bold'
+          content = content_tag(:b, content)
+        when style == 'font-style' && value == 'italic'
+          content = content_tag(:i, content)
+        end
+      end
+      
+      content
     end
-
-    # @param variant 'normal', 'small-caps'
-    def set_font_variant(variant='normal')
-      @style['font-variant'] = variant
-    end
-
-    # @param weight 'normal', 'bold', 'light' 
-    def set_font_weight(weight='normal')
-      @style['font-weight'] = weight
-    end
-
-    # @param decoration 'none', 'underline'
-    def set_text_decoration(decoration='none')
-      @style['text-decoration'] = decoration
-    end
-
-    # @param align 'baseline', 'sub', 'sup' 
-    def set_vertical_align(align='baseline')
-      @style['vertical-align'] = align
-    end
-
-    # @param case 'lowercase', 'uppercase', 'capitalize-first', 'capitalize-all', 'title', 'sentence'
-    def set_text_case(text_case)
-      case text_case
-      when 'lowercase'
-        @style['text-transform'] = 'lowercase'
-
-      when 'uppercase'
-        @style['text-transform'] = 'uppercase'
-
-      when 'capitalize-first'
-        @input = @input.capitalize
-
-      when 'capitalize-all'
-        @style['text-transform'] = 'capitalize'
-
-        # TODO 'title' must be localized
-      when 'title'
-        @input = @input.capitalize.split(/(\s+)/).map { |word| word.match(/^(and|of|in|is|a|an|the)$/) ? word : word.capitalize }.join
-
-        # TODO
-      when 'sentence'
-        @input = @input.capitalize
+    
+    def content_tag(name, content, styles=nil)
+      if styles.nil?
+        %Q{<#{name}>#{content}</#{name}>}
       else
-        # nothing
+        %Q{<#{name} style="#{ styles.map { |k,v| [[k,v].join(': ')].join('; ') } }">#{content}</#{name}>}
       end
     end
-
   end
 
 end

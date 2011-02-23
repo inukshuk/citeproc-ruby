@@ -75,84 +75,110 @@ module CSL
     
     class Default
 
-      attr_accessor :input
+      attr_reader :input
+      
+      Token = Struct.new :content, :annotations, :styles
+      
+      def initialize
+        @styles = {}
+        @tokens = []
+        @affixes = [nil, nil]
+      end
+      
+      def input=(input)
+        @tokens = input.split(/(<span[^>]*>[^<]*<\/span>)/).map do |t|
+          token = Token.new
+          
+          if t.match(/^<span(?:\s+class=['"]([\w\s]*)["'])?>([^<]*)<\/span>$/)
+            token.content = $2
+            token.annotations = $1.split(/\s+/)
+          else
+            token = Token.new
+            token.content = t
+            token.annotations = []
+          end
+          
+          token
+        end
+      end
       
       def finalize
-        @input
+        [@affixes[0], @tokens.map(&:content).join, @affixes[1]].reject(&:nil?).join
       end
       
       def set_prefix(prefix)
-        @input = [prefix, @input].join
+        @affixes[0] = prefix
       end
 
       def set_suffix(suffix)
-        @input = [@input, suffix].join
+        @affixes[1] = suffix
       end
       
       # @param display 'block', 'left-margin', 'right-inline', 'inline'
       def set_display(display)
+        @styles['display'] = display
       end
       
       def set_strip_periods(strip)
-        @input.gsub!(/\./, '') if strip == 'true'
+        @tokens.each { |token| token.content.gsub!(/\./, '') } if strip == 'true'
       end
             
       # @param style 'normal', 'italic', 'oblique' 
       def set_font_style(style='normal')
+        @styles['font-style'] = style
       end
       
       # @param variant 'normal', 'small-caps'
       def set_font_variant(variant='normal')
-        # @input.upcase! if variant == 'small-caps'
+        @styles['font-variant'] = variant
       end
    
       # @param weight 'normal', 'bold', 'light' 
       def set_font_weight(weight='normal')
+        @styles['font-weight'] = weight
       end
 
       # @param decoration 'none', 'underline'
       def set_text_decoration(decoration='none')
+        @styles['text-decoration'] = decoration
       end
 
       # @param align 'baseline', 'sub', 'sup' 
       def set_vertical_align(align='baseline')
+        @styles['vertical-align'] = align        
       end
 
       # @param case 'lowercase', 'uppercase', 'capitalize-first', 'capitalize-all', 'title', 'sentence'
       def set_text_case(text_case)
-        # TODO this is in desparate need of refactoring
-        # TODO where is this kind of special treatment specified?
-        # For now we're ignoring nocase spans and stripping them out at the end
-        # as this seems to be what the unit tests expect.
-        tokens = @input.split(/(<span[^>]+class=['"][^'"]*nocase[^'"]*['"][^>]*>[^<]*<\/span>)/i)
+
+        # note: the nocase annotations does not override lowercase and uppercase
+        
         case text_case
         when 'lowercase'
-          tokens.map! { |token| token.start_with?('<') ? token : token.downcase }
+          @tokens.each { |token| token.content.downcase! }
           
         when 'uppercase'
-          tokens.map! { |token| token.start_with?('<') ? token : token.upcase }
+          @tokens.each { |token| token.content.upcase! }
           
         when 'capitalize-first'
-          tokens.map! { |token| token.start_with?('<') ? token : token.split(/(\s+)/).map(&:capitalize).join }
-          tokens.detect { |token| !token.start_with?('<') }.capitalize!
+          token = @tokens.detect { |token| !token.annotations.include?('nocase') }
+          token.content.sub!(/^./) { $&.upcase }
           
         when 'capitalize-all'
-          tokens.map! { |token| token.start_with?('<') ? token : token.split(/(\s+)/).map(&:capitalize).join }
+          # @tokens.each { |token| token.content.gsub!(/\b\w/) { $&.upcase } unless token.annotations.include?('nocase') }
+          @tokens.each { |token| token.content = token.content.split(/(\s+)/).map(&:capitalize).join unless token.annotations.include?('nocase') }
           
         # TODO exact specification?
         when 'title'
-          tokens.map! { |token| token.start_with?('<') ? token : token.split(/(\s+)/).map { |word| word.match(/^(and|of|a|an|the)$/i) ? word : word.capitalize }.join }
-          
+          @tokens.each { |token| token.content = token.content.split(/(\s+)/).map { |w| w.match(/^(and|of|a|an|the)$/i) ? w : w.gsub(/\b\w/) { $&.upcase } }.join unless token.annotations.include?('nocase') }
 
         # TODO exact specification?
         when 'sentence'
-          tokens.map! { |token| token.start_with?('<') ? token : token.split(/(\s+)/).map(&:downcase).join }
-          tokens.detect { |token| !token.start_with?('<') }.capitalize!
+          @tokens.each { |token| token.content.capitalize! unless token.annotations.include?('nocase') }
 
         else
           # nothing
         end
-        @input = tokens.map { |token| token.start_with?('<') ? token.gsub(/<\/?span[^>]*>/i, '') : token }.join
       end
 
     end
