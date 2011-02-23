@@ -159,7 +159,7 @@ module CSL
     end
     
     def comma
-      options['sort-separator'] || ','
+      options['sort-separator'] || ', '
     end
     
     def delimiter
@@ -228,15 +228,7 @@ module CSL
       
       tokens.reject!(&:nil?)
 
-      string = tokens.inject('') do |string, token|
-        if token == comma
-          string.empty? ? '' : string + token
-        else
-          string.empty? ? token : [string, token].join(delimiter)
-        end
-      end
-      
-      string.gsub(/,,/, ',').gsub(/,$/, '')
+      tokens.join(delimiter).gsub(/,,|\s+,,?/, ',').gsub(/^,?\s+/, '').gsub(/,\s*$/, '').gsub(/\s+/, ' ')
     end
     
     def to_s

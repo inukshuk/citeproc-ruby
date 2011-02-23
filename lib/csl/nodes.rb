@@ -725,7 +725,7 @@ module CSL
         super
         inherit_attributes
         attributes['delimiter'] ||= ', '
-        attributes['delimiter-precedes-last'] ||= 'true'
+        attributes['delimiter-precedes-last'] ||= 'false'
         node.children.each do |node|
           names = [node['name']]
           names << 'dropping-particle' << 'non-dropping-particle' if names.first == 'family'
@@ -782,7 +782,7 @@ module CSL
           ampersand = delimiter_precedes_last? ? [delimiter, ampersand].join : ampersand
           ampersand.center(ampersand.length + 2)
         else
-          delimiter_precedes_last? ? delimiter : ' '
+          delimiter
         end
       end
 

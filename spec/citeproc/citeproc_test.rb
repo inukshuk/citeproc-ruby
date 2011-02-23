@@ -15,7 +15,7 @@ def filter(file, fixture)
   # ['affix_InterveningEmpty.json'].include?(File.basename(file))
   # File.basename(file) =~ /parallel_suppressyear/i
   # File.basename(file) =~ /page_/i
-  # File.basename(file) =~ /substitute_/i
+  # File.basename(file) =~ /plural_/i
   fixture['mode'] == 'citation' && !fixture['citations']
 end
 
