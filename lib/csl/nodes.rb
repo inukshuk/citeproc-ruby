@@ -563,6 +563,7 @@ module CSL
         super
 
         names = collect_names(item(data['id']))
+        count_only = self.name.form == 'count'
         
         unless names.empty? || names.map(&:last).flatten.empty?
   
@@ -584,7 +585,7 @@ module CSL
             
             truncated = self.name.truncate(names)
             
-            unless self.name.form == 'count'
+            unless count_only
               processed << self.name.process_names(role, truncated, @processor)
             
               if names.length > truncated.length
@@ -595,15 +596,16 @@ module CSL
             
               processed << self.label.process_names(role, names.length, @processor) unless self.label.nil?
             else
-              processed << truncated.length.to_s
+              processed << truncated.length
             end
             
             processed.join
           end
 
-          names.join(delimiter)
+          
+          count_only ? names.inject(0) { |a, b| a.to_i + b.to_i }.to_s : names.join(delimiter)
         else
-          self.name.form == 'count' ? '0' : @substitute.nil? ? '' : @substitute.process(data, @processor)
+          count_only ? '0' : @substitute.nil? ? '' : @substitute.process(data, @processor)
         end
       end
     
