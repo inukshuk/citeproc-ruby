@@ -583,7 +583,8 @@ module CSL
             processed = []
             processed << self.name.process_names(role, names, @processor)
             if self.name.truncated?
-              processed << ' '
+              # use delimiter before et al. if there are more than a single name
+              processed << (self.name.et_al_use_first.to_i > 1 ? self.name.delimiter : ' ')
               processed << (self.et_al.nil? ? locale['et-al'].to_s : self.et_al.process(data, @processor))
             end
             processed << self.label.process_names(role, names.length, @processor) unless self.label.nil?
@@ -748,7 +749,7 @@ module CSL
         end
 
         # truncate names
-        if et_al_min? && names.length <= et_al_min.to_i
+        if et_al_min? && et_al_min.to_i <= names.length
           names = names[0, et_al_use_first.to_i]
           @truncated = true
         else

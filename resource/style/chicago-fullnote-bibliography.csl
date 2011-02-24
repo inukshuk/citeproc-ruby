@@ -1,11 +1,12 @@
 <style 
       xmlns="http://purl.org/net/xbiblio/csl"
-      class="note"
-      xml:lang="en">
+      class="in-text"
+      version="1.0"
+      default-locale="en-US-x-sort-ja-alalc97-x-sec-en-x-name-ja-alalc97">
   <info>
     <title>Chicago Manual of Style (Full Note with Bibliography)</title>
     <id>http://www.zotero.org/styles/chicago-fullnote-bibliography</id>
-    <link href="http://www.zotero.org/styles/chicago-fullnote-bibliography" />
+    <link rel="self" href="http://www.zotero.org/styles/chicago-fullnote-bibliography" />
     <link href="http://www.chicagomanualofstyle.org/tools_citationguide.html" rel="documentation" />
     <author>
       <name>Julian Onions</name>
@@ -20,9 +21,9 @@
       <email>elena.razlogova@gmail.com</email>
     </contributor>
     <summary>Chicago format with full notes and bibliography</summary>
-    <category term="generic-base" />
-    <category term="numeric" />
-    <updated />
+    <category field="generic-base" />
+    <category citation-format="numeric" />
+    <updated>2009-08-10T04:49:00+09:00</updated>
   </info>
   <macro name="editor-translator">
     <group delimiter=", ">
@@ -267,8 +268,8 @@
       <text macro="interviewer-note" />
       <text variable="medium" />
       <choose>
-        <if match="none" variable="title"> </if>
-        <else-if match="any" type="thesis speech"> </else-if>
+        <if match="none" variable="title"/>
+        <else-if match="any" type="thesis speech"/>
         <else>
           <text variable="genre" />
         </else>
@@ -282,8 +283,8 @@
         <text text-case="capitalize-first" variable="medium" />
       </group>
       <choose>
-        <if match="none" variable="title"> </if>
-        <else-if match="any" type="thesis speech"> </else-if>
+        <if match="none" variable="title"/>
+        <else-if match="any" type="thesis speech"/>
         <else>
           <text text-case="capitalize-first" variable="genre" />
         </else>
@@ -445,7 +446,7 @@
     <group>
       <choose>
         <if locator="page" match="none">
-          <label form="short" strip-periods="false" suffix=" " variable="locator" />
+          <label form="short" suffix=" " variable="locator" />
         </if>
       </choose>
       <text variable="locator" />
@@ -512,7 +513,7 @@
         <group delimiter=", " prefix=" (" suffix=")">
           <group delimiter=" ">
             <choose>
-              <if match="none" variable="title"> </if>
+              <if match="none" variable="title"/>
               <else-if match="any" type="thesis speech">
                 <text variable="genre" />
               </else-if>
@@ -592,6 +593,22 @@
     <text suffix=" " variable="title" />
     <text variable="genre" />
   </macro>
+  <macro name="legal-case-first">
+    <group delimiter=", ">
+      <text variable="title"/>
+      <group delimiter=" ">
+        <text variable="volume"/>
+        <text variable="container-title"/>
+        <text variable="page"/>
+        <group prefix="(" suffix=")" delimiter=" ">
+          <text variable="authority" form="short"/>
+          <date variable="issued">
+            <date-part name="year"/>
+	      </date>
+  	    </group>
+	  </group>
+	</group>
+  </macro>
   <citation 
          disambiguate-add-names="true"
          et-al-min="4"
@@ -600,12 +617,15 @@
          et-al-use-first="1">
     <layout delimiter="; " prefix="" suffix=".">
       <choose>
-        <if position="ibid-with-locator">
+        <if type="legal_case">
+          <text macro="legal-case-first"/>
+		</if>
+        <else-if position="ibid-with-locator">
           <group delimiter=", ">
             <text suffix="." term="ibid" text-case="capitalize-first" />
             <text macro="point-locators-subsequent" />
           </group>
-        </if>
+        </else-if>
         <else-if position="ibid">
           <text suffix="." term="ibid" text-case="capitalize-first" />
         </else-if>
@@ -629,7 +649,7 @@
           <text macro="collection-title" prefix=", " />
           <text macro="issue-note" />
           <text macro="locators-newspaper" prefix=", " />
-          <text macro="point-locators" />
+          <text macro="point-locators"/>
           <text macro="access-note" prefix=", " />
         </else>
       </choose>
@@ -646,6 +666,11 @@
       <key variable="issued" />
     </sort>
     <layout suffix=".">
+	  <choose>
+	  <if type="legal_case">
+		<text macro="legal-case-first"/>
+	  </if>
+      <else>
       <group delimiter=". ">
         <text macro="contributors" />
         <text macro="title" />
@@ -663,6 +688,8 @@
       <text macro="locators-newspaper" prefix=", " />
       <text macro="locators-journal" />
       <text macro="access" prefix=". " />
+	  </else>
+	  </choose>
     </layout>
   </bibliography>
 </style>

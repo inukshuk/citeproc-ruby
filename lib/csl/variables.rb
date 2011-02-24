@@ -228,7 +228,7 @@ module CSL
       
       tokens.reject!(&:nil?)
 
-      tokens.join(delimiter).gsub(/,,|\s+,,?/, ',').gsub(/^,?\s+/, '').gsub(/,\s*$/, '').gsub(/\s+/, ' ')
+      tokens.join(delimiter).squeeze(',').squeeze(' ').gsub(/^[\s,]+|[\s,]+$|\s(,)/, '\1')
     end
     
     def to_s
