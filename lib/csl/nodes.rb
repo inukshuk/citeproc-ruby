@@ -794,7 +794,7 @@ module CSL
       def inherit_attributes
         inherit_attributes_from(['citation', 'bibliography', 'style'], Nodes.inheritable_name_attributes)
         inherit_attributes_from(['citation', 'bibliography', 'style'], ['form', 'delimiter'], 'name-')
-        inherit_attributes_from(['style'], ['demote-non-dropping-particle'])
+        inherit_attributes_from(['style'], ['demote-non-dropping-particle', 'initialize-with-hyphen'])
       end
       
     end

@@ -138,6 +138,15 @@ module CiteProc
       options.each_pair { |key, value| self.options[key] = value unless value.nil? }
     end
     
+    def given
+      initialize? ? to_initials(self['given']) : self['given']
+    end
+    
+    def to_initials(name)
+      return name if name.nil?
+      name.split(/\s+/).map { |token| token.split(/-/).map { |p| p[0] + options['initialize-with'] }.join(options['initialize-with-hyphen'] == 'false' ? '' : '-' ) }.join(' ')
+    end
+    
     def is_personal?
       self.family?
     end
@@ -162,6 +171,10 @@ module CiteProc
     
     def delimiter
       is_romanesque? ? ' ' : ''
+    end
+    
+    def initialize?
+      options.has_key?('initialize-with') && family?
     end
     
     def is_static_order?
