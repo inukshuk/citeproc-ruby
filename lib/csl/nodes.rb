@@ -572,8 +572,8 @@ module CSL
             editors = names.detect { |name| name.first == 'editor' }
             translators = names.detect { |name| name.first == 'translator' }
         
-            if editors == translators
-              editors.first = 'editortranslator'
+            if editors.last.sort == translators.last.sort
+              editors[0] = 'editortranslator'
               names.delete(translators)
             end
           end

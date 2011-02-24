@@ -244,9 +244,8 @@ module CiteProc
       literal.gsub(/^(the|an?|der|die|das|eine?|l[ae])\s+/i, '')
     end
     
-    def <=>(other, opts={})
-      merge_options(opts)
- 
+    def <=>(other)
+
       tests = self.sort_order.zip(other.sort_order).map do |pair|
         this, that = pair.map { |token| token.gsub(/[\s-]+/,'_').gsub(/literal/, 'literal_sort_order') }          
 
@@ -256,9 +255,11 @@ module CiteProc
         # TODO should we ignore '' here?
         this <=> that
       end
-      
+
       tests = tests.reject(&:nil?)
-      tests[tests.take_while(&:zero?).length]
+      zeroes = tests.take_while(&:zero?)
+
+      zeroes.length != tests.length ? tests[zeroes.length] : zeroes.empty? ? nil : 0
     end
   end
 
