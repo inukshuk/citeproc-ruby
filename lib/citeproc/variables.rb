@@ -173,6 +173,14 @@ module CiteProc
       is_romanesque? ? ' ' : ''
     end
     
+    #
+    # CSL1.0 Warning
+    #
+    # @returns true if, using the current options, the name's given name is
+    # to be displayed using initials. Takes into account whether or not the
+    # family name is set (if not, given name should not be turned to initials,
+    # this is *not* sepcified in CSL 1.0).
+    #
     def initialize?
       options.has_key?('initialize-with') && family?
     end
