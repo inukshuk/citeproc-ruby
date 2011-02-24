@@ -581,19 +581,29 @@ module CSL
 
           names = names.map do |role, names|
             processed = []
-            processed << self.name.process_names(role, names, @processor)
-            if self.name.truncated?
-              # use delimiter before et al. if there are more than a single name
-              processed << (self.name.et_al_use_first.to_i > 1 ? self.name.delimiter : ' ')
-              processed << (self.et_al.nil? ? locale['et-al'].to_s : self.et_al.process(data, @processor))
+            
+            truncated = self.name.truncate(names)
+            
+            unless self.name.form == 'count'
+              processed << self.name.process_names(role, truncated, @processor)
+            
+              if names.length > truncated.length
+                # use delimiter before et al. if there are more than a single name
+                processed << (self.name.et_al_use_first.to_i > 1 ? self.name.delimiter : ' ')
+                processed << (self.et_al.nil? ? locale['et-al'].to_s : self.et_al.process(data, @processor))
+              end
+            
+              processed << self.label.process_names(role, names.length, @processor) unless self.label.nil?
+            else
+              processed << truncated.length.to_s
             end
-            processed << self.label.process_names(role, names.length, @processor) unless self.label.nil?
+            
             processed.join
           end
 
           names.join(delimiter)
         else
-          @substitute.nil? ? '' : @substitute.process(data, @processor)
+          self.name.form == 'count' ? '0' : @substitute.nil? ? '' : @substitute.process(data, @processor)
         end
       end
     
@@ -738,22 +748,10 @@ module CSL
         @parts ||= {}
       end
   
-      def truncated?
-        @truncated || false
-      end
-            
       def process_names(role, names, processor=nil)
         unless processor.nil?
           self.processor = processor
           self.parts.values.each { |part| part.processor = processor }
-        end
-
-        # truncate names
-        if et_al_min? && et_al_min.to_i <= names.length
-          names = names[0, et_al_use_first.to_i]
-          @truncated = true
-        else
-          @truncated = false
         end
 
         # set display options
@@ -773,6 +771,10 @@ module CSL
 
       format_on :process_names
 
+      def truncate(names)
+        et_al_min? && et_al_min.to_i <= names.length ? names[0, et_al_use_first.to_i] : names
+      end
+      
       private      
 
       # @returns the delimiter to be used between the penultimate and last

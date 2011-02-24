@@ -15,8 +15,8 @@ def filter(file, fixture)
   # ['affix_InterveningEmpty.json'].include?(File.basename(file))
   # File.basename(file) =~ /parallel_suppressyear/i
   # File.basename(file) =~ /page_/i
-  # File.basename(file) =~ /name_/i
-  fixture['mode'] == 'citation' && !fixture['citations']
+  File.basename(file) =~ /name_/i
+  # fixture['mode'] == 'citation' && !fixture['citations']
 end
 
 describe 'citeproc-test' do
@@ -48,7 +48,7 @@ describe 'citeproc-test' do
           data = CiteProc::CitationData.parse(fixture['citation_items'] || nil)
         
           if data.empty?
-            result = @proc.cite(:all).map { |d| d[1] }.join(', ')
+            result = @proc.cite(:all).map { |d| d[1] }.join()
           else
             result = data.map { |d| @proc.cite(d).map { |c| c[1] }.join(', ') }.join("\n")
           end
