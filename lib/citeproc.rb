@@ -44,7 +44,6 @@ Debugger.start
 require 'extensions/core'
 require 'extensions/attributes'
 
-require 'csl/variables'
 require 'csl/locale'
 require 'csl/formatting'
 require 'csl/nodes'
@@ -55,13 +54,14 @@ Dir.glob("#{File.expand_path('..', __FILE__)}/csl/formats/*.rb").each do |format
   require format
 end
 
-# load available input filters
-Dir.glob("#{File.expand_path('..', __FILE__)}/csl/filters/*.rb").each do |format|
-  require format
-end
-
 require 'citeproc/version'
+require 'citeproc/variables'
 require 'citeproc/data'
 require 'citeproc/item'
 require 'citeproc/bibliography'
 require 'citeproc/processor'
+
+# load available input filters
+Dir.glob("#{File.expand_path('..', __FILE__)}/citeproc/filters/*.rb").each do |format|
+  require format
+end

@@ -16,7 +16,7 @@
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 #++
 
-module CSL
+module CiteProc
     
   class Variable
     include Attributes
@@ -57,7 +57,7 @@ module CSL
       end
 
       def parse(variables, type=nil)
-        parser = lambda { |variable, type| CSL.const_get(Variable.parser[type]).new(variable) }
+        parser = lambda { |variable, type| CiteProc.const_get(Variable.parser[type]).new(variable) }
         variables.is_a?(Array) ? variables.map { |v| parser.call(v, type) } : parser.call(variables, type)
       end
       
@@ -227,7 +227,6 @@ module CSL
       end
       
       tokens.reject!(&:nil?)
-
       tokens.join(delimiter).squeeze(',').squeeze(' ').gsub(/^[\s,]+|[\s,]+$|\s(,)/, '\1')
     end
     

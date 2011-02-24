@@ -21,7 +21,7 @@ module CiteProc
   class Item
     include Attributes
     
-    attr_fields CSL::Variable.fields
+    attr_fields Variable.fields
     
     def initialize(attributes={}, filter=nil)
       self.merge!(attributes)
@@ -34,7 +34,7 @@ module CiteProc
     
     def merge!(arguments)
       arguments = [arguments] unless arguments.is_a?(Array)
-      arguments.each { |argument| argument.map { |key, value| self.attributes[key] = CSL::Variable.parse(value, key) }}
+      arguments.each { |argument| argument.map { |key, value| self.attributes[key] = Variable.parse(value, key) }}
     end
     
   end

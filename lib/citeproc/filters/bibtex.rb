@@ -16,7 +16,7 @@
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 #++
 
-CSL::Variable.filters[:bibtex] = (Hash.new { |h, k| k }).merge(Hash[*%w{
+CiteProc::Variable.filters[:bibtex] = (Hash.new { |h, k| k }).merge(Hash[*%w{
   date      issued
   isbn      ISBN
   booktitle container-title
