@@ -24,6 +24,11 @@ module CSL::Format
       @container = :span
       @mode = :individual
     end
+
+    def self.filter(string)
+      string.gsub(/&([^\w])/i, '&amp;\1')
+    end
+
     
     def finalize
       content = super
@@ -34,6 +39,10 @@ module CSL::Format
       end
     end
 
+    def input=(input)
+      super
+      @tokens.each { |token| token.content = Html.filter(token.content) }
+    end
 
     # @param display 'block', 'left-margin', 'right-inline', 'inline'
     def set_display(display)
