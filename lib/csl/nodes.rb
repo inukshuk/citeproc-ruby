@@ -601,7 +601,6 @@ module CSL
             
             processed.join
           end
-
           
           count_only ? names.inject(0) { |a, b| a.to_i + b.to_i }.to_s : names.join(delimiter)
         else
@@ -784,8 +783,7 @@ module CSL
       def ampersand
         if self.and?
           ampersand = self.and == 'symbol' ? '&' : locale[self.and == 'text' ? 'and' : self.and].to_s(attributes)
-          ampersand = delimiter_precedes_last? ? [delimiter, ampersand].join : ampersand
-          ampersand.center(ampersand.length + 2)
+          delimiter_precedes_last? ? [delimiter, ampersand, ' '].join : ampersand.center(ampersand.length + 2)
         else
           delimiter
         end

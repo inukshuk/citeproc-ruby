@@ -117,7 +117,8 @@ module CiteProc
   #
   class Name < Variable
 
-    ROMANESQUE = /^[a-zA-Z\u0080-\u017f\u0400-\u052f\u0386-\u03fb\u1f00-\u1ffe]*$/
+    ROMANESQUE = /^[a-zA-Z\u0080-\u017f\u0400-\u052f\u0386-\u03fb\u1f00-\u1ffe\.\s'\u0027\u02bc\u2019-]*$/
+    NO_INITIALS = /^(de)$/
     
     attr_fields %w{ given family literal suffix dropping-particle
       non-dropping-particle comma-suffix static-ordering parse-names }
@@ -144,7 +145,12 @@ module CiteProc
     
     def to_initials(name)
       return name if name.nil?
-      name.split(/\s+/).map { |token| token.split(/-/).map { |p| p[0] + options['initialize-with'] }.join(options['initialize-with-hyphen'] == 'false' ? '' : '-' ) }.join(' ')
+      
+      name.split(/\s+/).map do |token|
+        token.split(/-/).map do |part|
+          part.match(NO_INITIALS) ? part.center(part.length + 2) : part[0] + options['initialize-with']
+        end.join(options['initialize-with-hyphen'] == 'false' ? '' : '-' )
+      end.join
     end
     
     def is_personal?
@@ -152,7 +158,7 @@ module CiteProc
     end
     
     def is_romanesque?
-      (given.nil? || given.match(ROMANESQUE)) && (family.nil? || family.match(ROMANESQUE))
+      (self['given'].nil? || self['given'].match(ROMANESQUE)) && (self['family'].nil? || self['family'].match(ROMANESQUE))
     end
     
     alias :is_byzantine? :is_romanesque?
