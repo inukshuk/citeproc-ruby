@@ -81,7 +81,9 @@ module CiteProc
     def import(items)
       items = to_a(items)
       items.each do |item|
-        self.items[item['id']] = Item.new(item)
+        item = Item.new(item)
+        item.processor = self
+        self.items[item['id']] = item
       end
     end
     

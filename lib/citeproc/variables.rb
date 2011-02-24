@@ -43,7 +43,7 @@ module CiteProc
     @date_fields.each { |field| @parser[field] = 'Date' }
     @name_fields.each { |field| @parser[field] = 'Name' }
 
-    attr_fields :literal
+    attr_fields :value
     
     class << self
       attr_reader :date_fields, :name_fields, :text_fields, :filters, :parser
@@ -68,21 +68,19 @@ module CiteProc
     end
     
     def set(argument)
-      argument.is_a?(Hash) || argument.is_a?(Array) ?  self.merge!(argument) : self.literal = argument.to_s
-    end
-    
-    # @param form e.g. long/short for title
-    # TODO where is this specified? (seen in text node docs)
-    def value(form=nil)
-      self.literal
+      argument.is_a?(Hash) || argument.is_a?(Array) ?  self.merge!(argument) : self.value = argument.to_s
     end
     
     def to_s
-      self.literal.to_s
+      self.value.to_s
     end
-        
+    
+    def is_numeric?
+      self.to_s.match(/^-?\d+$/)
+    end
+    
     def <=>(other)
-      self.attributes <=> other.attributes
+      self.to_s <=> other.to_s
     end
   end
   
@@ -136,7 +134,7 @@ module CiteProc
       @options ||= defaults
     end
     
-    def options=(options)
+    def merge_options(options)
       options.each_pair { |key, value| self.options[key] = value unless value.nil? }
     end
     
@@ -173,11 +171,15 @@ module CiteProc
     def is_sort_order?
       ['all', 'true', 'yes', 'always'].include?(options['name-as-sort-order'])
     end
-    
+ 
+    def is_numeric?
+      false
+    end
+       
     # @returns a list of strings, representing a given order of the individual
     # tokens when displaying the name.
     def display_order(opts={})
-      self.options = opts
+      merge_options(opts)
 
       case
       when literal?
@@ -204,7 +206,7 @@ module CiteProc
     # @returns a list of strings, representing the order of precedence of the
     # individual tokens when sorting the name.
     def sort_order(opts={})
-      self.options = opts
+      merge_options(opts)
 
       case
       when literal?
@@ -242,7 +244,9 @@ module CiteProc
       literal.gsub(/^(the|an?|der|die|das|eine?|l[ae])\s+/i, '')
     end
     
-    def <=>(other)
+    def <=>(other, opts={})
+      merge_options(opts)
+ 
       tests = self.sort_order.zip(other.sort_order).map do |pair|
         this, that = pair.map { |token| token.gsub(/[\s-]+/,'_').gsub(/literal/, 'literal_sort_order') }          
 
@@ -279,15 +283,17 @@ module CiteProc
         date_parts[0][index] = value.to_i
       end      
     end
+    
+    alias :is_uncertain? :circa?
         
     def date_parts
       attributes['date-parts'] ||= [[]]
     end
     
-    def is_range?
+    def range?
       date_parts.length > 1
     end
-    
+        
     def from
       date_parts.first
     end
@@ -299,13 +305,21 @@ module CiteProc
     def to_s
       literal || attributes.inspect
     end
-  
+
+    def is_numeric?
+      false
+    end
+    
+    def sort_order
+      "%04d%02d%02d-%04d%02d%02d" % self.from + self.to
+    end
+    
     def to_json
       self.attributes.to_json
     end
     
     def <=>(other)
-      self.from <=> other.from
+      self.sort_order <=> other.sort_order
     end
   end
 end

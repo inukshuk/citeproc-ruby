@@ -19,9 +19,12 @@
 module CiteProc
 
   class Item
+    include Comparable
     include Attributes
     
     attr_fields Variable.fields
+    
+    attr_accessor :processor
     
     def initialize(attributes={}, filter=nil)
       self.merge!(attributes)
@@ -36,7 +39,15 @@ module CiteProc
       arguments = [arguments] unless arguments.is_a?(Array)
       arguments.each { |argument| argument.map { |key, value| self.attributes[key] = Variable.parse(value, key) }}
     end
+
+    def to_s
+      self.attributes.inspect
+    end
     
+    def <=>(other)
+      self.attributes <=> other.attributes if @processor.nil?
+      
+    end
   end
 
 end

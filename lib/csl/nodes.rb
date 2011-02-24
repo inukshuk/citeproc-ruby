@@ -366,15 +366,15 @@ module CSL
 
       def process(data, processor=nil)
         super
-        date = self.item(data['id'])[variable].clone
+        date = self.item(data['id'])[variable]
         
         case
         when date.nil?
           ''
         when date.literal?
-          date.literal
+          date.literal.clone
         else
-          self.parts.map { |part| part.process(date, processor) }.join(delimiter)
+          self.parts.map { |part| part.process(date.clone, @processor) }.join(delimiter)
         end
       end
 
@@ -757,7 +757,7 @@ module CSL
         end
 
         # set display options
-        names = names.each { |name| name.options = attributes }
+        names = names.each { |name| name.merge_options(attributes) }
         names.first.options['name-as-sort-order'] = 'true' if name_as_sort_order == 'first'
 
         # name-part formatting
@@ -1146,7 +1146,7 @@ module CSL
         super
         
         elements.each do |element|
-          return element.process(data, processor) if element.evaluate?(item(data['id']))
+          return element.process(data, processor) if element.evaluate?(data, item(data['id']))
         end
 
         ''
@@ -1175,27 +1175,43 @@ module CSL
         self.elements.map { |element| element.process(data, @processor) }.join
       end
       
-      def evaluate?(item)
+      def evaluate?(data, item)
         case
         when self.disambiguate?
+          # CiteProc.log.warn "Choose disambiguate not implemented yet"
           false
+
         when self.is_numeric?
-          false
+          value = item[variable]
+          value && value.is_numeric?
+          
         when self.is_uncertain_date?
-          false
+          date = item[variable]
+          date.is_a?(Date) && date.is_uncertain?
+          
         when self.locator?
-          false
+          locator == (data['locator'] || item['locator'] || '').to_s
+          
         when self.position?
+          # CiteProc.log.warn "Choose position not implemented yet"
           false
+
         when type?
           self.is_match?(item['type'].to_s, type.split(/\s+/))
+          
         when self.variable?
           self.is_empty?(item, variable.split(/\s+/))
+          
         when @name == 'else'
           true
+          
         else
           false
+          
         end
+      rescue Exception => e
+        CiteProc.log.error "Failed to evaluate item #{item.inspect}; returning false."
+        false
       end
       
       # does a match any/all/none b in bs?
