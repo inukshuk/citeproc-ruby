@@ -44,6 +44,15 @@ module CiteProc
       self.attributes.inspect
     end
     
+    alias :access :[]
+    
+    # @returns the variable with the given id. In case of a normal
+    # CiteProc::Variable, the variable is returned as a string.
+    def [](id)
+      value = access(id)
+      value.class == CiteProc::Variable ? value.value : value
+    end
+    
     def <=>(other)
       self.attributes <=> other.attributes if @processor.nil?
       

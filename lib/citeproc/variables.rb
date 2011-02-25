@@ -179,6 +179,10 @@ module CiteProc
       is_romanesque? ? ' ' : ''
     end
     
+    def value
+      self
+    end
+    
     #
     # CSL1.0 Warning
     #
@@ -334,6 +338,10 @@ module CiteProc
       literal || attributes.inspect
     end
 
+    def value
+      self
+    end
+    
     def is_numeric?
       false
     end

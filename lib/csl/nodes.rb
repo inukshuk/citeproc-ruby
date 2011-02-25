@@ -237,7 +237,7 @@ module CSL
         when self.variable?
           item = self.item(data['id'])
           text = (data[variable] || item["short#{variable.capitalize}"] || item[['short', variable].join('-')] || item[variable]).to_s
-          
+
           if self.form == 'short'
             text = abbreviate(text)
           end
@@ -1148,7 +1148,7 @@ module CSL
         super
         
         elements.each do |element|
-          return element.process(data, processor) if element.evaluate?(data, item(data['id']))
+          return element.process(data, @processor) if element.evaluate?(data, item(data['id']))
         end
 
         ''
