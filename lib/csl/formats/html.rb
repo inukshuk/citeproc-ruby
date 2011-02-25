@@ -31,12 +31,13 @@ module CSL::Format
 
     
     def finalize
-      content = super
-      if @styles.empty?
-        content
-      else
-        @mode == :combined ? content_tag(@container, content, @styles) : individual_tags(content)
+      content = @tokens.map(&:content).join
+
+      unless @styles.empty?
+        content = @mode == :combined ? content_tag(@container, content, @styles) : individual_tags(content)
       end
+
+      [@affixes[0], content, @affixes[1]].reject(&:nil?).join      
     end
 
     def input=(input)
