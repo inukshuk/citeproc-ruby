@@ -578,8 +578,6 @@ module CSL
             end
           end
       
-          # TODO not sure whether format is applied only once or on each name item individually
-
           names = names.map do |role, names|
             processed = []
             
@@ -589,9 +587,12 @@ module CSL
               processed << self.name.process_names(role, truncated, @processor)
             
               if names.length > truncated.length
-                # use delimiter before et al. if there are more than a single name
-                processed << (self.name.et_al_use_first.to_i > 1 ? self.name.delimiter : ' ')
-                processed << (self.et_al.nil? ? locale['et-al'].to_s : self.et_al.process(data, @processor))
+
+                # use delimiter before et al. if there is more than a single name; squeeze whitespace
+                others = (self.et_al.nil? ? locale['et-al'].to_s : self.et_al.process(data, @processor))
+                link = (self.name.et_al_use_first.to_i > 1 ? self.name.delimiter : ' ')
+
+                processed << [link, others].join.squeeze(' ')
               end
             
               processed << self.label.process_names(role, names.length, @processor) unless self.label.nil?
@@ -840,7 +841,7 @@ module CSL
 
       def process(data, processor=nil)
         super
-        locale[term].to_s(attributes)
+        locale[term ||  'et-al'].to_s(attributes)
       end
     
       format_on :process
