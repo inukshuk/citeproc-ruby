@@ -3,6 +3,7 @@ source :rubyforge
 gem 'logging'
 gem 'nokogiri'
 gem 'rspec'
+gem 'activesupport'
 
 group :development do
 	gem 'ruby-debug19', :platforms => [:ruby_19]
@@ -10,3 +11,5 @@ group :development do
 end
 
 gem 'json', :platforms => [:ruby_18]
+
+gem 'unicode_utils', :platforms => [:ruby_19]

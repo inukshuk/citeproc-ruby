@@ -155,14 +155,14 @@ module CSL
         
         case text_case
         when 'lowercase'
-          @tokens.each { |token| token.content.downcase! }
+          @tokens.each { |token| token.content = UnicodeUtils ? UnicodeUtils.downcase(token.content) : token.content.downcase }
           
         when 'uppercase'
-          @tokens.each { |token| token.content.upcase! }
+          @tokens.each { |token| token.content = UnicodeUtils ? UnicodeUtils.upcase(token.content) : token.content.upcase }
           
         when 'capitalize-first'
           token = @tokens.detect { |token| !token.annotations.include?('nocase') }
-          token.content.sub!(/^./) { $&.upcase }
+          token.content.sub!(/^./) { UnicodeUtils ? UnicodeUtils.upcase($&) : $&.upcase }
           
         when 'capitalize-all'
           # @tokens.each { |token| token.content.gsub!(/\b\w/) { $&.upcase } unless token.annotations.include?('nocase') }
@@ -170,7 +170,7 @@ module CSL
           
         # TODO exact specification?
         when 'title'
-          @tokens.each { |token| token.content = token.content.split(/(\s+)/).map { |w| w.match(/^(and|of|a|an|the)$/i) ? w : w.gsub(/\b\w/) { $&.upcase } }.join unless token.annotations.include?('nocase') }
+          @tokens.each { |token| token.content = token.content.split(/(\s+)/).map { |w| w.match(/^(and|of|a|an|the)$/i) ? w : w.gsub(/\b\w/) { UnicodeUtils ? UnicodeUtils.upcase($&) : $&.upcase } }.join unless token.annotations.include?('nocase') }
 
         # TODO exact specification?
         when 'sentence'

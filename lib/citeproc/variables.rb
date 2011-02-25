@@ -188,7 +188,7 @@ module CiteProc
     # this is *not* sepcified in CSL 1.0).
     #
     def initialize?
-      options.has_key?('initialize-with') && family?
+      options.has_key?('initialize-with') && family? && is_romanesque?
     end
     
     def is_static_order?
