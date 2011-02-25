@@ -56,5 +56,5 @@
         }
     ], 
     "mode": "citation", 
-    "result": "Doe &amp; Roe, <i>Book A</i> (2000); Doe &amp; Roe, <i>Book B</i> (2000)"
+    "result": "Doe &#38; Roe, <i>Book A</i> (2000); Doe &#38; Roe, <i>Book B</i> (2000)"
 }

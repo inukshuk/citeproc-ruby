@@ -10,15 +10,11 @@
             "author": [
                 {
                     "family": "Doe", 
-                    "given": "John", 
-                    "static-ordering": false, 
-                    "uri": "http://people.org/doej"
+                    "given": "John"
                 }, 
                 {
                     "family": "Roe", 
-                    "given": "Jane", 
-                    "static-ordering": false, 
-                    "uri": "http://people.org/roej"
+                    "given": "Jane"
                 }
             ], 
             "id": "item-1", 

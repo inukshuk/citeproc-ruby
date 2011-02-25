@@ -145,5 +145,5 @@
         }
     ], 
     "mode": "citation", 
-    "result": "Smith, Brown &amp; J. Jones (1980a); Smith, Brown &amp; J. Jones (1980b)\nSmith, Brown &amp; J. Jones (1980a); Smith, Benson, et al. (1980)\nSmith, Brown &amp; J. Jones (1980a); Smith, Brown &amp; A. Jones (1980)"
+    "result": "Smith, Brown &#38; J. Jones (1980a); Smith, Brown &#38; J. Jones (1980b)\nSmith, Brown &#38; J. Jones (1980a); Smith, Benson, et al. (1980)\nSmith, Brown &#38; J. Jones (1980a); Smith, Brown &#38; A. Jones (1980)"
 }

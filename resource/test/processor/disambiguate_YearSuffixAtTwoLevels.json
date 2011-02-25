@@ -141,5 +141,5 @@
         }
     ], 
     "mode": "citation", 
-    "result": ">>[0] Smith, Jones &amp; Brown (1986a); Smith, Jones &amp; Brown (1986b); Smith, Jones, Brown, et al. (1986a); Smith, Jones, Brown, et al. (1986b)"
+    "result": ">>[0] Smith, Jones &#38; Brown (1986a); Smith, Jones &#38; Brown (1986b); Smith, Jones, Brown, et al. (1986a); Smith, Jones, Brown, et al. (1986b)"
 }

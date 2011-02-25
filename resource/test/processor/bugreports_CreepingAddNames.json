@@ -1,0 +1,142 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": [
+        [
+            {
+                "citationID": "CITATION-1", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-1"
+                    }
+                ], 
+                "properties": {
+                    "noteIndex": 0
+                }
+            }, 
+            [], 
+            []
+        ], 
+        [
+            {
+                "citationID": "CITATION-1", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-1"
+                    }, 
+                    {
+                        "id": "ITEM-2"
+                    }
+                ], 
+                "properties": {
+                    "noteIndex": 0
+                }
+            }, 
+            [], 
+            []
+        ], 
+        [
+            {
+                "citationID": "CITATION-1", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-1"
+                    }, 
+                    {
+                        "id": "ITEM-2"
+                    }, 
+                    {
+                        "id": "ITEM-3"
+                    }
+                ], 
+                "properties": {
+                    "noteIndex": 0
+                }
+            }, 
+            [], 
+            []
+        ]
+    ], 
+    "csl": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<style xmlns=\"http://purl.org/net/xbiblio/csl\" class=\"in-text\" version=\"1.0\">\n   <info>\n      <title>American Sociological Association</title>\n      <id>http://www.zotero.org/styles/asa</id>\n      <link href=\"http://www.zotero.org/styles/asa\" rel=\"self\"/>\n      <author>\n         <name>Julian Onions</name>\n         <email>julian.onions@gmail.com</email>\n      </author>\n      <category citation-format=\"author-date\"/>\n      <category field=\"sociology\"/>\n      <updated>2008-10-20T16:32:11+00:00</updated>\n      <summary>The ASA style.</summary>\n      <link href=\"http://www.asanet.org/galleries/default-file/asaguidelinesnew.pdf\" rel=\"documentation\"/>\n   </info>\n   <macro name=\"editor\">\n      <names variable=\"editor\">\n         <label form=\"verb\" text-case=\"lowercase\" suffix=\" \"/>\n         <name and=\"text\" delimiter=\", \"/>\n      </names>\n   </macro>\n   <macro name=\"series-editor\">\n      <names variable=\"original-author\">\n         <label form=\"short\" text-case=\"capitalize-first\" suffix=\". \" strip-periods=\"true\"/>\n         <name and=\"text\" delimiter=\", \"/>\n      </names>\n   </macro>\n   <macro name=\"anon\">\n      <text term=\"anonymous\" form=\"short\" text-case=\"capitalize-first\" strip-periods=\"true\"/>\n   </macro>\n   <macro name=\"author\">\n      <names variable=\"author\">\n         <name and=\"text\" name-as-sort-order=\"first\" sort-separator=\", \" delimiter=\", \" delimiter-precedes-last=\"always\"/>\n         <label form=\"short\" prefix=\", \" suffix=\".\" text-case=\"lowercase\" strip-periods=\"true\"/>\n         <substitute>\n            <names variable=\"editor\"/>\n            <names variable=\"translator\"/>\n            <text macro=\"anon\"/>\n         </substitute>\n      </names>\n   </macro>\n   <macro name=\"author-short\">\n      <names variable=\"author\">\n         <name form=\"short\" and=\"text\" delimiter=\", \"/>\n         <substitute>\n            <names variable=\"editor\"/>\n            <names variable=\"translator\"/>\n            <text macro=\"anon\"/>\n         </substitute>\n      </names>\n   </macro>\n   <macro name=\"access\">\n      <group>\n         <text variable=\"URL\"/>\n         <group prefix=\" (\" suffix=\")\">\n            <text term=\"accessed\" text-case=\"capitalize-first\" suffix=\" \"/>\n            <date variable=\"accessed\">\n               <date-part name=\"month\" suffix=\" \"/>\n               <date-part name=\"day\" suffix=\", \"/>\n               <date-part name=\"year\"/>\n            </date>\n         </group>\n      </group>\n   </macro>\n   <macro name=\"title\">\n      <choose>\n         <if type=\"thesis\">\n            <text variable=\"title\"/>\n         </if>\n         <else-if type=\"bill book graphic legal_case motion_picture report song\" match=\"any\">\n            <text variable=\"title\" font-style=\"italic\"/>\n         </else-if>\n         <else>\n            <text variable=\"title\" quotes=\"true\"/>\n         </else>\n      </choose>\n   </macro>\n   <macro name=\"publisher\">\n      <group delimiter=\": \">\n         <text variable=\"publisher-place\"/>\n         <text variable=\"publisher\"/>\n      </group>\n   </macro>\n   <macro name=\"year-date\">\n      <choose>\n         <if variable=\"issued\">\n            <date variable=\"issued\">\n               <date-part name=\"year\"/>\n            </date>\n         </if>\n         <else>\n            <text term=\"no date\" form=\"short\" strip-periods=\"true\"/>\n         </else>\n      </choose>\n   </macro>\n   <macro name=\"day-month\">\n      <date variable=\"issued\">\n         <date-part name=\"month\"/>\n         <date-part name=\"day\" prefix=\" \"/>\n      </date>\n   </macro>\n   <macro name=\"pages\">\n      <label variable=\"page\" form=\"short\" suffix=\". \" text-case=\"capitalize-first\" strip-periods=\"true\"/>\n      <text variable=\"page\"/>\n   </macro>\n   <macro name=\"edition\">\n      <choose>\n         <if is-numeric=\"edition\">\n            <group delimiter=\" \">\n               <number variable=\"edition\" form=\"ordinal\"/>\n               <text term=\"edition\" form=\"short\" suffix=\".\" strip-periods=\"true\"/>\n            </group>\n         </if>\n         <else>\n            <text variable=\"edition\" suffix=\".\"/>\n         </else>\n      </choose>\n   </macro>\n   <citation et-al-min=\"4\" et-al-use-first=\"1\" et-al-subsequent-min=\"3\" et-al-subsequent-use-first=\"1\" disambiguate-add-year-suffix=\"true\" disambiguate-add-names=\"true\" disambiguate-add-givenname=\"true\" collapse=\"year\">\n      <layout prefix=\"(\" suffix=\")\" delimiter=\"; \">\n         <group delimiter=\":\">\n            <group delimiter=\" \">\n               <text macro=\"author-short\"/>\n               <text macro=\"year-date\"/>\n            </group>\n            <text variable=\"locator\"/>\n         </group>\n      </layout>\n   </citation>\n   <bibliography hanging-indent=\"true\" et-al-min=\"6\" et-al-use-first=\"1\">\n      <sort>\n         <key macro=\"author\"/>\n         <key variable=\"title\"/>\n      </sort>\n      <layout suffix=\".\">\n         <group delimiter=\" \">\n            <text macro=\"author\" suffix=\".\"/>\n            <text macro=\"year-date\" suffix=\".\"/>\n         </group>\n         <choose>\n            <if type=\"article-newspaper article-magazine\" match=\"any\">\n               <group delimiter=\" \">\n                  <text macro=\"title\" prefix=\" \" suffix=\".\"/>\n               </group>\n               <group prefix=\" \" delimiter=\", \">\n                  <text variable=\"container-title\" font-style=\"italic\"/>\n                  <text macro=\"day-month\"/>\n                  <text variable=\"edition\"/>\n                  <text variable=\"page\"/>\n               </group>\n            </if>\n            <else-if type=\"thesis\">\n               <text macro=\"title\" prefix=\" \" suffix=\".\" quotes=\"true\"/>\n               <group prefix=\" \" delimiter=\", \">\n                  <text macro=\"edition\"/>\n                  <text macro=\"editor\" suffix=\".\"/>\n                  <text variable=\"genre\"/>\n                  <text macro=\"publisher\"/>\n               </group>\n            </else-if>\n            <else-if type=\"bill book graphic legal_case motion_picture report song\" match=\"any\">\n               <group delimiter=\" \">\n                  <text macro=\"title\" prefix=\" \" suffix=\".\"/>\n                  <text macro=\"edition\"/>\n                  <text macro=\"editor\" suffix=\".\"/>\n                  <text macro=\"publisher\"/>\n               </group>\n            </else-if>\n            <else-if type=\"chapter paper-conference\" match=\"any\">\n               <group delimiter=\" \">\n                  <text macro=\"title\" prefix=\" \" suffix=\".\"/>\n                  <group delimiter=\", \" suffix=\".\">\n                     <group delimiter=\" \">\n                        <text macro=\"pages\"/>\n                        <text term=\"in\" text-case=\"lowercase\"/>\n                        <text variable=\"container-title\" font-style=\"italic\"/>\n                     </group>\n                     <text variable=\"volume\" prefix=\"vol. \"/>\n                     <text variable=\"collection-title\" font-style=\"italic\"/>\n                     <text macro=\"editor\"/>\n                  </group>\n                  <text macro=\"publisher\"/>\n               </group>\n            </else-if>\n            <else>\n               <group suffix=\".\">\n                  <text macro=\"title\" prefix=\" \"/>\n                  <text macro=\"editor\" prefix=\" \"/>\n               </group>\n               <group prefix=\" \" suffix=\".\" delimiter=\" \">\n                  <text variable=\"container-title\" font-style=\"italic\"/>\n                  <group delimiter=\":\">\n                     <text variable=\"volume\"/>\n                     <text variable=\"page\"/>\n                  </group>\n               </group>\n            </else>\n         </choose>\n         <text prefix=\" \" macro=\"access\" suffix=\".\"/>\n      </layout>\n   </bibliography>\n</style>\n", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Morley", 
+                    "given": "John"
+                }, 
+                {
+                    "family": "King", 
+                    "given": "Richard"
+                }, 
+                {
+                    "family": "Gadget", 
+                    "given": "Tom"
+                }, 
+                {
+                    "family": "Widget", 
+                    "given": "Peter"
+                }
+            ], 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "2011"
+                    ]
+                ]
+            }, 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Butler", 
+                    "given": "Sharon"
+                }, 
+                {
+                    "family": "Turner", 
+                    "given": "Sarah"
+                }
+            ], 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "2010"
+                    ]
+                ]
+            }, 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Rowan", 
+                    "given": "Steven"
+                }, 
+                {
+                    "family": "Peel", 
+                    "given": "Artemus"
+                }, 
+                {
+                    "family": "Vendeville", 
+                    "given": "Bruce"
+                }
+            ], 
+            "id": "ITEM-3", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "2004"
+                    ]
+                ]
+            }, 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": ">>[0] (Morley et al. 2011; Butler and Turner 2010; Rowan, Peel, and Vendeville 2004)"
+}

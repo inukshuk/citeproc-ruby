@@ -1,0 +1,126 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": [
+        [
+            {
+                "citationID": "CITATION-1", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-1"
+                    }
+                ], 
+                "properties": {
+                    "noteIndex": 0
+                }
+            }, 
+            [], 
+            []
+        ], 
+        [
+            {
+                "citationID": "CITATION-2", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-2"
+                    }
+                ], 
+                "properties": {
+                    "noteIndex": 0
+                }
+            }, 
+            [
+                [
+                    "CITATION-1", 
+                    0
+                ]
+            ], 
+            []
+        ], 
+        [
+            {
+                "citationID": "CITATION-3", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-3"
+                    }
+                ], 
+                "properties": {
+                    "noteIndex": 0
+                }
+            }, 
+            [
+                [
+                    "CITATION-1", 
+                    0
+                ], 
+                [
+                    "CITATION-2", 
+                    0
+                ]
+            ], 
+            []
+        ]
+    ], 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation \n         et-al-min=\"3\"\n         et-al-use-first=\"1\"\n         et-al-subsequent-min=\"3\"\n         et-al-subsequent-use-first=\"1\"\n         disambiguate-add-year-suffix=\"true\">\n    <layout delimiter=\"; \">\n      <group delimiter=\" \">\n        <names variable=\"author\">\n          <name form=\"short\"/>\n        </names>\n        <date  variable=\"issued\" form=\"text\" date-parts=\"year\"/>\n      </group>\n    </layout>\n  </citation>\n  <bibliography>\n    <sort>\n      <key variable=\"author\" />\n      <key variable=\"title\" />\n    </sort>\n    <layout>\n      <text value=\"Ignore me\" />\n    </layout>\n  </bibliography>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Smith", 
+                    "given": "John"
+                }
+            ], 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1990"
+                    ]
+                ]
+            }, 
+            "title": "Book A", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Smith", 
+                    "given": "John"
+                }
+            ], 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1990"
+                    ]
+                ]
+            }, 
+            "title": "Book B", 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Jones", 
+                    "given": "Bob"
+                }
+            ], 
+            "id": "ITEM-3", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1990"
+                    ]
+                ]
+            }, 
+            "title": "Book C", 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "..[0] Smith 1990a\n..[1] Smith 1990b\n>>[2] Jones 1990"
+}

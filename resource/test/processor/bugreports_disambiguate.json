@@ -60,5 +60,5 @@
         }
     ], 
     "mode": "citation", 
-    "result": "(FamilyA &amp; FamilyB, 2003; FamilyA, FamilyC, &amp; FamilyB, 2007)"
+    "result": "(FamilyA &#38; FamilyB, 2003; FamilyA, FamilyC, &#38; FamilyB, 2007)"
 }

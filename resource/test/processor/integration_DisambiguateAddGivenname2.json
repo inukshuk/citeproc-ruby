@@ -90,5 +90,5 @@
         }
     ], 
     "mode": "citation", 
-    "result": ">>[0] John Smith &amp; Jane Smith (1980)"
+    "result": ">>[0] John Smith &#38; Jane Smith (1980)"
 }

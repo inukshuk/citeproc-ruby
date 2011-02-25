@@ -89,5 +89,5 @@
         }
     ], 
     "mode": "citation", 
-    "result": "One TwoA <i>Three Four</i> Five!\n<i>One TwoB</i> Three Four Five!\nOne TwoC Three <i>Four Five!</i>\n<i>One TwoD</i> Three <i>Four Five!</i>\n<i>One TwoE <span style=\"font-style:normal;\">Three</span> Four Five!</i>\nOne TwoF&lt;/i&gt; Three Four Five!\nOne <i>TwoG</i> Three&lt;/i&gt; Four Five!\nOne &lt;i&gt;TwoH<i> Three</i> Four Five!"
+    "result": "One TwoA <i>Three Four</i> Five!\n<i>One TwoB</i> Three Four Five!\nOne TwoC Three <i>Four Five!</i>\n<i>One TwoD</i> Three <i>Four Five!</i>\n<i>One TwoE <span style=\"font-style:normal;\">Three</span> Four Five!</i>\nOne TwoF&#60;/i&#62; Three Four Five!\nOne <i>TwoG</i> Three&#60;/i&#62; Four Five!\nOne &#60;i&#62;TwoH<i> Three</i> Four Five!"
 }

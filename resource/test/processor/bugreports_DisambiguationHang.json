@@ -1,0 +1,188 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": [
+        [
+            {
+                "citationID": "CITATION-1", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-1"
+                    }
+                ], 
+                "properties": {
+                    "noteIndex": 1
+                }
+            }, 
+            [], 
+            []
+        ], 
+        [
+            {
+                "citationID": "CITATION-2", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-2"
+                    }
+                ], 
+                "properties": {
+                    "noteIndex": 2
+                }
+            }, 
+            [
+                [
+                    "CITATION-1", 
+                    1
+                ]
+            ], 
+            []
+        ], 
+        [
+            {
+                "citationID": "CITATION-3", 
+                "citationItems": [
+                    {
+                        "id": "ITEM-3"
+                    }
+                ], 
+                "properties": {
+                    "noteIndex": 3
+                }
+            }, 
+            [
+                [
+                    "CITATION-1", 
+                    1
+                ], 
+                [
+                    "CITATION-2", 
+                    2
+                ]
+            ], 
+            []
+        ]
+    ], 
+    "csl": "<style \n      xmlns=\"http://purl.org/net/xbiblio/csl\"\n      class=\"note\"\n      version=\"1.0\">\n  <info>\n    <id />\n    <title />\n    <updated>2009-08-10T04:49:00+09:00</updated>\n  </info>\n  <citation \n        et-al-min=\"6\"\n        et-al-use-first=\"1\"\n  \t\tet-al-subsequent-min=\"3\" \n\t\tet-al-subsequent-use-first=\"1\" \n\t\tdisambiguate-add-names=\"true\" \n\t\tdisambiguate-add-givenname=\"true\"\n        disambiguate-add-year-suffix=\"true\">\n    <layout prefix=\"(\" suffix=\")\" delimiter=\"; \">\n      <group delimiter=\" \">\n        <names variable=\"author\">\n  \t\t  <name form=\"short\" and=\"symbol\"/>\n        </names>\n        <date variable=\"issued\" form=\"text\" date-parts=\"year\"/>\n      </group>\n    </layout>\n  </citation>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Caminiti", 
+                    "given": "R"
+                }, 
+                {
+                    "family": "Johnson", 
+                    "given": "P B"
+                }, 
+                {
+                    "family": "Burnod", 
+                    "given": "Y"
+                }, 
+                {
+                    "family": "Galli", 
+                    "given": "C"
+                }, 
+                {
+                    "family": "Ferraina", 
+                    "given": "S"
+                }
+            ], 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        1990
+                    ]
+                ]
+            }, 
+            "type": "article-journal"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Caminiti", 
+                    "given": "R"
+                }, 
+                {
+                    "family": "Johnson", 
+                    "given": "P B"
+                }, 
+                {
+                    "family": "Burnod", 
+                    "given": "Y"
+                }, 
+                {
+                    "family": "Galli", 
+                    "given": "C"
+                }, 
+                {
+                    "family": "Ferraina", 
+                    "given": "S"
+                }
+            ], 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        1990
+                    ]
+                ]
+            }, 
+            "type": "article-journal"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Caminiti", 
+                    "given": "R"
+                }, 
+                {
+                    "family": "Johnson", 
+                    "given": "P B"
+                }, 
+                {
+                    "family": "Urbano", 
+                    "given": "A"
+                }
+            ], 
+            "id": "ITEM-3", 
+            "issued": {
+                "date-parts": [
+                    [
+                        1990, 
+                        7
+                    ]
+                ]
+            }
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Caminiti", 
+                    "given": "R"
+                }, 
+                {
+                    "family": "Johnson", 
+                    "given": "P B"
+                }, 
+                {
+                    "family": "Urbano", 
+                    "given": "A"
+                }
+            ], 
+            "id": "ITEM-4", 
+            "issued": {
+                "date-parts": [
+                    [
+                        1990, 
+                        7
+                    ]
+                ]
+            }
+        }
+    ], 
+    "mode": "citation", 
+    "result": ">>[0] (Caminiti, Johnson, Burnod, Galli, &#38; Ferraina 1990a)\n>>[1] (Caminiti, Johnson, Burnod, Galli, &#38; Ferraina 1990b)\n>>[2] (Caminiti, Johnson, &#38; Urbano 1990)"
+}

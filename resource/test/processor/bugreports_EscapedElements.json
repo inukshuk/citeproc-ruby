@@ -20,5 +20,5 @@
         }
     ], 
     "mode": "bibliography", 
-    "result": "<div class=\"csl-bib-body\">\n  <div class=\"csl-entry\">\n    <div class=\"csl-left-margin\">1.</div><div class=\"csl-right-inline\">FamilyName, G. The Title. at &lt;http://www.test.com&gt;</div>\n  </div>\n</div>"
+    "result": "<div class=\"csl-bib-body\">\n  <div class=\"csl-entry\">\n    <div class=\"csl-left-margin\">1.</div><div class=\"csl-right-inline\">FamilyName, G. The Title. at &#60;http://www.test.com&#62;</div>\n  </div>\n</div>"
 }

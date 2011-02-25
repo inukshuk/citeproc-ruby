@@ -23,5 +23,5 @@
         }
     ], 
     "mode": "citation", 
-    "result": "numbers = 1-3; numbers = 4 &amp; 5; number = 10"
+    "result": "numbers = 1-3; numbers = 4 &#38; 5; number = 10"
 }

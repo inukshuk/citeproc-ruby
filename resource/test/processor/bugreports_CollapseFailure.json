@@ -1,0 +1,87 @@
+{
+    "abbreviations": false, 
+    "bibentries": false, 
+    "bibsection": false, 
+    "citation_items": false, 
+    "citations": false, 
+    "csl": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<style xmlns=\"http://purl.org/net/xbiblio/csl\" version=\"1.0\"\nclass=\"in-text\">\n  <info>\n    <title>My First Style</title>\n    <id>my-first-style</id>\n    <updated>2008-10-29T21:01:24+00:00</updated>\n  </info>\n  <macro name=\"author-short\">\n    <names variable=\"author\">\n      <name form=\"short\"/>\n    </names>\n  </macro>\n  <macro name=\"author\">\n    <names variable=\"author\">\n      <name name-as-sort-order=\"all\" initialize-with=\". \"/>\n    </names>\n  </macro>\n  <macro name=\"issued\">\n    <date variable=\"issued\">\n      <date-part name=\"year\"/>\n    </date>\n  </macro>\n  <citation et-al-min=\"3\" et-al-use-first=\"1\" disambiguate-add-year-suffix=\"true\" collapse=\"year\">\n    <sort>\n      <key macro=\"issued\"/>\n      <key macro=\"author-short\"/>\n    </sort>\n    <layout prefix=\"(\" suffix=\")\" delimiter=\"; \">\n      <group delimiter=\" \">\n        <text macro=\"author-short\"/>\n        <text macro=\"issued\"/>\n      </group>\n    </layout>\n  </citation>\n  <bibliography>\n    <sort>\n      <key macro=\"author\"/>\n      <key macro=\"issued\"/>\n    </sort>\n    <layout suffix=\".\">\n      <group delimiter=\" \">\n        <text macro=\"author\"/>\n        <text macro=\"issued\" prefix=\"(\" suffix=\")\"/>\n        <text variable=\"title\" suffix=\".\"/>\n        <text variable=\"container-title\" font-style=\"italic\"/>\n      </group>\n      <group prefix=\", \">\n        <text variable=\"volume\" suffix=\":\"/>\n        <text variable=\"page\"/>\n      </group>\n    </layout>\n  </bibliography>\n</style>", 
+    "input": [
+        {
+            "author": [
+                {
+                    "family": "Doe", 
+                    "given": "John"
+                }, 
+                {
+                    "family": "Roe", 
+                    "given": "Jane"
+                }, 
+                {
+                    "family": "Noakes", 
+                    "given": "Richard"
+                }
+            ], 
+            "id": "ITEM-1", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1965"
+                    ]
+                ]
+            }, 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Doe", 
+                    "given": "John"
+                }, 
+                {
+                    "family": "Spindlethrift", 
+                    "given": "Melanie"
+                }, 
+                {
+                    "family": "Korkblougher", 
+                    "given": "Weegas"
+                }
+            ], 
+            "id": "ITEM-2", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1965"
+                    ]
+                ]
+            }, 
+            "type": "book"
+        }, 
+        {
+            "author": [
+                {
+                    "family": "Doe", 
+                    "given": "John"
+                }, 
+                {
+                    "family": "Blub", 
+                    "given": "Sophie"
+                }, 
+                {
+                    "family": "Lanbright", 
+                    "given": "Bugeyes"
+                }
+            ], 
+            "id": "ITEM-3", 
+            "issued": {
+                "date-parts": [
+                    [
+                        "1970"
+                    ]
+                ]
+            }, 
+            "type": "book"
+        }
+    ], 
+    "mode": "citation", 
+    "result": "(Doe et al. 1965a; 1965b; 1970)"
+}
