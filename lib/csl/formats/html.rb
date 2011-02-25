@@ -26,7 +26,7 @@ module CSL::Format
     end
 
     def self.filter(string)
-      string.gsub(/&([^\w])/i, '&amp;\1')
+      string.gsub(/&([^#])/i, '&#38;\1')
     end
 
     
