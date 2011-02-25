@@ -118,7 +118,6 @@ module CiteProc
   class Name < Variable
 
     ROMANESQUE = /^[a-zA-Z\u0080-\u017f\u0400-\u052f\u0386-\u03fb\u1f00-\u1ffe\.\s'\u0027\u02bc\u2019-]*$/
-    NO_INITIALS = /^(de)$/
     
     attr_fields %w{ given family literal suffix dropping-particle
       non-dropping-particle comma-suffix static-ordering parse-names }
@@ -148,8 +147,9 @@ module CiteProc
       
       name.split(/\s+/).map do |token|
         token.split(/-/).map do |part|
-          part.match(NO_INITIALS) ? part.center(part.length + 2) : part[0] + options['initialize-with']
-        end.join(options['initialize-with-hyphen'] == 'false' ? '' : '-' )
+          # Keep all-lowercase names; otherwise keep only upper case letters
+          part.match(/^[[:lower:]]+$/) ? part.center(part.length + 2) : part.scan(/[[:upper:]]/).join.capitalize + options['initialize-with']
+        end.join(options['initialize-with-hyphen'] == 'false' ? '' : '-' ).gsub(/\s+-/, '-')
       end.join
     end
     
@@ -162,11 +162,7 @@ module CiteProc
     end
     
     alias :is_byzantine? :is_romanesque?
-    
-    def is_oriental?
-      !is_romanesque?
-    end
-    
+        
     def comma_suffix
       self.comma_suffix? && self.suffix? ? comma : nil
     end
