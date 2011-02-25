@@ -145,7 +145,7 @@ module CiteProc
     def to_initials(name)
       return name if name.nil?
       
-      name.split(/\s+/).map do |token|
+      name.split(/\s+|\.\s*/).map do |token|
         token.split(/-/).map do |part|
           # Keep all-lowercase names; otherwise keep only upper case letters
           part.match(/^[[:lower:]]+$/) ? part.center(part.length + 2) : part.scan(/[[:upper:]]/).join.capitalize + options['initialize-with']
