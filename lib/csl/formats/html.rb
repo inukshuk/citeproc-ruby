@@ -37,7 +37,7 @@ module CSL::Format
         content = @mode == :combined ? content_tag(@container, content, @styles) : individual_tags(content)
       end
 
-      [@affixes[0], content, @affixes[1]].reject(&:nil?).join      
+      [prefix, content, suffix].reject(&:nil?).join      
     end
 
     def input=(input)

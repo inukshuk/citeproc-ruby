@@ -78,6 +78,7 @@ module CSL
       attr_reader :input
       
       Token = Struct.new :content, :annotations, :styles
+      AffixFilter = /([\.,\s!?()])/
       
       def initialize
         @styles = {}
@@ -103,9 +104,20 @@ module CSL
       end
       
       def finalize
-        [@affixes[0], @tokens.map(&:content).join, @affixes[1]].reject(&:nil?).join
+        apply_affixes(@tokens.map(&:content).join)
+        [prefix, @tokens.map(&:content).join, suffix].reject(&:nil?).join
       end
       
+      def prefix
+        return nil if @affixes[0].nil?
+        @affixes[0].match(/([\.;:!?])$/) && @tokens.first.content.start_with?($1) ? @affixes[0].sub(/\.$/, '') : @affixes[0]
+      end
+
+      def suffix
+        return nil if @affixes[1].nil?
+        @affixes[1].match(/^([\.;:!?])/) && @tokens.last.content.end_with?($1) ? @affixes[1].sub(/^\./, '') : @affixes[1]
+      end
+            
       def set_prefix(prefix)
         @affixes[0] = prefix
       end
