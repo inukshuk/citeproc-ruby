@@ -110,12 +110,12 @@ module CSL
       
       def prefix
         return nil if @affixes[0].nil?
-        @affixes[0].match(/([\.;:!?])$/) && @tokens.first.content.start_with?($1) ? @affixes[0].sub(/\.$/, '') : @affixes[0]
+        @affixes[0].match(/([\.;:!?\s])$/) && @tokens.first.content.start_with?($1) ? @affixes[0].sub(/\.$/, '') : @affixes[0]
       end
 
       def suffix
         return nil if @affixes[1].nil?
-        @affixes[1].match(/^([\.;:!?])/) && @tokens.last.content.end_with?($1) ? @affixes[1].sub(/^\./, '') : @affixes[1]
+        @affixes[1].match(/^([\.;:!?\s])/) && @tokens.last.content.end_with?($1) ? @affixes[1].sub(/^\./, '') : @affixes[1]
       end
             
       def set_prefix(prefix)
