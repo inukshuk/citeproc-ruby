@@ -130,20 +130,27 @@ module CSL
     
       attr_fields Nodes.inheritable_name_attributes
 
-      attr_reader :layout
+      attr_reader :layout, :sort_keys
     
       def initialize(node, style, processor=nil)
         super
         @layout = Node.parse(node.at_css('layout'), style, processor)
+        @sort_keys = node.css('sort key').map { |key| Hash[key.attributes.values.map { |a| [a.name, a.value] }] }
       end
     
-      def sort
-        # TODO
+      # @returns the citation data element with the citation-items array
+      # sorted according to the sort keys defined for this renderer.
+      def sort(data)
+        data.items = data.items.zip(data.map { |d| self.item(d['id']) }).sort do |a,b|
+          this, that = [a,b].map(&:last)
+          this.compare(that, node.name.downcase)
+        end.map(&:first)
+        
       end
 
       def process(data, processor=nil)
         super
-        data.map { |data| @layout.process(data, processor) }.join(self['delimiter'])
+        sort(data).map { |data| @layout.process(data, processor) }.join(self['delimiter'])
       end
       
     end
@@ -194,7 +201,7 @@ module CSL
         super
         self.elements.map { |element| element.process(data, processor) }.join
       end
-
+      
       format_on :process
     end
   

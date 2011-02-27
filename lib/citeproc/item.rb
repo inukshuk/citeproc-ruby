@@ -53,9 +53,41 @@ module CiteProc
       value.class == CiteProc::Variable ? value.value : value
     end
     
+    # Compares two items according to the sort keys specified in the processor
+    # assigned to the first item.
+    #
+    # @returns -1, 0, 1
+    #
+    def compare(other, mode=:citation)
+      
+      @processor.style.send(mode).sort_keys.each do |key|
+        case
+        when key.has_key?('variable')
+          variable = key['variable']
+          this, that = self[variable], other[variable]
+                  
+        when key.has_key?('macro')
+          macro = @processor.style.macros[key['macro']]
+          this, that = macro.process({'id' => self['id']}, @processor),
+            macro.process({'id' => other['id']}, @processor) 
+
+        else
+          CiteProc.log.warn "sort key #{ key.inspect } contains no variable or macro definition."
+        end
+
+        comparison = this <=> that
+        comparison = comparison ? comparison : that.nil? ? 1 : -1
+        
+        comparison = comparison * -1 if key['sort'] == 'descending'
+        return comparison unless comparison.zero?
+      end
+      
+      0
+    end
+    
     def <=>(other)
       self.attributes <=> other.attributes if @processor.nil?
-      
+      self.compare(other)
     end
   end
 
