@@ -143,7 +143,7 @@ module CSL
 
       def process(data, processor=nil)
         super
-        @layout.process(data, processor)
+        data.map { |data| @layout.process(data, processor) }.join(@layout.delimiter)
       end
       
     end
@@ -179,7 +179,7 @@ module CSL
 
       def process(data, processor=nil)
         super
-        self.elements.map { |element| element.process(data, processor) }.join(delimiter)
+        self.elements.map { |element| element.process(data, processor) }.join
       end
 
       format_on :process

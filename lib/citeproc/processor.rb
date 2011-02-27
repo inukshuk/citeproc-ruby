@@ -103,14 +103,13 @@ module CiteProc
     def cite(data)
       data = extract_citation_data(data) unless data.kind_of?(CitationData)
 
-      data.map do |data|
+      # data.map do |data|
         # item = self.items[data['id']]
         # CiteProc.log.warn "no item available for citation data #{datum.inspect}" unless item
-
         citation = @style.citation.process(data, self)
         
-        [register(citation), citation]
-      end
+        [[register(citation), citation]]
+      # end
     end
 
     def nocite(ids, options={})
