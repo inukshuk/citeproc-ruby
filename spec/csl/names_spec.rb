@@ -1,11 +1,11 @@
-describe CSL::Name do
-  CSL::Test::Fixtures::Names.keys.each do |feature|
+describe CiteProc::Name do
+  CiteProc::Test::Fixtures::Names.keys.each do |feature|
     describe feature do
 
-      CSL::Test::Fixtures::Names[feature].each do |test|
+      CiteProc::Test::Fixtures::Names[feature].each do |test|
 
         it test['it'] do
-          names = CSL::Variable.parse(test['names'], 'author')
+          names = CiteProc::Variable.parse(test['names'], 'author')
           expected = test['expected']
           options = test['options']
         

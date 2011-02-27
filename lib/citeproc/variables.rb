@@ -68,7 +68,7 @@ module CiteProc
     end
     
     def set(argument)
-      argument.is_a?(Hash) || argument.is_a?(Array) ?  self.merge!(argument) : self.value = argument.to_s
+      argument.is_a?(Hash) ?  self.merge!(argument) : self.value = argument.to_s
     end
     
     def to_s
@@ -117,7 +117,7 @@ module CiteProc
   #
   class Name < Variable
 
-    ROMANESQUE = /^[a-zA-Z\u0080-\u017f\u0400-\u052f\u0386-\u03fb\u1f00-\u1ffe\.\s'\u0027\u02bc\u2019-]*$/
+    ROMANESQUE = /^[a-zA-Z\u0080-\u017f\u0400-\u052f\u0386-\u03fb\u1f00-\u1ffe\.,\s'\u0027\u02bc\u2019-]*$/
     
     attr_fields %w{ given family literal suffix dropping-particle
       non-dropping-particle comma-suffix static-ordering parse-names }
@@ -138,6 +138,16 @@ module CiteProc
       options.each_pair { |key, value| self.options[key] = value unless value.nil? }
     end
     
+    def merge!(argument)
+      
+      if argument['parse-names'] && argument.delete('parse-names') != 'false'
+        parse_family(argument.delete('family'))
+        parse_given(argument.delete('given'))
+      end
+      
+      argument.map { |key, value| self[key] = value }
+    end
+    
     def given
       initialize? ? to_initials(self['given']) : self['given']
     end
@@ -151,6 +161,65 @@ module CiteProc
           part.match(/^[[:lower:]]+$/) ? part.center(part.length + 2) : part.scan(/[[:upper:]]/).join.capitalize + options['initialize-with']
         end.join(options['initialize-with-hyphen'] == 'false' ? '' : '-' ).gsub(/\s+-/, '-')
       end.join
+    end
+    
+    # Parses a string and sets :family, :given, :suffix, and :particles
+    # correspondingly.
+    #
+    # * non-dropping-particle: A string at the beginning of the family field
+    #   consisting of spaces and lowercase roman or Cyrillic characters will
+    #   be treated as a non-dropping-particle. The particles preceding some
+    #   names should be treated as part of the last name, depending on the
+    #   cultural heritage and personal preferences of the individual. To
+    #   suppress parsing and treat such particles as part of the family name
+    #   field, enclose the family name field content in double-quotes
+    # * dropping-particle: A string at the end of the given name field
+    #   consisting of spaces and lowercase roman or Cyrillic characters will
+    #   be treated as a dropping-particle.
+    # * suffix: Content following a comma in the given name field will be
+    #   parse out as a name suffix. Modern typographical convention does not
+    #   place a comma between suffixes such as "Jr." and the last name, when
+    #   rendering the name in normal order: "John Doe Jr." If an individual
+    #   prefers that the traditional comma be used in rendering their name,
+    #   the comma can be force by placing a exclamation mark after the comma.
+    #
+    def parse(string)
+      return if string.nil?
+
+      tokens = string.split(/,\s+/)
+
+      parse_family(tokens[0])
+      parse_given(tokens[1])
+    end
+    
+    # @see parse
+    def parse_family(string)
+      return if string.nil?
+      
+      tokens = string.scan(/^['"](.+)['"]$|^([[:lower:]\s]+)?([[:upper:]][[:alpha:]\s]*)$/).first
+            
+      if tokens.nil?
+        self['family'] = string
+      else
+        self['family'] = tokens[0] || tokens[2] || string
+        self['non-dropping-particle'] = tokens[1].gsub(/^\s+|\s+$/, '') unless tokens[1].nil?
+      end
+    end
+    
+    # @see parse
+    def parse_given(string)
+      return if string.nil?
+
+      tokens = string.scan(/^((?:[[:upper:]][[:alpha:]\.]*\s*)+)([[:lower:]\s]+)?(?:,!?\s([[:alpha:]\.\s]+))?$/).first
+
+      if tokens.nil?
+        self['given'] = string
+      else
+        self['given'] = (tokens[0] || string).gsub(/^\s+|\s+$/, '')
+        self['dropping-particle'] = tokens[1] unless tokens[1].nil?
+        self['suffix'] = tokens[2] unless tokens[2].nil?
+        self['comma-suffix'] = 'true' if string.match(/,!/)
+      end
     end
     
     def is_personal?
@@ -256,7 +325,7 @@ module CiteProc
       end
       
       tokens.reject!(&:nil?)
-      tokens.join(delimiter).squeeze(',').squeeze(' ').gsub(/^[\s,]+|[\s,]+$|\s(,)/, '\1')
+      tokens.join(delimiter).squeeze(' ').gsub(/^[\s,]+|[\s,]+$|\s(,)/, '\1').squeeze(',')
     end
     
     def to_s

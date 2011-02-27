@@ -623,6 +623,7 @@ module CSL
     
       def inherit_attributes
         inherit_attributes_from(['citation', 'bibliography', 'style'], ['delimiter'], 'names-')
+        inherit_attributes_from(['layout'],)
       end
       
     end

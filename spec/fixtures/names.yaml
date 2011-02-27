@@ -71,3 +71,45 @@ sort:
     - "Plato"
     - "Edgar Allen Poe"
     options: {}
+  - it: parses names correctly
+    names:
+    - family: van Gogh
+      given: Vincent
+      parse-names: "true"
+    - family: van Gogh
+      given: Vincent
+    - family: Humbolt
+      given: Alexander von
+      parse-names: "true"
+    - family: King
+      given: "Martin Luther, Jr."
+      parse-names: "true"
+    - family: King
+      given: "Martin Luther, Jr."
+    - family: Gates
+      given: "William Henry, III"
+      parse-names: "true"
+    - family: Bennett
+      given: "Frank G.,! Jr."
+      parse-names: "true"
+    - family: '"van der Vlist"'
+      given: Eric
+      parse-names: "true"
+    - family: van der Vlist
+      given: Eric
+    - family: van der Vlist
+      given: Eric
+      parse-names: true
+    expected:
+    - "Frank G. Bennett, Jr."
+    - William Henry Gates III
+    - Vincent van Gogh
+    - Alexander von Humbolt
+    - Martin Luther King Jr.
+    - "Martin Luther, Jr. King"
+    - Eric van der Vlist
+    - Eric van der Vlist
+    - Vincent van Gogh
+    - Eric van der Vlist
+    options:
+      demote-non-dropping-particle: "always"
