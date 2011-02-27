@@ -143,7 +143,7 @@ module CSL
 
       def process(data, processor=nil)
         super
-        data.map { |data| @layout.process(data, processor) }.join(@layout.delimiter)
+        data.map { |data| @layout.process(data, processor) }.join(self['delimiter'])
       end
       
     end
@@ -157,6 +157,19 @@ module CSL
       attr_fields %w{ collapse year-suffix-delimiter after-collapse-delimiter
         near-note-distance disambiguate-add-names disambiguate-add-given-name
         given-name-disambiguation-rule disambiguate-add-year-suffix }
+      
+      attr_fields %w{ delimiter suffix prefix }
+      
+      def initialize(node, style, processor=nil)
+        super
+        
+        %w{ delimiter suffix prefix }.each do |attribute|
+          self[attribute] = @layout.attributes.delete(attribute)
+        end
+      end
+      
+      format_on :process
+      
     end
     
     # All the rendering elements that should appear in the citations and
