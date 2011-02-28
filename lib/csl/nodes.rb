@@ -643,7 +643,6 @@ module CSL
     
       def inherit_attributes
         inherit_attributes_from(['citation', 'bibliography', 'style'], ['delimiter'], 'names-')
-        inherit_attributes_from(['layout'],)
       end
       
     end
@@ -1168,7 +1167,7 @@ module CSL
       
       def process(data, processor=nil)
         super
-        
+
         elements.each do |element|
           return element.process(data, @processor) if element.evaluate?(data, item(data['id']))
         end

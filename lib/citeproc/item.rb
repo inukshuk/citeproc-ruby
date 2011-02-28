@@ -44,14 +44,14 @@ module CiteProc
       self.attributes.inspect
     end
     
-    alias :access :[]
-    
+    # alias :access :[]
+    # 
     # @returns the variable with the given id. In case of a normal
     # CiteProc::Variable, the variable is returned as a string.
-    def [](id)
-      value = access(id)
-      value.class == CiteProc::Variable ? value.value : value
-    end
+    # def [](id)
+    #   value = access(id)
+    #   value.class == CiteProc::Variable ? value.value : value
+    # end
     
     # Compares two items according to the sort keys specified in the processor
     # assigned to the first item.
@@ -59,6 +59,7 @@ module CiteProc
     # @returns -1, 0, 1
     #
     def compare(other, mode=:citation)
+      return self <=> other if @processor.nil?
       
       @processor.style.send(mode).sort_keys.each do |key|
         case

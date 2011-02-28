@@ -83,7 +83,7 @@ module CiteProc
       items.each do |item|
         item = Item.new(item)
         item.processor = self
-        self.items[item['id']] = item
+        self.items[item['id'].to_s] = item
       end
     end
     

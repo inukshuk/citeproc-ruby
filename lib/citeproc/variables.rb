@@ -80,7 +80,13 @@ module CiteProc
     end
     
     def <=>(other)
-      self.to_s <=> other.to_s
+      strip_markup(self.to_s) <=> strip_markup(other.to_s)
+    end
+    
+    protected
+    
+    def strip_markup(string)
+      string.gsub(/<[^>]*>/, '')
     end
   end
   
@@ -412,7 +418,7 @@ module CiteProc
     end
     
     def sort_order
-      "%04d%02d%02d-%04d%02d%02d" % self.from + self.to
+      "%04d%02d%02d-%04d%02d%02d" % ((self.from + [0,0,0])[0,3] + (self.to + [0,0,0])[0,3])
     end
     
     def to_json
@@ -420,6 +426,7 @@ module CiteProc
     end
     
     def <=>(other)
+      super unless other.is_a?(Date)
       self.sort_order <=> other.sort_order
     end
   end
