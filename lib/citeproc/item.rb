@@ -69,8 +69,8 @@ module CiteProc
                   
         when key.has_key?('macro')
           macro = @processor.style.macros[key['macro']]
-          this, that = macro.process({'id' => self['id']}, @processor),
-            macro.process({'id' => other['id']}, @processor) 
+          this, that = macro.process({'id' => self['id'].to_s}, @processor),
+            macro.process({'id' => other['id'].to_s}, @processor) 
 
         else
           CiteProc.log.warn "sort key #{ key.inspect } contains no variable or macro definition."

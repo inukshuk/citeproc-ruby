@@ -60,7 +60,6 @@ module CiteProc
         parser = lambda { |variable, type| CiteProc.const_get(Variable.parser[type]).new(variable) }
         variables.is_a?(Array) ? variables.map { |v| parser.call(v, type) } : parser.call(variables, type)
       end
-      
     end
 
     def initialize(attributes={})
