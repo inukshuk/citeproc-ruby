@@ -179,11 +179,15 @@ module CSL
       
       options['form'] ||= 'ordinal'
       key = [options['form'], '%02d'].join('-')
-      
+
       ordinal = self[key % number].to_s 
-      ordinal = self[key % (number % 10)].to_s if ordinal.empty?
+
+      if ordinal.empty?
+        key = 'ordinal-%02d'
+        ordinal = self[key % (number % 10)].to_s
+      end
       
-      options['form'] == 'ordinal' ? [number, ordinal].join : ordinal
+      key.match(/^ordinal/) ? [number, ordinal].join : ordinal
     end
 
     
