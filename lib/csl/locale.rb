@@ -164,9 +164,10 @@ module CSL
 
     # Returns an ordinalized number according to the rules specified in the
     # given locale. Does not conform to CSL 1.0 in order to work around some
-    # shortcomings in the schema: this version tries several useful fall-backs
-    # if there is no direct hit in the locale (e.g., if 21 is not specified,
-    # we will try with 21 and then with 1).
+    # shortcomings in the schema: this version tries a useful fallback if
+    # there is no direct hit in the locale (e.g., if 21 is not specified, we
+    # will try with 21 and then with 1). The fallback of the long-ordinal form
+    # is ordinal.
     #
     # TODO: long-ordinals may be influenced by gender in some locales
     #
