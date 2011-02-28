@@ -54,6 +54,16 @@ module CSL
       
     attr_fields %w{ name long short verb verb-short symbol }
     
+    def self.build(doc)
+      terms = Hash.new { |h,k| h[k] = Term.new(k) }
+
+      doc.css('terms term').each do |t|
+        terms[t['name']][t['form'] || 'long'] = t.children.map(&:content)
+      end
+      
+      terms
+    end
+    
     def to_s(options={})
       term = case options['form']
         when 'verb-short' then verb_short || verb || long
@@ -66,6 +76,9 @@ module CSL
       options['plural'] && options['plural'] != 'false' && options['plural'].to_s != '1' ? term.last.to_s : term.first.to_s
     end
     
+    def empty?
+      long.nil? && short.nil? && verb.nil? && verb_short.nil? && symbol.nil?
+    end
   end
   
   class Locale
@@ -74,10 +87,11 @@ module CSL
     @path = File.expand_path('../../../resource/locale/', __FILE__)
     @default = 'en-US'
 
-    class << self; attr_accessor :path, :default end    
+    class << self; attr_accessor :path, :default; end    
     
-    attr_reader :language, :region
+    attr_reader :language, :region, :terms
 
+    # @param argument a language tag; or an XML node
     def initialize(tag=nil)
       set(tag || Locale.default)
     end
@@ -99,13 +113,10 @@ module CSL
     def tag
       [@language, @region].join('-')
     end
-    
-    def terms
-      @terms ||= build_terms
-    end
-    
+  
     def [](tag)
-      terms[tag]
+      term = @terms.map { |terms| terms[tag] }
+      term.detect {|t| !t.empty?} || term.first
     end
 
     # @example
@@ -142,6 +153,7 @@ module CSL
       @options, @date, @terms = nil
       @doc = Nokogiri::XML(File.open(document_path)) { |config| config.strict.noblanks }
       
+      @terms = [Term.build(@doc)]
     rescue Exception => e
       CiteProc.log.error "Failed to open locale file, falling back to default: #{e.message}"
       unless tag == Locale.default
@@ -177,16 +189,6 @@ module CSL
     
     private
     
-    def build_terms
-      @terms = Hash.new { |h,k| h[k] = Term.new(k) }
-      
-      @doc.css('terms term').each do |t|
-        @terms[t['name']][t['form'] || 'long'] = t.children.map(&:content)
-      end
-      
-      @terms
-    end
-
     # Set region to first available region for current language.
     def match_region
       Dir.entries(Locale.path).detect { |l| l.match(%r/^[\w]+-#{@language}-([A-Z]{2})\.xml$/) }

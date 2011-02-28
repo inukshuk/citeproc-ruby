@@ -29,6 +29,7 @@ module CiteProc
 
     def style=(resource)
       @style = CSL::Style.new(resource)
+      locale.terms.unshift(CSL::Term.build(@style.locale)) if @style.locale
     end
 
     def language=(language)

@@ -70,7 +70,7 @@ module CSL
     end
 
     def locale
-      # TODO
+      @locale ||= @doc.at_css('style > locale')
     end
     
     [:title, :id].each do |method_id|

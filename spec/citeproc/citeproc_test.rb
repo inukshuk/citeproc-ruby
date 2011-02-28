@@ -9,14 +9,14 @@ end
 
 #
 # Filter applied to each test to decide whether we should run it. Use this
-# to stay sane while the Processor is not feature complete!
+# to stay sane while the Processor is not feature-complete!
 #
 def filter(file, fixture)
   # ['affix_InterveningEmpty.json'].include?(File.basename(file))
   # File.basename(file) =~ /parallel_suppressyear/i
   # File.basename(file) =~ /page_/i
-  # File.basename(file) =~ /sort_\./i && fixture['mode'] == 'citation'
-  fixture['mode'] == 'citation' && !fixture['citations']
+  File.basename(file) =~ /number_/i && fixture['mode'] == 'citation'
+  # fixture['mode'] == 'citation' && !fixture['citations']
 end
 
 describe 'citeproc-test' do

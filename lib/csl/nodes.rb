@@ -518,7 +518,7 @@ module CSL
         super
       
         number = (data[variable] || self.item(data['id'])[variable] || '').to_s
-
+        
         number = case form
           when 'roman'        then number.to_i.romanize
           when 'ordinal'      then locale.ordinalize(number, attributes)
