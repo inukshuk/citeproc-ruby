@@ -89,7 +89,7 @@ module CSL
     
     [:citation, :bibliography].each do |method_id|
       define_method method_id do
-        @attributes[method_id] ||= CSL::Nodes.const_get(method_id.to_s.capitalize).new(@doc.at_css("style > #{method_id}"), self)
+        @attributes[method_id] ||= CSL.const_get(method_id.to_s.capitalize).new(@doc.at_css("style > #{method_id}"), self)
       end
     end
     

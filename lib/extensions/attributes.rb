@@ -16,24 +16,6 @@
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 #++
 
-# module LazyAttributes
-#   def self.included(base)
-#     base.extend(ClassMethods)
-#   end
-# 
-#   module ClassMethods
-#     
-#     def attr_lazy(*args)
-#       args.each do |attribute_name, initial_value|
-#         define_method attribute_name do
-#           self.instance_eval("@#{attribute_name} ||= #{initial_value.inspect}")
-#         end
-#       end
-#     end
-#   end
-#   
-# end
-
 require 'json'
 
 module Attributes
@@ -56,8 +38,16 @@ module Attributes
     attributes[filter_key(id)] = filter_value(value)
   end
   
-  def merge!(argument)
-    argument.map { |key, value| self[key] = value }
+  def merge!(other)
+    other = other.attributes unless other.is_a?(Hash)
+    other.each_pair { |key, value| self[key] = value }
+    self
+  end
+
+  def reverse_merge!(other)
+    other = other.attributes unless other.is_a?(Hash)
+    other.each_pair { |key, value| self[key] ||= value }
+    self
   end
   
   alias_method :to_hash, :attributes

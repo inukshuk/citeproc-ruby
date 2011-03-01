@@ -83,7 +83,6 @@ module CiteProc
       items = to_a(items)
       items.each do |item|
         item = Item.new(item)
-        item.processor = self
         self.items[item['id'].to_s] = item
       end
     end
@@ -102,15 +101,12 @@ module CiteProc
     # @returns a list of lists; [[1, 'Doe, 2000, p. 1'], ...]
     #
     def cite(data)
-      data = extract_citation_data(data) unless data.kind_of?(CitationData)
+      data = extract_citation_data(data)
 
-      # data.map do |data|
-        # item = self.items[data['id']]
-        # CiteProc.log.warn "no item available for citation data #{datum.inspect}" unless item
-        citation = @style.citation.process(data, self)
-        
-        [[register(citation), citation]]
-      # end
+      data.populate!(items)
+      citation = @style.citation.process(data, self)
+      
+      [[register(citation), citation]]
     end
 
     def nocite(ids, options={})
@@ -136,14 +132,14 @@ module CiteProc
     def extract_citation_data(argument)
       case
       when argument == :all
-        CitationData.new('citation-items' => self.items.keys.map { |id| { 'id' => id } })
-      when argument.is_a?(Array)
-        CitationData.new('citation-items' => argument.map { |id| { 'id' => id } })
-      when argument.is_a?(Hash)
-        CitationData.new(argument)
-      else
-        self.items.has_key?(argument.to_s) ? CitationData.new('citation-items' => [{ 'id' => argument.to_s }]) : CitationData.new
+        argument = items.keys.map { |id| { 'id' => id } }
+                
+      when items.has_key?(argument.to_s)
+        argument = { 'id' => argument.to_s }
+        
       end
+
+      CitationData.new(argument)
     end
     
     def new_abbreviations

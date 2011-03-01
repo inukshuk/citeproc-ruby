@@ -45,51 +45,47 @@ module CSL
       include Attributes
       include Formatting
 
-      attr_reader :node, :style, :processor
-      attr_accessor :processor
-    
-      def initialize(node, style, processor=nil)
+      attr_reader :style, :children, :parent
+          
+      def initialize(node, style, parent=nil)
         @node = node
-        @style= style
-        self.processor = processor
-        self.parse_attributes      
+        
+        @style = style
+        @parent = parent
+        
+        @children = node.children.map do |child|
+          Node.parse(child, style, self)
+        end
+        
+        parse_attributes(node)
+        inherit_attributes
       end
 
       # Parses the given node an returns a new instance of Node or a suitable
       # subclass corresponding to the node's name
-      def self.parse(node, style, processor=nil)
+      def self.parse(node, style, parent=nil)
         name = node.name.split(/[\s-]+/).map(&:capitalize).join
         klass = CSL::Nodes.const_defined?(name) ? CSL::Nodes.const_get(name) : CSL::Nodes::Node
-        klass.new(node, style, processor)
+        klass.new(node, style, parent)
       end
-    
-      # @returns the item with the given id (registered with the associated
-      # processor) or an empty item
-      def item(id)
-        (@processor && @processor.items[id]) || CiteProc::Item.new
-      end
-      
-      def locale
-        (@processor && @processor.locale) || Locale.new
-      end
-      
-      def processor=(processor)
-        @processor = processor
-        self.format = processor.format unless processor.nil?
-      end
-      
+            
       # Processes the supplied data.
-      def process(data, processor=nil)
-        self.processor = processor unless processor.nil?
+      def process(data, processor)
+        self.format = processor.format
+        ''
       end
     
-    
+
       protected
     
-      def parse_attributes
+      def parse_attributes(node)
         node.attributes.values.each { |a| attributes[a.name] = a.value }
       end
 
+      # Empty method; nodes may override this method.
+      def inherit_attributes
+      end
+      
       # Attributes for the cs:names and cs:name elements may also be set on
       # cs:style, cs:citation and cs:bibliography. This eliminates the need to
       # repeat the same attributes and attribute values for every occurrence
@@ -116,6 +112,7 @@ module CSL
       def inherit_attributes_from(nodes=[], attributes=[], prefix='')
         return unless @node
         
+        # TODO refactor so that node is not required anymore
         parent = @node.parent        
         until parent.name == 'document' do
           attributes.each { |attribute| self[attribute] ||= parent[[prefix, attribute].join] } if nodes.include?(parent.name)
@@ -125,59 +122,6 @@ module CSL
       end
     end
 
-    # Represents a cs:citation or cs:bibliography element.
-    class Renderer < Node
-    
-      attr_fields Nodes.inheritable_name_attributes
-
-      attr_reader :layout, :sort_keys
-    
-      def initialize(node, style, processor=nil)
-        super
-        @layout = Node.parse(node.at_css('layout'), style, processor)
-        @sort_keys = node.css('sort key').map { |key| Hash[key.attributes.values.map { |a| [a.name, a.value] }] }
-      end
-    
-      # @returns the citation data element with the citation-items array
-      # sorted according to the sort keys defined for this renderer.
-      def sort(data)
-        data.items = data.items.zip(data.map { |d| self.item(d['id']) }).sort do |a,b|
-          this, that = [a,b].map(&:last)
-          this.compare(that, node.name.downcase)
-        end.map(&:first)
-        
-      end
-
-      def process(data, processor=nil)
-        super
-        sort(data).map { |data| @layout.process(data, processor) }.join(self['delimiter'])
-      end
-      
-    end
-
-    class Bibliography < Renderer
-      attr_fields %w{ hanging-indent second-field-align line-spacing
-        entry-spacing subsequent-author-substitute }
-    end
-
-    class Citation < Renderer
-      attr_fields %w{ collapse year-suffix-delimiter after-collapse-delimiter
-        near-note-distance disambiguate-add-names disambiguate-add-given-name
-        given-name-disambiguation-rule disambiguate-add-year-suffix }
-      
-      attr_fields %w{ delimiter suffix prefix }
-      
-      def initialize(node, style, processor=nil)
-        super
-        
-        %w{ delimiter suffix prefix }.each do |attribute|
-          self[attribute] = @layout.attributes.delete(attribute)
-        end
-      end
-      
-      format_on :process
-      
-    end
     
     # All the rendering elements that should appear in the citations and
     # bibliography should be nested inside the cs:layout element. Itself a
@@ -187,19 +131,10 @@ module CSL
     class Layout < Node
       attr_fields Nodes.formatting_attributes
       attr_fields %w{ delimiter }
-
-      def initialize(node, style, processor=nil)
-        super
-        node.children.each { |n| self.elements.push(Node.parse(n, style, processor)) }
-      end
     
-      def elements
-        @elements ||= []
-      end
-
-      def process(data, processor=nil)
+      def process(data, processor)
         super
-        self.elements.map { |element| element.process(data, processor) }.join
+        children.map { |child| child.process(data, processor) }.join
       end
       
       format_on :process
@@ -244,26 +179,32 @@ module CSL
       attr_fields Nodes.formatting_attributes
       attr_fields %w{ variable form macro term plural value quotes }
     
-      def process(data, processor=nil)
+      def process(data, processor)
         super
 
         case
-        when self.value?
-          text = self.value
-        when self.macro?
-          text = @style.macros[macro].process(data, @processor) 
-        when self.term?
-          text = self.locale[term].to_s(attributes)
-        when self.variable?
-          item = self.item(data['id'])
-          text = (data[variable] || item["short#{variable.capitalize}"] || item[['short', variable].join('-')] || item[variable]).to_s
+        when value?
+          text = value
+          
+        when macro?
+          text = @style.macros[macro].process(data, processor) 
+          
+        when term?
+          text = processor.locale[term].to_s(attributes)
+          
+        when variable?
+          text = (data["short#{variable.capitalize}"] || data[['short', variable].join('-')] || data[variable]).to_s
 
-          if self.form == 'short'
-            text = abbreviate(text)
+          if form == 'short'
+            text = processor.abbreviate(variable, text)
           end
           
-          if self.variable == 'page' && @style.options.has_key?('page-range-format')
+          if variable == 'page' && @style.options.has_key?('page-range-format')
             text = format_page_range(text, @style.options['page-range-format'])
+          end
+          
+          if variable == 'page-first' && text.empty?
+            text = data['page'].to_s.scan(/\d+/).first.to_s
           end
           
         else
@@ -271,7 +212,7 @@ module CSL
         end
         
         # Add localized quotes
-        text = [self.locale['open-quote'], text, self.locale['close-quote']].join if quotes?
+        text = [processor.locale['open-quote'], text, processor.locale['close-quote']].join if quotes?
       
         text
       end
@@ -279,11 +220,6 @@ module CSL
       format_on :process
       
       protected
-      
-      def abbreviate(value)
-        @processor.abbreviate(variable, value)
-      end
-
       
       # The page abbreviation rules for the different values of the
       # page-range-format attribute on cs:style are:
@@ -384,30 +320,26 @@ module CSL
       attr_fields Nodes.formatting_attributes
       attr_fields %w{ variable form date-parts delimiter }
 
-      def process(data, processor=nil)
+      def process(data, processor)
         super
-        date = self.item(data['id'])[variable]
+        date = data[variable]
         
         case
         when date.nil?
           ''
+          
         when date.literal?
-          date.literal.clone
+          date.literal
+          
         else
-          self.parts.map { |part| part.process(date.clone, @processor) }.join(delimiter)
+          parts = form? ? collect(processor.locale.date[form].map { |node| Node.parse(node, @style, self) }, children) : children
+          parts.map { |part| part.process(date, processor) }.join(delimiter)
+
         end
       end
 
       format_on :process
-    
-      def parts
-        if self.form?
-          collect(DatePart.parse(self.locale.date[form]), DatePart.parse(@node.children))
-        else
-          DatePart.parse(@node.children)
-        end
-      end
-    
+        
       # Combines two lists of date-part elements. Attributes in the second
       # list take precedence over attributes in corresponding elements in the
       # first list.
@@ -434,43 +366,42 @@ module CSL
       attr_fields Nodes.formatting_attributes
       attr_fields %w{ name form range-delimiter strip-periods }
     
-      def self.parse(nodes)
-        return [] if nodes.empty?
-        nodes.map { |n| DatePart.new(n, @style, @processor) }
-      end    
-    
-      def process(date, processor=nil)
-        super
-        
+      def process(date, processor)
         part = case self['name']
           when 'day'
             case form
-            when 'ordinal' then locale.ordinalize(date.day)
+            when 'ordinal' then processor.locale.ordinalize(date.day)
             when 'numeric-leading-zeros' then "%02d" % date.day
             else # 'numeric'
               date.day.to_s
             end
+            
           when 'month'
             if date.season?
-              date.season.to_s.match(/[1-4]/) ? locale["season-0#{date.season}"].to_s : date.season.to_s
+              date.season.to_s.match(/[1-4]/) ? processor.locale["season-0#{date.season}"].to_s : date.season.to_s
             else
               case form
               when 'numeric' then date.month.to_s
               when 'numeric-leading-zeros' then "%02d" % date.month
               else
-                locale["month-%02d" % date.month].to_s(attributes)
+                processor.locale["month-%02d" % date.month].to_s(attributes)
               end
             end
+            
           when 'year'
             case form
             when 'short' then date.year.abs.to_s[-2..-1] # get the last two characters
             else # 'long'
               date.year.abs.to_s
             end
+            
+          else
+            CiteProc.log.error "illegal date-part #{ self['name'] }"
+            ''
           end
       
-        part = [part, locale['ad']].join if self['name'] == 'year' && date.year < 1000
-        part = [part, locale['bc']].join if self['name'] == 'year' && date.year < 0
+        part = [part, processor.locale['ad']].join if self['name'] == 'year' && date.year < 1000
+        part = [part, processor.locale['bc']].join if self['name'] == 'year' && date.year < 0
             
         part
       end
@@ -514,15 +445,14 @@ module CSL
       attr_fields Nodes.formatting_attributes      
       attr_fields %w{ variable form }
     
-      def process(data, processor=nil)
+      def process(data, processor)
         super
-      
-        number = (data[variable] || self.item(data['id'])[variable] || '').to_s
+        number = data[variable].to_s
         
         number = case form
           when 'roman'        then number.to_i.romanize
-          when 'ordinal'      then locale.ordinalize(number, attributes)
-          when 'long-ordinal' then locale.ordinalize(number, attributes)
+          when 'ordinal'      then processor.locale.ordinalize(number, attributes)
+          when 'long-ordinal' then processor.locale.ordinalize(number, attributes)
           else 
             number.to_i.to_s
           end unless number.empty?
@@ -534,119 +464,6 @@ module CSL
     
     end
 
-    # The cs:names element can be used to display the contents of one or more
-    # name variables, each of which can contain multiple names (e.g. the
-    # "author" variable will contain all the cited item's author names). The
-    # variables to be displayed are set with the variable attribute. If multiple
-    # variables are selected (separated by single spaces, see example below),
-    # each variable is independently rendered in the order specified, with one
-    # exception: if the value of variable consists of "editor" and "translator"
-    # (in either order), and if the contents of the two name variables is
-    # identical, then the contents of only one name variable is rendered. In
-    # addition, the "editor-translator" term is used if the cs:names element
-    # contains a cs:label element, replacing the default "editor" and
-    # "translator" terms (e.g., this might result in "Doe (editor &
-    # translator)". The delimiter attribute may be set on cs:names to delimit
-    # the names of the different name variables (e.g. the semicolon in "Doe
-    # (editor); Johnson (translator)").
-    #
-    #     <names variable="editor translator" delimiter="; ">
-    #       <name/>
-    #       <label prefix=" (" suffix=")"/>
-    #     </names>
-    #
-    # There are four child elements associated with the cs:names element:
-    # cs:name, cs:et-al, cs:substitute and cs:label (all discussed below). In
-    # addition, the cs:names element may carry the attributes for affixes,
-    # display and formatting.
-    class Names < Node
-      attr_fields Nodes.formatting_attributes
-      attr_fields %w{ variable delimiter }
-    
-      attr_accessor :name, :et_al, :label, :substitute
-      
-      def initialize(node, style, processor=nil)
-        super
-      
-        inherit_attributes
-        
-        # collect the child nodes (name, et-al, substitute, label)
-        node.children.each do |node|
-          name = node.name.downcase.gsub(/-/,'_') + '='
-          node = node.name.match(/substitute/i) ? Substitute.new(node, style, processor, self) : Node.parse(node, style, processor)
-          send(name, node)
-        end
-        
-      end
-    
-      def process(data, processor=nil)
-        super
-
-        names = collect_names(item(data['id']))
-        count_only = self.name.form == 'count'
-        
-        unless names.empty? || names.map(&:last).flatten.empty?
-  
-          # handle the editor-translator special case
-          if names.map(&:first).sort.join.match(/editortranslator/)
-            editors = names.detect { |name| name.first == 'editor' }
-            translators = names.detect { |name| name.first == 'translator' }
-        
-            if editors.last.sort == translators.last.sort
-              editors[0] = 'editortranslator'
-              names.delete(translators)
-            end
-          end
-      
-          names = names.map do |role, names|
-            processed = []
-            
-            truncated = self.name.truncate(names)
-            
-            unless count_only
-              processed << self.name.process_names(role, truncated, @processor)
-            
-              if names.length > truncated.length
-
-                # use delimiter before et al. if there is more than a single name; squeeze whitespace
-                others = (self.et_al.nil? ? locale['et-al'].to_s : self.et_al.process(data, @processor))
-                link = (self.name.et_al_use_first.to_i > 1 ? self.name.delimiter : ' ')
-
-                processed << [link, others].join.squeeze(' ')
-              end
-            
-              processed << self.label.process_names(role, names.length, @processor) unless self.label.nil?
-            else
-              processed << truncated.length
-            end
-            
-            processed.join
-          end
-          
-          count_only ? names.inject(0) { |a, b| a.to_i + b.to_i }.to_s : names.join(delimiter)
-        else
-          count_only ? '0' : @substitute.nil? ? '' : @substitute.process(data, @processor)
-        end
-      end
-    
-      format_on :process
-
-      private
-      
-      # @returns a list of all name variables covered by this node; each list
-      # is wrapped in a list containing the lists role (e.g., 'editor')
-      # followed by the list proper.
-      def collect_names(item)
-        return [] unless self.variable?
-        self.variable.split(/\s+/).map { |variable| [variable, (item[variable] || []).map(&:clone)] }
-      end
-    
-      def inherit_attributes
-        inherit_attributes_from(['citation', 'bibliography', 'style'], ['delimiter'], 'names-')
-      end
-      
-    end
-  
     # The cs:name element is a required child element of cs:names, and describes
     # both how individual names are formatted, and how names within a name
     # variable are separated from each other. The attributes that may be used on
@@ -754,41 +571,34 @@ module CSL
       attr_fields Nodes.inheritable_name_attributes
       attr_fields %w{ form delimiter }
         
-      def initialize(node, style, processor=nil)
+      def initialize(node, style, parent=nil)
         super
-        inherit_attributes
+
         attributes['delimiter'] ||= ', '
         attributes['delimiter-precedes-last'] ||= 'false'
-        node.children.each do |node|
-          names = [node['name']]
-          names << 'dropping-particle' << 'non-dropping-particle' if names.first == 'family'
-          names.each { |name| self.parts[name] = Node.parse(node, style, processor) }
-        end
+
+        children.each { |child| parts[child['name']] = child }        
       end
     
       def parts
-        @parts ||= {}
+        @parts ||= Hash.new { |h, k| k.match(/(non-)?dropping-particle/) ? h['family'] : nil }
       end
   
-      def process_names(role, names, processor=nil)
-        unless processor.nil?
-          self.processor = processor
-          self.parts.values.each { |part| part.processor = processor }
-        end
+      def process_names(role, names, processor)
 
         # set display options
         names = names.each { |name| name.merge_options(attributes) }
         names.first.options['name-as-sort-order'] = 'true' if name_as_sort_order == 'first'
 
         # name-part formatting
-        names.map! { |name| name.display({}, self.parts) }
+        names.map! { |name| name.display({}, parts) }
         
         # join names
         if names.length > 2
           names = [names[0..-2].join(delimiter), names.last]
         end
 
-        names.join(ampersand)
+        names.join(ampersand(processor))
       end
 
       format_on :process_names
@@ -801,9 +611,9 @@ module CSL
 
       # @returns the delimiter to be used between the penultimate and last
       # name in the list.
-      def ampersand
+      def ampersand(processor)
         if self.and?
-          ampersand = self.and == 'symbol' ? '&' : locale[self.and == 'text' ? 'and' : self.and].to_s(attributes)
+          ampersand = self.and == 'symbol' ? '&' : processor.locale[self.and == 'text' ? 'and' : self.and].to_s(attributes)
           delimiter_precedes_last? ? [delimiter, ampersand, ' '].join : ampersand.center(ampersand.length + 2)
         else
           delimiter
@@ -859,15 +669,69 @@ module CSL
     
       attr_accessor :parent
 
-      def process(data, processor=nil)
+      def process(data, processor)
         super
-        locale[term ||  'et-al'].to_s(attributes)
+        processor.locale[term ||  'et-al'].to_s(attributes)
       end
     
       format_on :process
     
     end
   
+  
+    # The cs:label element, used to output text terms whose pluralization
+    # depends on the contents of another variable (e.g. "(editors)" in "Doe and
+    # Smith (editors)"), is discussed in detail in the label section. It should
+    # be included after the cs:name and cs:et-al elements, but before the
+    # cs:substitute element. When used within cs:names, the variable attribute
+    # should be omitted, as the value set on the parent cs:names element is
+    # used.
+    #
+    # The Citation Style Language includes several variables that have
+    # matching terms. The cs:label element can be used to render one of these
+    # terms, while matching the term plurality with that of the corresponding
+    # variable. The variable/term combination is selected with the variable
+    # attribute, which can be set to either "page" or "locator". When cs:label
+    # is used as a child element of cs:names, the value of the variable
+    # attribute is automatically inherited from the parent cs:names element.
+    # The example below displays the "page" variable, using the singular form
+    # of the "page" term for a single page ("page 5"), or the plural form for
+    # a page range ("pages 5-7").  
+    #  
+    class Label < Node
+      attr_fields Nodes.formatting_attributes      
+      attr_fields %w{ variable plural form }
+    
+      def process(data, processor)
+        super
+        processor.locale[data['label'].to_s].to_s(attributes.merge({ 'plural' =>  is_plural?(data, 0) ? 'true' : 'false' }))
+      end
+    
+      def process_names(role, number, processor)
+        format = processor.format
+        processor.locale[role].to_s(attributes.merge({ 'plural' => is_plural?(nil, number) ? 'true' : 'false' }))        
+      end
+        
+      format_on :process
+      format_on :process_names
+      
+      def is_plural?(data, number)
+        case
+        when plural == 'always'
+          true
+        when plural == 'never'
+          false
+        when number > 1
+          true
+        when ['locator'].include?(variable)
+          data[variable].to_s.match(/\d+f|\d+\-\d+/)
+        else
+          false
+        end
+      end
+    end
+
+
     # The optional cs:substitute element, which should be included as the last
     # child element of cs:names, controls substitution in case the name
     # variables specified in the parent cs:names element are empty. The
@@ -893,91 +757,124 @@ module CSL
     #     </macro>
     #
     class Substitute < Node
-    
-      def initialize(node, style, processor=nil, names)
-        super(node, style, processor)
         
-        node.children.each do |node|
-          node = Node.parse(node, style, processor)
-          
-          if node.is_a?(Names)
-            node.name ||= names.name
-            node.et_al ||= names.et_al
-            node.label ||= names.label
-          end 
-          
-          self.elements.push(node)
-        end
-      end
-    
-      def elements
-        @elements ||= []
-      end
-
-      def process(data, processor=nil)
+      def process(data, processor)
         super
-        
-        elements.each do |element|
-          processed = element.process(data, processor)
+        children.each do |child|
+          processed = child.process(data, processor)
           return processed unless processed.empty?
         end
-        
         ''
       end
     
     end
-  
-    # The cs:label element, used to output text terms whose pluralization
-    # depends on the contents of another variable (e.g. "(editors)" in "Doe and
-    # Smith (editors)"), is discussed in detail in the label section. It should
-    # be included after the cs:name and cs:et-al elements, but before the
-    # cs:substitute element. When used within cs:names, the variable attribute
-    # should be omitted, as the value set on the parent cs:names element is
-    # used.
+
+    # The cs:names element can be used to display the contents of one or more
+    # name variables, each of which can contain multiple names (e.g. the
+    # "author" variable will contain all the cited item's author names). The
+    # variables to be displayed are set with the variable attribute. If multiple
+    # variables are selected (separated by single spaces, see example below),
+    # each variable is independently rendered in the order specified, with one
+    # exception: if the value of variable consists of "editor" and "translator"
+    # (in either order), and if the contents of the two name variables is
+    # identical, then the contents of only one name variable is rendered. In
+    # addition, the "editor-translator" term is used if the cs:names element
+    # contains a cs:label element, replacing the default "editor" and
+    # "translator" terms (e.g., this might result in "Doe (editor &
+    # translator)". The delimiter attribute may be set on cs:names to delimit
+    # the names of the different name variables (e.g. the semicolon in "Doe
+    # (editor); Johnson (translator)").
     #
-    # The Citation Style Language includes several variables that have
-    # matching terms. The cs:label element can be used to render one of these
-    # terms, while matching the term plurality with that of the corresponding
-    # variable. The variable/term combination is selected with the variable
-    # attribute, which can be set to either "page" or "locator". When cs:label
-    # is used as a child element of cs:names, the value of the variable
-    # attribute is automatically inherited from the parent cs:names element.
-    # The example below displays the "page" variable, using the singular form
-    # of the "page" term for a single page ("page 5"), or the plural form for
-    # a page range ("pages 5-7").  
-    #  
-    class Label < Node
-      attr_fields Nodes.formatting_attributes      
-      attr_fields %w{ variable plural form }
+    #     <names variable="editor translator" delimiter="; ">
+    #       <name/>
+    #       <label prefix=" (" suffix=")"/>
+    #     </names>
+    #
+    # There are four child elements associated with the cs:names element:
+    # cs:name, cs:et-al, cs:substitute and cs:label (all discussed below). In
+    # addition, the cs:names element may carry the attributes for affixes,
+    # display and formatting.
+    #
+    class Names < Node
+      attr_fields Nodes.formatting_attributes
+      attr_fields %w{ variable delimiter }
     
-      def process(data, processor=nil)
-        super
-        locale[data['label']].to_s(attributes.merge({ 'plural' =>  is_plural?(data, 0) ? 'true' : 'false' }))
-      end
-    
-      def process_names(role, number, processor=nil)
-        self.processor = processor unless processor.nil?
-        locale[role].to_s(attributes.merge({ 'plural' => is_plural?(nil, number) ? 'true' : 'false' }))        
-      end
-        
-      format_on :process
-      format_on :process_names
-      
-      def is_plural?(data, number)
-        case
-        when plural == 'always'
-          true
-        when plural == 'never'
-          false
-        when number > 1
-          true
-        when ['locator', 'page'].include?(variable)
-          data[variable].to_s.match(/\d+f|\d+\-\d+/)
-        else
-          false
+      [:name, :et_al, :label, :substitute].each do |method_id|
+        klass = CSL::Nodes.const_get(method_id.to_s.split(/_/).map(&:capitalize).join)
+        define_method method_id do
+          elements = parent.is_a?(Substitute) && klass != Substitute ? parent.parent.children : children
+          elements.detect { |child| child.class == klass }
         end
       end
+      
+      def process(data, processor)
+        super
+        names = collect_names(data)
+        debugger if self.name.nil?
+        count_only = self.name.form == 'count'
+        
+        unless names.empty? || names.map(&:last).flatten.empty?
+  
+          # handle the editor-translator special case
+          if names.map(&:first).sort.join.match(/editortranslator/)
+            editors = names.detect { |name| name.first == 'editor' }
+            translators = names.detect { |name| name.first == 'translator' }
+        
+            if editors.last.sort == translators.last.sort
+              editors[0] = 'editortranslator'
+              names.delete(translators)
+            end
+          end
+      
+          names = names.map do |role, names|
+            processed = []
+            
+            truncated = self.name.truncate(names)
+            
+            unless count_only
+              processed << self.name.process_names(role, truncated, processor)
+            
+              if names.length > truncated.length
+
+                # use delimiter before et al. if there is more than a single name; squeeze whitespace
+                others = (self.et_al.nil? ? processor.locale['et-al'].to_s : self.et_al.process(data, processor))
+                link = (self.name.et_al_use_first.to_i > 1 ? self.name.delimiter : ' ')
+
+                processed << [link, others].join.squeeze(' ')
+              end
+            
+              processed << self.label.process_names(role, names.length, processor) unless self.label.nil?
+            else
+              processed << truncated.length
+            end
+            
+            processed.join
+          end
+          
+          count_only ? names.inject(0) { |a, b| a.to_i + b.to_i }.to_s : names.join(delimiter)
+        else
+          count_only ? '0' : substitute.nil? ? '' : substitute.process(data, processor)
+        end
+      end
+    
+      format_on :process
+
+      protected
+      
+      # @returns a list of all name variables covered by this node; each list
+      # is wrapped in a list containing the lists role (e.g., 'editor')
+      # followed by the list proper.
+      def collect_names(item)
+        return [] unless self.variable?
+        self.variable.split(/\s+/).map { |variable| [variable, (item[variable] || []).map(&:clone)] }
+      end
+    
+      def inherit_attributes
+        inherit_attributes_from(['citation', 'bibliography', 'style'], ['delimiter'], 'names-')
+      end
+      
     end
+  
 
     # The cs:group element may contain one or more rendering elements (not
     # cs:layout). cs:group itself may carry the delimiter attribute (to
@@ -1005,47 +902,36 @@ module CSL
       attr_fields Nodes.formatting_attributes
       attr_fields %w{ delimiter }    
 
-      def initialize(node, style, processor=nil)
+      def initialize(node, style, parent=nil)
         super
         
-        collect_formatting_attributes(%w{ delimiter suffix prefix })
-        
-        @node.children.each do |node|
-          node = Node.parse(node, style, processor)
-          
-          # push down formatting attributes
-          apply_formatting_attributes(node)
-          
-          self.elements.push(node)
+        formatting_attributes = collect_formatting_attributes(%w{ delimiter suffix prefix })        
+
+        children.each do |child|
+          formatting_attributes.each_pair do |key, value|
+            child[key] ||= value
+          end
         end
+
       end
 
-      def elements
-        @elements ||= []
-      end
-
-      def process(data, processor=nil)
+      def process(data, processor)
         super
-        processed = @elements.map { |element| element.process(data, processor) }
+        processed = children.map { |child| child.process(data, processor) }
+        # TODO this must be changed to empty strings because of variable evaluation *only*
         processed.include?('') ? '' : apply_format(processed.join(delimiter))
+        # apply_format(processed.join(delimiter))
       end
 
-      
       protected
       
       def collect_formatting_attributes(exceptions=[])
-        @formatting_attributes = {}
+        formatting_attributes = {}
         (Nodes.formatting_attributes - exceptions).each do |key|
-          @formatting_attributes[key] = self[key]
+          formatting_attributes[key] = self[key]
           self.attributes.delete(key)
         end
-        @formatting_attributes
-      end
-      
-      def apply_formatting_attributes(node)
-        @formatting_attributes.each_pair do |key, value|
-          node[key] ||= value
-        end
+        formatting_attributes
       end
       
     end
@@ -1156,22 +1042,11 @@ module CSL
     #
     class Choose < Node
 
-      def initialize(node, style, processor=nil)
+      def process(data, processor)
         super
-        @node.children.each { |node| self.elements.push(ConditionalBlock.new(node, style, @processor)) }
-      end
-    
-      def elements
-        @elements ||= []
-      end
-      
-      def process(data, processor=nil)
-        super
-
-        elements.each do |element|
-          return element.process(data, @processor) if element.evaluate?(data, item(data['id']))
+        children.each do |child|
+          return child.process(data, processor) if child.evaluate?(data, processor)
         end
-
         ''
       end
       
@@ -1181,51 +1056,39 @@ module CSL
       attr_fields %w{ disambiguate is-numeric is-uncertain-date locator
         position type variable match }
       
-      attr_reader :name
-      
-      def initialize(node, style, processor=nil)
+      def process(data, processor)
         super
-        @name = @node.name
-        @node.children.each { |node| self.elements.push(Node.parse(node, style, @processor)) }
+        children.map { |child| child.process(data, processor) }.join
       end
       
-      def elements
-        @elements ||= []
-      end
-      
-      def process(data, processor=nil)
-        super
-        self.elements.map { |element| element.process(data, @processor) }.join
-      end
-      
-      def evaluate?(data, item)
+      def evaluate?(data, processor)
         case
         when self.disambiguate?
           # CiteProc.log.warn "Choose disambiguate not implemented yet"
           false
 
         when self.is_numeric?
-          value = item[variable]
+          value = data[is_numeric]
           value && value.is_numeric?
           
         when self.is_uncertain_date?
-          date = item[variable]
+          date = data[is_uncertain_date]
           date.is_a?(Date) && date.is_uncertain?
           
         when self.locator?
-          locator == (data['locator'] || item['locator'] || '').to_s
+          locator == data['locator'].to_s
           
         when self.position?
           # CiteProc.log.warn "Choose position not implemented yet"
           false
 
         when type?
-          self.is_match?(item['type'].to_s, type.split(/\s+/))
+          self.is_match?(data['type'].to_s, type.split(/\s+/))
           
         when self.variable?
-          self.is_empty?(item, variable.split(/\s+/))
+          self.is_empty?(data, variable.split(/\s+/))
           
-        when @name == 'else'
+        when self.is_a?(Else)
           true
           
         else
@@ -1233,7 +1096,7 @@ module CSL
           
         end
       rescue Exception => e
-        CiteProc.log.error "Failed to evaluate item #{item.inspect}; returning false."
+        CiteProc.log.error "Failed to evaluate item #{data.inspect}: #{ e.message }; returning false."
         false
       end
       
@@ -1251,4 +1114,9 @@ module CSL
     end
 
   end
+  
+  %w{ If ElseIf Else }.each do |node_name|
+    CSL::Nodes.const_set(node_name.to_sym, Class.new(CSL::Nodes::ConditionalBlock))
+  end
+  
 end

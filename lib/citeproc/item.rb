@@ -23,8 +23,7 @@ module CiteProc
     include Attributes
     
     attr_fields Variable.fields
-    
-    attr_accessor :processor
+    attr_fields %w{ locator label suppress-author author-only prefix suffix }
     
     def initialize(attributes={}, filter=nil)
       self.merge!(attributes)
@@ -35,60 +34,25 @@ module CiteProc
       # TODO
     end
     
-    def merge!(arguments)
-      arguments = [arguments] unless arguments.is_a?(Array)
-      arguments.each { |argument| argument.map { |key, value| self.attributes[key] = Variable.parse(value, key) }}
+    def merge!(other)
+      other = other.attributes unless other.is_a?(Hash)
+      other.each_pair { |key, value| self.attributes[key] = Variable.parse(value, key) }
+      self
     end
 
+    def reverse_merge!(other)
+      other = other.attributes unless other.is_a?(Hash)
+      other.each_pair { |key, value| self.attributes[key] ||= Variable.parse(value, key) }
+      self
+    end
+    
     def to_s
       self.attributes.inspect
     end
     
-    # alias :access :[]
-    # 
-    # @returns the variable with the given id. In case of a normal
-    # CiteProc::Variable, the variable is returned as a string.
-    # def [](id)
-    #   value = access(id)
-    #   value.class == CiteProc::Variable ? value.value : value
-    # end
-    
-    # Compares two items according to the sort keys specified in the processor
-    # assigned to the first item.
-    #
-    # @returns -1, 0, 1
-    #
-    def compare(other, mode=:citation)
-      return self <=> other if @processor.nil?
-      
-      @processor.style.send(mode).sort_keys.each do |key|
-        case
-        when key.has_key?('variable')
-          variable = key['variable']
-          this, that = self[variable], other[variable]
-                  
-        when key.has_key?('macro')
-          macro = @processor.style.macros[key['macro']]
-          this, that = macro.process({'id' => self['id'].to_s}, @processor),
-            macro.process({'id' => other['id'].to_s}, @processor) 
-
-        else
-          CiteProc.log.warn "sort key #{ key.inspect } contains no variable or macro definition."
-        end
-
-        comparison = this <=> that
-        comparison = comparison ? comparison : that.nil? ? 1 : -1
-        
-        comparison = comparison * -1 if key['sort'] == 'descending'
-        return comparison unless comparison.zero?
-      end
-      
-      0
-    end
     
     def <=>(other)
-      self.attributes <=> other.attributes if @processor.nil?
-      self.compare(other)
+      self.attributes <=> other.attributes
     end
   end
 

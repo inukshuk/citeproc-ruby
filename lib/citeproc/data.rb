@@ -98,7 +98,7 @@ module CiteProc
         hash[key] = key.to_s.gsub(/([[:lower:]])([[:upper:]])/, '\1-\2').downcase
       end
 
-      self.merge!(attributes)
+      merge!(attributes)
       
       yield self if block_given?
     end
@@ -118,10 +118,13 @@ module CiteProc
     def merge!(argument)
       case
       when argument.is_a?(Array) && argument.map(&:class).uniq == [Hash]
+        super('citation-items' => argument.map { |argument| Item.new(argument) })
+
+      when argument.is_a?(Array) && argument.map(&:class).uniq == [Item]
         super('citation-items' => argument)
-      
+
       when argument.is_a?(Hash)
-        argument.has_key?('id') ? super('citation-items' => [argument]) : super(argument)
+        argument.has_key?('id') ? super('citation-items' => [Item.new(argument)]) : super(argument)
         
       when argument.is_a?(String) || argument.is_a?(Symbol)
         super('citation-items' => [{ 'id' => argument.to_s }])
@@ -135,7 +138,12 @@ module CiteProc
     end
     
     def citation_items
-      self.attributes['citation-items'] ||= []
+      attributes['citation-items'] ||= []
+    end
+    
+    def populate!(items)
+      citation_items.each { |item| item.reverse_merge!(items[item.id.to_s]) }
+      self
     end
     
     def properties
@@ -148,7 +156,7 @@ module CiteProc
       alias_method "#{a}?", "#{m}?"
     end
     
-    [:each, :map, :empty?].each do |method_id|
+    [:each, :map, :empty?, :first, :last, :sort].each do |method_id|
       define_method method_id do |*args, &block|
         self.items.send(method_id, *args, &block)
       end

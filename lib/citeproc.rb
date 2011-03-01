@@ -51,6 +51,7 @@ require 'extensions/attributes'
 require 'csl/locale'
 require 'csl/formatting'
 require 'csl/nodes'
+require 'csl/renderer'
 require 'csl/style'
 
 # load available output formats

@@ -67,6 +67,7 @@ module CiteProc
     end
     
     def set(argument)
+      argument = argument.to_hash if argument.is_a?(Variable)
       argument.is_a?(Hash) ?  self.merge!(argument) : self.value = argument.to_s
     end
     

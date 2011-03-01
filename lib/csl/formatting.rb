@@ -104,7 +104,6 @@ module CSL
       end
       
       def finalize
-        apply_affixes(@tokens.map(&:content).join)
         [prefix, @tokens.map(&:content).join, suffix].reject(&:nil?).join
       end
       
