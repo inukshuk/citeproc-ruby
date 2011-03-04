@@ -37,7 +37,10 @@ module CSL
         Term.new(hash).singularize.should == 'test'
       end
     end
-        
+
+    describe 'gender' do
+      Term.new(xml).has_gender?.should_be true
+    end
   end
   
 end
