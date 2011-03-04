@@ -107,19 +107,18 @@ module CSL
     end
     
     def to_s(options={})
-      options['plural'] = ['', 'false', '1', 'never'].include?(options['plural'].to_s) ? 'singular' : 'plural'
-      options['form'] ||= 'long'
-      
+      plural = ['', 'false', '1', 'never'].include?(options['plural'].to_s) ? false : true
+
       term = case options['form']
         when 'verb-short' then verb_short || verb || long
         when 'symbol'     then symbol || short || long
         when 'verb'       then verb || long
         when 'short'      then short || long
         else
-          self[options['form']] || {}
-      end
+          self[options['form']] || self[options['gender-form']] || long || masculine || feminine || neutral
+      end || {}
       
-      term[options['plural']].to_s
+      plural && !term['plural'].nil? ? term['plural'].to_s : term['singular'].to_s
     rescue Exception => e
       CiteProc.log.error "failed to convert Term to String: #{ e.message }"
       ''

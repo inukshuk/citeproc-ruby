@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module CSL
 
   describe Locale do
@@ -77,34 +79,79 @@ module CSL
     end
   
     describe '#ordinalize' do
-      it 'works in English' do
-        result = (1..13).map do |i|
-          en.ordinalize(i)
+      context 'in English' do
+        it 'works' do
+          result = (1..13).map do |i|
+            en.ordinalize(i)
+          end
+      
+          expected = %w{ 1st 2nd 3rd 4th 5th 6th 7th 8th 9th 10th 11th 12th 13th }
+
+          result.should == expected
+      
+          result = [20, 21, 22, 23, 24, 100, 101, 102, 103, 104, 113, 123].map do |i|
+            en.ordinalize(i)
+          end
+
+          expected = %w{ 20th 21st 22nd 23rd 24th 100th 101st 102nd 103rd 104th 113th 123rd }
+
+          result.should == expected
+
         end
       
-        expected = %w{ 1st 2nd 3rd 4th 5th 6th 7th 8th 9th 10th 11th 12th 13th }
-
-        result.should == expected
+        it 'long-forms work in English' do
+          result = (1..13).map do |i|
+            en.ordinalize(i, 'form' => 'long-ordinal')
+          end
       
-        result = [20, 21, 22, 23, 24, 100, 101, 102, 103, 104, 113, 123].map do |i|
-          en.ordinalize(i)
+          expected = %w{ first second third fourth fifth sixth seventh eighth ninth tenth 11th 12th 13th }
+
+          result.should == expected
         end
+      end
 
-        expected = %w{ 20th 21st 22nd 23rd 24th 100th 101st 102nd 103rd 104th 113th 123rd }
+      context 'in German' do
+        it 'works' do
+          result = (1..13).map do |i|
+            de.ordinalize(i)
+          end
+      
+          expected = %w{ 1. 2. 3. 4. 5. 6. 7. 8. 9. 10. 11. 12. 13. }
 
-        result.should == expected
+          result.should == expected
+      
+          result = [20, 21, 22, 23, 24, 100, 101, 102, 103, 104, 113, 123].map do |i|
+            de.ordinalize(i)
+          end
 
+          expected = %w{ 20. 21. 22. 23. 24. 100. 101. 102. 103. 104. 113. 123. }
+
+          result.should == expected
+
+        end
+      
+        it 'long-forms work' do
+          result = (1..13).map do |i|
+            de.ordinalize(i, 'form' => 'long-ordinal')
+          end
+      
+          expected = %w{ erster zweiter dritter vierter fünfter sechster siebter achter neunter zehnter  11. 12. 13. }
+
+          result.should == expected
+        end
+        
+        it 'female long-forms work' do
+          result = (1..13).map do |i|
+            de.ordinalize(i, 'form' => 'long-ordinal', 'gender-form' => 'feminine')
+          end
+      
+          expected = %w{ erste zweite dritte vierte fünfte sechste siebte achte neunte zehnte  11. 12. 13. }
+
+          result.should == expected
+        end
+        
       end
       
-      it 'long-forms work in English' do
-        result = (1..10).map do |i|
-          en.ordinalize(i, 'form' => 'long-ordinal')
-        end
-      
-        expected = %w{ first second third fourth fifth sixth seventh eighth ninth tenth }
-
-        result.should == expected
-      end
       
     end
   end
