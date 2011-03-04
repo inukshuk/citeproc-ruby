@@ -2,7 +2,6 @@ module CSL
 
   describe Term do
 
-    let(:locale) { Locale.new }
     let(:xml) { '<term name="test" gender="neutral"><single>test</single><multiple>tests</multiple></term>' }
     let(:hash) { { 'long' => { 'singular' => 'test', 'plural' => 'tests' } } }
     
@@ -39,7 +38,18 @@ module CSL
     end
 
     describe 'gender' do
-      Term.new(xml).has_gender?.should_be true
+      it 'parses the gender attribute' do
+        Term.new(xml).has_gender?.should be true
+        Term.new(xml).is_neutral?.should be true
+        Term.new(xml).is_masculine?.should be false
+        Term.new(xml).is_feminine?.should be false
+      end
+
+      it 'has no gender by default' do
+        Term.new.has_gender?.should be false
+        Term.new(hash).has_gender?.should be false
+      end
+      
     end
   end
   

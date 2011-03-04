@@ -24,24 +24,74 @@ module CSL
     # Class Instance Variables
     @path = File.expand_path('../../../resource/locale/', __FILE__)
     @default = 'en-US'
-
-    class << self; attr_accessor :path, :default; end    
     
-    attr_reader :language, :region, :terms
+    # Language and region defaults
+    @regions = Hash.new { |hash, key| hash[key] = Locale.match_region(key) }
+    @regions['en'] = 'US'
+    @regions['de'] = 'DE'
+    @regions['pt'] = 'PT'
+
+    @languages = Hash.new { |hash, key| hash[key] = Locale.match_language(key) }
+
+    class << self
+      attr_accessor :path, :default, :regions, :languages
+  
+      # @returns first available region for current language.
+      def match_region(language)
+        Dir.entries(Locale.path).detect { |l| l.match(%r/^[\w]+-#{language}-([A-Z]{2})\.xml$/) }
+        $1
+      end
+
+      # @returns first available language for current region.
+      def match_language(region)
+        Dir.entries(Locale.path).detect { |l| l.match(%r/^[\w]+-([a-z]{2})-#{region}\.xml$/) }
+        $1
+      end
+    end
+    
+    
+    attr_reader :language, :region
 
     # @param argument a language tag; or an XML node
-    def initialize(tag=nil)
-      set(tag || Locale.default)
+    def initialize(argument=nil, &block)
+      case
+      when argument.is_a?(Nokogiri::XML::Node)
+        @language, @region = argument['lang'].split(/-/)
+        parse!(argument)
+      
+      when argument.is_a?(String) && argument.match(/^\s*<locale/)
+        argument = Nokogiri::XML.parse(argument) { |config| config.strict.noblanks }.root
+        @language, @region = argument['lang'].split(/-/)
+        parse!(argument)
+      
+      when argument.is_a?(String) || argument.is_a?(Symbol)
+        set(argument)
+      end
+      
+      yield self if block_given?
     end
     
-    def language=(new_language)
-      @language = new_language
-      match_region
+    def language=(language)
+      @language = language
+      @region = Locale.regions[language]
     end
     
-    def region=(new_region)
-      @region = new_region
-      match_language
+    def region=(region)
+      @region = region
+      @language = Locale.languages[region]
+    end
+    
+    def parse!(node)
+      raise(ArgumentError, "expected XML node, was: #{ node.inspect }") unless node.is_a?(Nokogiri::XML::Node)
+      
+      @terms = Term.build(node)
+      
+      @options = Hash[*node.css('style-options').map(&:attributes).map { |a| a.map { |name, a| [name, a.value] } }.flatten]    
+      
+      # TODO parse date-part elements
+      @date = Hash[*['text', 'numeric'].map { |form| [form, node.css("date[form='#{form}'] > date-part")] }.flatten]
+      
+      self
     end
     
     def set(tag)
@@ -52,25 +102,26 @@ module CSL
       [@language, @region].join('-')
     end
   
+    def terms
+      @terms ||= Term.build
+    end
+    
     def [](tag)
-      term = @terms.map { |terms| terms[tag] }
-      term.detect {|t| !t.empty?} || term.first
+      terms[tag.to_s]
     end
 
     # @example
     # #options['punctuation-in-quotes'] => 'true'
     def options
-      @options ||= Hash.new { |h,k| @doc.at_css('style-options')[k.to_s] }
+      @options ||= {}
     end
     
     alias :style_options :options
 
     # @example
-    # #date(:numeric)['month']['suffix'] => '/'
+    # #date['numeric']['month']['suffix'] => '/'
     def date
-      @date ||= Hash[['text', 'numeric'].map { |form|
-        [form, @doc.css("date[form='#{form}'] > date-part")]
-      }]
+      @date ||= {}
     end
     
     # Around Alias Chains to call reload whenver locale changes
@@ -83,17 +134,16 @@ module CSL
       end
     end
 
-    # Reloads the XML file. Called automatically whenever the locale changes.
+    # Reloads the XML file. Called automatically whenever language or region changes.
     def reload!
-      match_region if @region.nil?
-      match_language if @language.nil?
-      
-      @options, @date, @terms = nil
-      @doc = Nokogiri::XML(File.open(document_path)) { |config| config.strict.noblanks }
-      
-      @terms = [Term.build(@doc)]
+      @region = Locale.regions[@language] if @region.nil?
+      @language = Locale.languages[@region] if @language.nil?
+
+      parse!(Nokogiri::XML(File.open(document_path)) { |config| config.strict.noblanks }.root)
     rescue Exception => e
       CiteProc.log.error "Failed to open locale file, falling back to default: #{e.message}"
+      CiteProc.log.debug e.backtrace[0..10].join("\n")
+      
       unless tag == Locale.default
         @language, @region = Locale.default.split(/-/)
         retry
@@ -120,10 +170,12 @@ module CSL
       key = [options['form'], '%02d'].join('-')
 
       ordinal = self[key % number].to_s 
-
-      if ordinal.empty?
+      mod = 100
+      
+      while ordinal.empty? && mod > 1
         key = 'ordinal-%02d'
-        ordinal = self[key % (number % 10)].to_s
+        ordinal = self[key % (number % mod)].to_s
+        mod = mod / 10
       end
       
       key.match(/^ordinal/) ? [number, ordinal].join : ordinal
@@ -131,18 +183,6 @@ module CSL
 
     
     private
-    
-    # Set region to first available region for current language.
-    def match_region
-      Dir.entries(Locale.path).detect { |l| l.match(%r/^[\w]+-#{@language}-([A-Z]{2})\.xml$/) }
-      @region = $1
-    end
-
-    # Set language to first available language for current region.
-    def match_language
-      Dir.entries(Locale.path).detect { |l| l.match(%r/^[\w]+-([a-z]{2})-#{@region}\.xml$/) }
-      @language = $1
-    end
     
     def document_path
       File.expand_path("./locales-#{@language}-#{@region}.xml", Locale.path)

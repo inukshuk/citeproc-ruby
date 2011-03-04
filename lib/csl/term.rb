@@ -51,7 +51,8 @@ module CSL
   class Term
     include Attributes
 
-    attr_fields %w{ name long short verb verb-short symbol gender }
+    attr_fields %w{ name long short verb verb-short symbol gender feminine
+      masculine neutral }
     
     def initialize(argument=nil, &block)
       case
@@ -79,9 +80,9 @@ module CSL
       
     
     # @returns a hash containing all the terms in the given document
-    def self.build(doc)
+    def self.build(doc=nil)
       terms = Hash.new { |h,k| h[k] = Term.new(k) }
-      doc.css('terms term').each { |term| terms[term['name']].parse!(term) }
+      doc.css('terms term').each { |term| terms[term['name']].parse!(term) } unless doc.nil?
 
       terms
     end
@@ -107,14 +108,16 @@ module CSL
     
     def to_s(options={})
       options['plural'] = ['', 'false', '1', 'never'].include?(options['plural'].to_s) ? 'singular' : 'plural'
+      options['form'] ||= 'long'
       
       term = case options['form']
         when 'verb-short' then verb_short || verb || long
         when 'symbol'     then symbol || short || long
         when 'verb'       then verb || long
         when 'short'      then short || long
-        else long
-      end || {}
+        else
+          self[options['form']] || {}
+      end
       
       term[options['plural']].to_s
     rescue Exception => e
