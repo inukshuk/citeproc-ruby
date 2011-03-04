@@ -15,62 +15,63 @@ def filter(file, fixture)
   # ['affix_InterveningEmpty.json'].include?(File.basename(file))
   # File.basename(file) =~ /bugreports_greek/i
   # File.basename(file) =~ /sort_stripmark/i
-  # File.basename(file) =~ /number_/i && fixture['mode'] == 'citation'
-  fixture['mode'] == 'citation' && !fixture['citations']
+  File.basename(file) =~ /nameattr_etalsubsequentusefirstoncitation/i && fixture['mode'] == 'citation'
+  # fixture['mode'] == 'citation' && !fixture['citations']
 end
 
-describe 'citeproc' do
-
-  before(:each) do
-    @proc = CiteProc::Processor.new
-  end
-
-  CiteProc::Test::Fixtures::Processor.each_pair do |file, fixture|
-
-    tokens = File.basename(file).split(/_|\.json/)
-    
-    describe tokens[0].downcase do
-      
-      name = tokens[1].gsub(/([[:lower:]])([[:upper:]])/, '\1 \2').downcase
-      
-      it name do
-        @proc.style = fixture['csl']
-        @proc.import(fixture['input'])
-        @proc.format = :html
-
-        @proc.add_abbreviations(fixture['abbreviations']) if fixture['abbreviations']
-      
-        case fixture['mode']
-        
-        when 'citation'
-          # citations => process_citation_cluster
-          # citation_items || :all => make_citation_cluster
-          data = fixture['citation_items']
-        
-          unless data
-            result = @proc.cite(:all).map { |d| d[1] }.join
-          else
-            result = data.map { |d| @proc.cite(d).map { |c| c[1] }.join }.join("\n")
-          end
-        
-        when 'bibliography'
-          not_implemented
-        
-        when 'bibliography-header'
-          not_implemented
-        
-        when 'bibliography-nosort'
-          not_implemented
-        
-        else
-          CiteProc.log.warn "unkown processor mode: #{fixture['mode']}"
-          not_implemented
-        end
-      
-        result.should == fixture['result']
-      
-      end
-    end if filter(file, fixture)
+module CiteProc
   
+  describe 'citeproc' do
+
+    let(:proc) { Processor.new }
+
+    Test::Fixtures::Processor.each_pair do |file, fixture|
+
+      tokens = File.basename(file).split(/_|\.json/)
+    
+      describe tokens[0].downcase do
+      
+        name = tokens[1].gsub(/([[:lower:]])([[:upper:]])/, '\1 \2').downcase
+      
+        it name do
+          proc.style = fixture['csl']
+          proc.import(fixture['input'])
+          proc.format = :html
+
+          proc.add_abbreviations(fixture['abbreviations']) if fixture['abbreviations']
+      
+          case fixture['mode']
+        
+          when 'citation'
+            # citations => process_citation_cluster
+            # citation_items || :all => make_citation_cluster
+            data = fixture['citation_items']
+        
+            unless data
+              result = proc.cite(:all).map { |d| d[1] }.join
+            else
+              result = data.map { |d| proc.cite(d).map { |c| c[1] }.join }.join("\n")
+            end
+        
+          when 'bibliography'
+            not_implemented
+        
+          when 'bibliography-header'
+            not_implemented
+        
+          when 'bibliography-nosort'
+            not_implemented
+        
+          else
+            CiteProc.log.warn "unkown processor mode: #{fixture['mode']}"
+            not_implemented
+          end
+      
+          result.should == fixture['result']
+      
+        end
+      end if filter(file, fixture)
+  
+    end
   end
 end

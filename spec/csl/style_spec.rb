@@ -48,7 +48,7 @@ describe CSL::Style do
   describe 'citation renderer' do
     it 'initialises the citation renderer' do
       @style.open 'apa'
-      @style.citation.class.name.should == 'CSL::Nodes::Citation'
+      @style.citation.class.name.should == 'CSL::Citation'
     end
     
     it 'contains a layout section' do
@@ -61,7 +61,7 @@ describe CSL::Style do
   describe 'bibliography renderer' do
     it 'initialises the bibliography renderer' do
       @style.open 'apa'
-      @style.bibliography.class.name.should == 'CSL::Nodes::Bibliography'
+      @style.bibliography.class.name.should == 'CSL::Bibliography'
     end
   end
   

@@ -48,6 +48,7 @@ Debugger.start
 require 'extensions/core'
 require 'extensions/attributes'
 
+require 'csl/term'
 require 'csl/locale'
 require 'csl/formatting'
 require 'csl/nodes'

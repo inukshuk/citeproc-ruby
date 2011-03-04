@@ -604,6 +604,7 @@ module CSL
       format_on :process_names
 
       def truncate(names)
+        debugger
         et_al_min? && et_al_min.to_i <= names.length ? names[0, et_al_use_first.to_i] : names
       end
       
@@ -835,7 +836,6 @@ module CSL
               processed << self.name.process_names(role, truncated, processor)
             
               if names.length > truncated.length
-
                 # use delimiter before et al. if there is more than a single name; squeeze whitespace
                 others = (self.et_al.nil? ? processor.locale['et-al'].to_s : self.et_al.process(data, processor))
                 link = (self.name.et_al_use_first.to_i > 1 ? self.name.delimiter : ' ')
