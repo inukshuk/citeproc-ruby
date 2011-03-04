@@ -20,6 +20,7 @@
 module CSL
   
   class Locale
+    include Comparable
 
     # Class Instance Variables
     @path = File.expand_path('../../../resource/locale/', __FILE__)
@@ -86,10 +87,14 @@ module CSL
       
       @terms = Term.build(node)
       
-      @options = Hash[*node.css('style-options').map(&:attributes).map { |a| a.map { |name, a| [name, a.value] } }.flatten]    
+      @options = Hash[node.css('style-options').map(&:attributes).map { |a| a.map { |name, a| [name, a.value] } }.flatten]    
       
-      # TODO parse date-part elements
-      @date = Hash[*['text', 'numeric'].map { |form| [form, node.css("date[form='#{form}'] > date-part")] }.flatten]
+      @date = Hash.new([])
+      ['text', 'numeric'].each do |form|
+        @date[form] = node.css("date[form='#{form}'] > date-part").map do |part|
+          Hash[part.attributes.values.map { |a| [a.name, a.value] }]
+        end
+      end
       
       self
     end
@@ -121,7 +126,7 @@ module CSL
     # @example
     # #date['numeric']['month']['suffix'] => '/'
     def date
-      @date ||= {}
+      @date ||= Hash.new([])
     end
     
     # Around Alias Chains to call reload whenver locale changes
@@ -150,6 +155,10 @@ module CSL
       end
     end
 
+    def <=>(other)
+      self.tag <=> other.tag
+    end
+    
     # Returns an ordinalized number according to the rules specified in the
     # given locale. Does not conform to CSL 1.0 in order to work around some
     # shortcomings in the schema: this version tries a useful fallback if

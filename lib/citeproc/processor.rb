@@ -29,7 +29,6 @@ module CiteProc
 
     def style=(resource)
       @style = CSL::Style.new(resource)
-      locale.terms.unshift(CSL::Term.build(@style.locale)) if @style.locale
     end
 
     def language=(language)
@@ -41,7 +40,7 @@ module CiteProc
     end
     
     def locale
-      @locale ||= CSL::Locale.new
+      @locale ||= CSL.default_locale
     end
     
     # @returns the abbreviations, a self-recording hash.

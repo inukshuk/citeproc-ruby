@@ -47,18 +47,20 @@ module CSL
 
       attr_reader :style, :children, :parent
           
-      def initialize(node, style, parent=nil)
-        @node = node
-        
+      def initialize(argument, style, parent=nil)
         @style = style
         @parent = parent
         
-        @children = node.children.map do |child|
-          Node.parse(child, style, self)
-        end
+        if argument.is_a?(Nokogiri::XML::Node)
+          @children = argument.children.map do |child|
+            Node.parse(child, style, self)
+          end
         
-        parse_attributes(node)
-        inherit_attributes
+          parse_attributes(argument)
+          inherit_attributes(argument)
+        else
+          super(argument)
+        end
       end
 
       # Parses the given node an returns a new instance of Node or a suitable
@@ -83,7 +85,7 @@ module CSL
       end
 
       # Empty method; nodes may override this method.
-      def inherit_attributes
+      def inherit_attributes(node)
       end
       
       # Attributes for the cs:names and cs:name elements may also be set on
@@ -109,11 +111,11 @@ module CSL
       # This mehtod traverses a nodes ancestor chain and inherits all
       # specified attributes from each parent that matches a name in names.
       #
-      def inherit_attributes_from(nodes=[], attributes=[], prefix='')
-        return unless @node
+      def inherit_attributes_from(node, nodes=[], attributes=[], prefix='')
+        return unless node
         
         # TODO refactor so that node is not required anymore
-        parent = @node.parent        
+        parent = node.parent        
         until parent.name == 'document' do
           attributes.each { |attribute| self[attribute] ||= parent[[prefix, attribute].join] } if nodes.include?(parent.name)
           parent = parent.parent
@@ -319,7 +321,7 @@ module CSL
     class Date < Node
       attr_fields Nodes.formatting_attributes
       attr_fields %w{ variable form date-parts delimiter }
-
+      
       def process(data, processor)
         super
         date = data[variable]
@@ -332,21 +334,28 @@ module CSL
           date.literal
           
         else
-          parts = form? ? collect(processor.locale.date[form].map { |node| Node.parse(node, @style, self) }, children) : children
-          parts.map { |part| part.process(date, processor) }.join(delimiter)
+          parts(processor).map { |part| part.process(date, processor) }.join(delimiter)
 
         end
       end
 
       format_on :process
-        
+      
+      def parts(processor)
+        form? ? merge_parts(localized_parts(processor), children) : children
+      end
+      
+      def localized_parts(processor)
+        processor.locale.date[form].map { |node| DatePart.new(node, @style, self) }
+      end
+      
       # Combines two lists of date-part elements. Attributes in the second
       # list take precedence over attributes in corresponding elements in the
       # first list.
       # 
       # @returns the consolidated list
       #
-      def collect(p1, p2)
+      def merge_parts(p1, p2)
       
         # merge
         parts = p1.empty? ? p2 : p1.map do |this|
@@ -604,7 +613,7 @@ module CSL
       format_on :process_names
 
       def truncate(names)
-        debugger
+        # TODO subsequent
         et_al_min? && et_al_min.to_i <= names.length ? names[0, et_al_use_first.to_i] : names
       end
       
@@ -621,10 +630,10 @@ module CSL
         end
       end
 
-      def inherit_attributes
-        inherit_attributes_from(['citation', 'bibliography', 'style'], Nodes.inheritable_name_attributes)
-        inherit_attributes_from(['citation', 'bibliography', 'style'], ['form', 'delimiter'], 'name-')
-        inherit_attributes_from(['style'], ['demote-non-dropping-particle', 'initialize-with-hyphen'])
+      def inherit_attributes(node)
+        inherit_attributes_from(node, ['citation', 'bibliography', 'style'], Nodes.inheritable_name_attributes)
+        inherit_attributes_from(node, ['citation', 'bibliography', 'style'], ['form', 'delimiter'], 'name-')
+        inherit_attributes_from(node, ['style'], ['demote-non-dropping-particle', 'initialize-with-hyphen'])
       end
       
     end
@@ -869,8 +878,8 @@ module CSL
         self.variable.split(/\s+/).map { |variable| [variable, (item[variable] || []).map(&:clone)] }
       end
     
-      def inherit_attributes
-        inherit_attributes_from(['citation', 'bibliography', 'style'], ['delimiter'], 'names-')
+      def inherit_attributes(node)
+        inherit_attributes_from(node, ['citation', 'bibliography', 'style'], ['delimiter'], 'names-')
       end
       
     end

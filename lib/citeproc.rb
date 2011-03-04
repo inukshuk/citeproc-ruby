@@ -71,3 +71,12 @@ require 'citeproc/processor'
 Dir.glob("#{File.expand_path('..', __FILE__)}/citeproc/filters/*.rb").each do |format|
   require format
 end
+
+# Top-level CSL utility functions
+module CSL
+  
+  def self.default_locale
+    Locale.new(Locale.default)
+  end
+  
+end

@@ -3,9 +3,6 @@
 # suite.
 #
 
-def not_implemented
-  # 'Not implemented'.should == 'Implemented'
-end
 
 #
 # Filter applied to each test to decide whether we should run it. Use this
@@ -15,8 +12,8 @@ def filter(file, fixture)
   # ['affix_InterveningEmpty.json'].include?(File.basename(file))
   # File.basename(file) =~ /bugreports_greek/i
   # File.basename(file) =~ /sort_stripmark/i
-  File.basename(file) =~ /nameattr_etalsubsequentusefirstoncitation/i && fixture['mode'] == 'citation'
-  # fixture['mode'] == 'citation' && !fixture['citations']
+  # File.basename(file) =~ /date_/i && fixture['mode'] == 'citation'
+  true
 end
 
 module CiteProc
@@ -54,17 +51,17 @@ module CiteProc
             end
         
           when 'bibliography'
-            not_implemented
-        
+            pending('not yet implemented')
+            
           when 'bibliography-header'
-            not_implemented
+            pending('not yet implemented')
         
           when 'bibliography-nosort'
-            not_implemented
+            pending('not yet implemented')
         
           else
             CiteProc.log.warn "unkown processor mode: #{fixture['mode']}"
-            not_implemented
+            pending('not yet implemented')
           end
       
           result.should == fixture['result']

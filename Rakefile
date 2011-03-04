@@ -28,7 +28,7 @@ RSpec::Core::RakeTask.new(:test) do |t|
   # t.rspec_opts = ['-c', '-f html', '-o ./doc/citeproc-tests.html', '-p', '-r ./spec/spec_helper.rb']
   t.rspec_opts = ['-c', '-f progress', '-p', '-r ./spec/spec_helper.rb']
   t.fail_on_error = false
-  t.pattern = 'spec/**/*_test.rb'
+  t.pattern = 'spec/citeproc/citeproc_spec.rb'
 end
 
 
