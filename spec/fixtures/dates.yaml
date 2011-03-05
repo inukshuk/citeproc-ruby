@@ -1,0 +1,80 @@
+---
+display:
+  - it: returns an empty string by default
+    dates:
+    - {}
+    expected:
+    - ""
+    options: {}
+json-api:
+  - it: supports simple parts
+    dates:
+    - date-parts:
+      - - "2000"
+        - "1"
+        - "15"
+    expected:
+    - '{"date-parts":[[2000,1,15]]}'
+    options: {}
+  - it: supports integers and strings parts
+    dates:
+    - date-parts:
+      - - "2000"
+        - "1"
+        - "15"
+    - date-parts:
+      - - 2000
+        - 1
+        - 15
+    - date-parts:
+      - - '2000'
+        - 1
+        - '15'
+    expected:
+    - '{"date-parts":[[2000,1,15]]}'
+    - '{"date-parts":[[2000,1,15]]}'
+    - '{"date-parts":[[2000,1,15]]}'
+    options: {}
+  - it: supports negative years
+    dates:
+    - date-parts:
+      - - -200
+    expected:
+    - '{"date-parts":[[-200]]}'
+    options: {}
+  - it: supports additional elements
+    dates:
+    - season: '1'
+      date-parts:
+      - - 1950
+    - season: 'Trinity'
+      date-parts:
+      - - 1975
+    expected:
+    - '{"season":"1","date-parts":[[1950]]}'
+    - '{"season":"Trinity","date-parts":[[1975]]}'
+    options: {}
+  - it: supports open and closed ranges
+    dates:
+    - date-parts:
+      - - 2000
+        - 11
+      - - 2000
+        - 12
+    - date-parts:
+      - - 2000
+        - 11
+      - - 0
+        - 0
+    expected:
+    - '{"date-parts":[[2000,11],[2000,12]]}'
+    - '{"date-parts":[[2000,11],[0,0]]}'
+    options: {}
+  - it: supports string literals and raw strings
+    dates:
+    - literal: 13th century
+    - raw: 23 May 1955
+    expected:
+    - '{"literal":"13th century"}'
+    - '{"date-parts":[[1955,5,23]]}'
+    options: {}
