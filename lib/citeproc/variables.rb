@@ -146,11 +146,15 @@ module CiteProc
       options.each_pair { |key, value| self.options[key] = value unless value.nil? }
     end
     
+    def parse!(argument)
+      return super unless argument.is_a?(String)
+      parse_name!(argument)
+    end
+    
     def merge!(argument)
-      
       if argument['parse-names'] && argument.delete('parse-names') != 'false'
-        parse_family(argument.delete('family'))
-        parse_given(argument.delete('given'))
+        parse_family!(argument.delete('family'))
+        parse_given!(argument.delete('given'))
       end
       
       argument.map { |key, value| self[key] = value }
@@ -191,17 +195,19 @@ module CiteProc
     #   prefers that the traditional comma be used in rendering their name,
     #   the comma can be force by placing a exclamation mark after the comma.
     #
-    def parse(string)
+    def parse_name!(string)
       return if string.nil?
 
       tokens = string.split(/,\s+/)
 
-      parse_family(tokens[0])
-      parse_given(tokens[1])
+      parse_family!(tokens[0])
+      parse_given!(tokens[1])
+      
+      self
     end
     
     # @see parse
-    def parse_family(string)
+    def parse_family!(string)
       return if string.nil?
       
       tokens = string.scan(/^['"](.+)['"]$|^([[:lower:]\s]+)?([[:upper:]][[:alpha:]\s]*)$/).first
@@ -212,10 +218,12 @@ module CiteProc
         self['family'] = tokens[0] || tokens[2] || string
         self['non-dropping-particle'] = tokens[1].gsub(/^\s+|\s+$/, '') unless tokens[1].nil?
       end
+      
+      self
     end
     
     # @see parse
-    def parse_given(string)
+    def parse_given!(string)
       return if string.nil?
 
       tokens = string.scan(/^((?:[[:upper:]][[:alpha:]\.]*\s*)+)([[:lower:]\s]+)?(?:,!?\s([[:alpha:]\.\s]+))?$/).first
@@ -228,6 +236,8 @@ module CiteProc
         self['suffix'] = tokens[2] unless tokens[2].nil?
         self['comma-suffix'] = 'true' if string.match(/,!/)
       end
+      
+      self
     end
     
     def is_personal?
@@ -340,10 +350,6 @@ module CiteProc
       self.display
     end
     
-    def to_json
-      self.attributes.to_json
-    end
-    
     def literal_as_sort_order
       literal.gsub(/^(the|an?|der|die|das|eine?|l[ae])\s+/i, '')
     end
@@ -424,11 +430,7 @@ module CiteProc
     def sort_order
       "%04d%02d%02d-%04d%02d%02d" % ((self.from + [0,0,0])[0,3] + (self.to + [0,0,0])[0,3])
     end
-    
-    def to_json
-      self.attributes.to_json
-    end
-    
+        
     def <=>(other)
       super unless other.is_a?(Date)
       self.sort_order <=> other.sort_order
