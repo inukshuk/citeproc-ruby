@@ -820,7 +820,7 @@ module CSL
       def process(data, processor)
         super
         names = collect_names(data)
-        debugger if self.name.nil?
+        
         count_only = self.name.form == 'count'
         
         unless names.empty? || names.map(&:last).flatten.empty?

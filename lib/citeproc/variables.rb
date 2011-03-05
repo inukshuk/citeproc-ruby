@@ -39,14 +39,12 @@ module CiteProc
 
     @filters = Hash.new
     
-    @parser = Hash.new('Variable')
-    @date_fields.each { |field| @parser[field] = 'Date' }
-    @name_fields.each { |field| @parser[field] = 'Name' }
+    @types = Hash.new(Variable)
 
     attr_fields :value
     
     class << self
-      attr_reader :date_fields, :name_fields, :text_fields, :filters, :parser
+      attr_reader :date_fields, :name_fields, :text_fields, :filters, :types
 
       def fields
         date_fields + name_fields + text_fields
@@ -56,17 +54,18 @@ module CiteProc
         Variable.filters[id][key]
       end
 
-      def parse(variables, type=nil)
-        parser = lambda { |variable, type| CiteProc.const_get(Variable.parser[type]).new(variable) }
-        variables.is_a?(Array) ? variables.map { |v| parser.call(v, type) } : parser.call(variables, type)
+      def parse(values, name=nil)
+        values.is_a?(Array) ? values.map { |value| Variable.types[name].new(value) } :
+          Variable.types[name].new(values)
       end
     end
 
-    def initialize(attributes={})
-      set(attributes)
+    def initialize(attributes={}, &block)
+      parse!(attributes)
+      yield self if block_given?
     end
     
-    def set(argument)
+    def parse!(argument)
       argument = argument.to_hash if argument.is_a?(Variable)
       argument.is_a?(Hash) ?  self.merge!(argument) : self.value = argument.to_s
     end
@@ -123,7 +122,10 @@ module CiteProc
   #
   class Name < Variable
 
+    # Based on the regular expression in citeproc-js
     ROMANESQUE = /^[a-zA-Z\u0080-\u017f\u0400-\u052f\u0386-\u03fb\u1f00-\u1ffe\.,\s'\u0027\u02bc\u2019-]*$/
+    
+    Variable.name_fields.each { |field| Variable.types[field] = Name }
     
     attr_fields %w{ given family literal suffix dropping-particle
       non-dropping-particle comma-suffix static-ordering parse-names }
@@ -378,6 +380,8 @@ module CiteProc
   class Date < Variable
 
     attr_fields %w{ date-parts season circa literal }
+
+    Variable.date_fields.each { |field| Variable.types[field] = Date }
 
     [:year, :month, :day].each_with_index do |method_id, index|
       define_method method_id do; date_parts[0][index].to_i end

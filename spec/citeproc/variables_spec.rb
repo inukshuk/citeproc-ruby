@@ -25,4 +25,9 @@ module CiteProc
       end
     end
   end
+  
+  # describe Date do
+  #   
+  # end
+  
 end

@@ -9,7 +9,7 @@
 # to stay sane while the Processor is not feature-complete!
 #
 def filter(file, fixture)
-  # ['affix_InterveningEmpty.json'].include?(File.basename(file))
+  # return ['affix_InterveningEmpty.json'].include?(File.basename(file))
   # File.basename(file) =~ /bugreports_greek/i
   # File.basename(file) =~ /sort_stripmark/i
   # File.basename(file) =~ /date_/i && fixture['mode'] == 'citation'
