@@ -39,12 +39,16 @@ module Attributes
   end
   
   def merge!(other)
+    return self if other.nil?
+    
     other = other.attributes unless other.is_a?(Hash)
     other.each_pair { |key, value| self[key] = value }
     self
   end
 
   def reverse_merge!(other)
+    return self if other.nil?
+    
     other = other.attributes unless other.is_a?(Hash)
     other.each_pair { |key, value| self[key] ||= value }
     self

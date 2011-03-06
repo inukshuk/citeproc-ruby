@@ -34,7 +34,7 @@ module CSL
       @layout = Nodes::Node.parse(node.at_css('layout'), style)
       @sort_keys = node.css('sort key').map do |key|
         Hash[key.attributes.values.map { |a| [a.name, a.value] }]
-      end  
+      end
     end
   
     def sort(data, processor)

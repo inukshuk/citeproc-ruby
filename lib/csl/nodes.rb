@@ -45,45 +45,95 @@ module CSL
       include Attributes
       include Formatting
 
-      attr_reader :style, :children, :parent
+      attr_reader :children
+      attr_accessor :style, :parent
           
-      def initialize(argument, style, parent=nil)
-        @style = style
-        @parent = parent
+      def initialize(*args)
+        @style = args.detect { |argument| argument.is_a?(Style) }
+        args.delete(@style) unless @style.nil?
         
-        if argument.is_a?(Nokogiri::XML::Node)
-          @children = argument.children.map do |child|
-            Node.parse(child, style, self)
+        args.each do |argument|
+          case          
+          when argument.is_a?(Node)
+            @parent = argument
+            @style = @parent.style || @style
+            
+          when argument.is_a?(String) && argument.match(/^\s*</)
+            parse!(Nokogiri::XML.parse(argument) { |config| config.strict.noblanks }.root)
+          
+          when argument.is_a?(Nokogiri::XML::Node)
+            parse!(argument)
+          
+          when argument.is_a?(Hash)
+            merge!(argument)
+          
+          else
+            CiteProc.log.warn "cannot initialize Node from argument #{ argument.inspect }" unless argument.nil?
           end
-        
-          parse_attributes(argument)
-          inherit_attributes(argument)
-        else
-          super(argument)
         end
+        
+        yield self if block_given?
       end
 
       # Parses the given node an returns a new instance of Node or a suitable
-      # subclass corresponding to the node's name
-      def self.parse(node, style, parent=nil)
+      # subclass corresponding to the node's name.
+      def self.parse(*args, &block)
+        node = args.detect { |argument| argument.is_a?(Nokogiri::XML::Node) }
+        raise(ArgumentException, "arguments must contain an XML node; was #{ args.map(&:class).inspect }") if node.nil?
+        
         name = node.name.split(/[\s-]+/).map(&:capitalize).join
-        klass = CSL::Nodes.const_defined?(name) ? CSL::Nodes.const_get(name) : CSL::Nodes::Node
-        klass.new(node, style, parent)
+        klass = Nodes.const_defined?(name) ? Nodes.const_get(name) : Node
+        
+        klass.new(*args, &block)
       end
-            
-      # Processes the supplied data.
+
+      # Parses the given XML node.
+      def parse!(node)
+        return if node.nil?
+        
+        node.attributes.values.each { |a| attributes[a.name] = a.value }
+        
+        @children = node.children.map do |child|
+          Node.parse(self, child)
+        end
+        
+        inherit_attributes(node)
+        self
+      end
+      
+      # @returns a new Node with the attributes of self and other merged.
+      def merge(other)
+        self.class.new(attributes).merge!(other)
+      end
+
+      # @returns a new Node with the attributes of self and other merged;
+      # attributes in other take precedence.      
+      def reverse_merge(other)
+        other.merge(self)
+      end
+      
+      # @returns the localized term with the given name.
+      def term(name, processor=nil)
+        locale = processor && processor.locale || CSL.default_locale
+        locale[name]
+      end
+      
+      # Processes the supplied data. @returns a formatted string.
       def process(data, processor)
         self.format = processor.format
         ''
       end
-    
 
-      protected
-    
-      def parse_attributes(node)
-        node.attributes.values.each { |a| attributes[a.name] = a.value }
+      def to_s
+        attributes.merge('node' => self.class.name).inspect
       end
 
+      protected
+
+      def extract_argument!(arguments, type)
+        argument
+      end
+      
       # Empty method; nodes may override this method.
       def inherit_attributes(node)
       end
@@ -282,8 +332,9 @@ module CSL
     end
 
 
-    # The cs:date element is used to output dates, in either a localized or a
-    # non-localized format. The desired date variable (see Date Variables) is
+    #
+    # The Date element is used to output dates, in either a localized or a
+    # non-localized format. The desired date variable (@see CiteProc::Date) is
     # selected with the variable attribute.
     #
     # Localized date formats are selected with the form attribute. This
@@ -318,6 +369,7 @@ module CSL
     #
     # For both localized and non-localized dates, affixes, display and
     # formatting attributes may be specified for the cs:date element.
+    #
     class Date < Node
       attr_fields Nodes.formatting_attributes
       attr_fields %w{ variable form date-parts delimiter }
@@ -326,97 +378,91 @@ module CSL
         super
         date = data[variable]
         
-        case
-        when date.nil?
-          ''
-          
-        when date.literal?
-          date.literal
-          
-        else
-          parts(processor).map { |part| part.process(date, processor) }.join(delimiter)
-
-        end
+        return '' if date.nil? || date.parts.empty?
+        return date.literal if date.literal?
+        
+        parts(processor).map { |part| part.process(date, processor) }.join(delimiter)
       end
 
       format_on :process
       
       def parts(processor)
-        form? ? merge_parts(localized_parts(processor), children) : children
+        form? ? merge_parts(processor.locale.date[form], children) : children
       end
-      
-      def localized_parts(processor)
-        processor.locale.date[form].map { |node| DatePart.new(node, @style, self) }
-      end
-      
-      # Combines two lists of date-part elements. Attributes in the second
-      # list take precedence over attributes in corresponding elements in the
+            
+      # Combines two lists of date-part elements; includes only the parts set
+      # in the 'date-parts' attribute and retains the order of elements in the
       # first list.
-      # 
-      # @returns the consolidated list
-      #
       def merge_parts(p1, p2)
-      
-        # merge
-        parts = p1.empty? ? p2 : p1.map do |this|
-          that = p2.detect { |part| part['name'] == this['name'] }
-          this.attributes = this.attributes.merge(that.attributes) unless that.nil?
-          this
+        merged = p1.map do |part|
+          DatePart.new(part.attributes, style).merge(p2.detect { |p| p['name'] == part['name'] })
         end
-      
-        # filter
-        filter = %w{ year month day } & (date_parts? ? date_parts.split(/-/) : %w{ year month day })
-        parts = parts.reject { |part| !filter.include?(part['name']) }
+        merged.reject { |part| !date_parts.match(Regexp.new(part['name'])) }
       end
 
+      def date_parts
+        self['date-parts'] || 'year-month-day'
+      end
     end
 
     class DatePart < Node
       attr_fields Nodes.formatting_attributes
       attr_fields %w{ name form range-delimiter strip-periods }
     
-      def process(date, processor)
-        part = case self['name']
-          when 'day'
-            case form
-            when 'ordinal' then processor.locale.ordinalize(date.day)
-            when 'numeric-leading-zeros' then "%02d" % date.day
-            else # 'numeric'
-              date.day.to_s
-            end
-            
-          when 'month'
-            if date.season?
-              date.season.to_s.match(/[1-4]/) ? processor.locale["season-0#{date.season}"].to_s : date.season.to_s
-            else
-              case form
-              when 'numeric' then date.month.to_s
-              when 'numeric-leading-zeros' then "%02d" % date.month
-              else
-                processor.locale["month-%02d" % date.month].to_s(attributes)
-              end
-            end
-            
-          when 'year'
-            case form
-            when 'short' then date.year.abs.to_s[-2..-1] # get the last two characters
-            else # 'long'
-              date.year.abs.to_s
-            end
-            
-          else
-            CiteProc.log.error "illegal date-part #{ self['name'] }"
-            ''
-          end
-      
-        part = [part, processor.locale['ad']].join if self['name'] == 'year' && date.year < 1000
-        part = [part, processor.locale['bc']].join if self['name'] == 'year' && date.year < 0
-            
-        part
+      def process(data, processor)  
+        send(['process', self['name']].join('_'), data, processor)
+
+      rescue Exception => e
+        CiteProc.log.error "failed to process node #{ self['name'] }: #{ e.message }"
+        CiteProc.log.debug e.backtrace[0,10].join("\n").gsub(/^/, "\t")
+        ''
       end
     
       format_on :process
-    
+
+      def process_year(date, processor)
+        return '' if date.year.nil?
+        
+        year = date.year.abs.to_s
+        year = year[-2..-1] if form == 'short'
+        year = [year, processor.locale['ad']].join if date.ad?
+        year = [year, processor.locale['bc']].join if date.bc?
+        year
+      end
+      
+      def process_month(date, processor)
+        return '' if date.month.nil?      
+        return process_season(date, processor) if date.is_season?
+
+        case
+        when form == 'numeric'
+          date.month.to_s
+        when form == 'numeric-leading-zeros'
+          "%02d" % date.month
+        else
+          processor.locale["month-%02d" % date.month].to_s(attributes)
+        end      
+      end
+      
+      def process_season(date, processor)
+        season = date.season.to_s
+        season = date.month.to_s if season.match(/true|always|yes/i)
+        season = processor.locale['season-%02d' % season.to_i].to_s if season.match(/0?[1-4]/)
+        season
+      end
+
+      def process_day(date, processor)
+        return '' if date.day.nil?
+        
+        case
+        when form == 'ordinal'
+          processor.locale.ordinalize(date.day)
+        when form == 'numeric-leading-zeros'
+          "%02d" % date.day
+        else # 'numeric'
+          date.day.to_s
+        end
+      end
     end
 
 
@@ -470,7 +516,6 @@ module CSL
       end
 
       format_on :process
-    
     end
 
     # The cs:name element is a required child element of cs:names, and describes
@@ -580,8 +625,8 @@ module CSL
       attr_fields Nodes.inheritable_name_attributes
       attr_fields %w{ form delimiter }
         
-      def initialize(node, style, parent=nil)
-        super
+      def initialize(*args, &block)
+        super(*args, &block)
 
         attributes['delimiter'] ||= ', '
         attributes['delimiter-precedes-last'] ||= 'false'
@@ -911,8 +956,8 @@ module CSL
       attr_fields Nodes.formatting_attributes
       attr_fields %w{ delimiter }    
 
-      def initialize(node, style, parent=nil)
-        super
+      def initialize(*args, &block)
+        super(*args, &block)
         
         formatting_attributes = collect_formatting_attributes(%w{ delimiter suffix prefix })        
 

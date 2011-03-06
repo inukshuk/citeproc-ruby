@@ -392,9 +392,12 @@ module CiteProc
     Variable.date_fields.each { |field| Variable.types[field] = Date }
 
     [:year, :month, :day].each_with_index do |method_id, index|
-      define_method method_id do; date_parts[0][index] end
+      define_method method_id do
+        date_parts[0].nil? ? nil : date_parts[0][index]
+      end
       
       define_method [method_id, '='].join do |value|
+        date_parts[0] = [] if date_parts[0].nil?
         date_parts[0][index] = value.to_i
       end
     end
@@ -424,7 +427,7 @@ module CiteProc
     end
     
     def date_parts
-      attributes['date-parts'] ||= [[]]
+      attributes['date-parts'] ||= []
     end
     
     alias :parts :date_parts
@@ -434,12 +437,20 @@ module CiteProc
       date_parts.length > 1
     end
     
-    def is_uncertain
+    def is_open_range?
+      is_range? && to.uniq == [0]
+    end
+    
+    def uncertain!
       self['circa'] = true
     end
     
+    def bc?; year && year < 0; end
+    def ad?; !bc? && year < 1000; end
+    
     alias :is_uncertain? :circa?
-     
+    alias :is_season? :season?
+    
     def from
       date_parts.first
     end
@@ -457,20 +468,16 @@ module CiteProc
       literal || attributes.inspect
     end
 
-    def value
-      self
-    end
+    def value; self; end
     
-    def is_numeric?
-      false
-    end
+    def is_numeric?; false; end
     
     def sort_order
-      "%04d%02d%02d-%04d%02d%02d" % ((self.from + [0,0,0])[0,3] + (self.to + [0,0,0])[0,3])
+      "%04d%02d%02d-%04d%02d%02d" % ((from + [0,0,0])[0,3] + (to + [0,0,0])[0,3])
     end
         
     def <=>(other)
-      super unless other.is_a?(Date)
+      return nil unless other.is_a?(Date)
       self.sort_order <=> other.sort_order
     end
   end

@@ -92,7 +92,7 @@ module CSL
       @date = Hash.new([])
       ['text', 'numeric'].each do |form|
         @date[form] = node.css("date[form='#{form}'] > date-part").map do |part|
-          Hash[part.attributes.values.map { |a| [a.name, a.value] }]
+          Nodes::DatePart.new(Hash[part.attributes.values.map { |a| [a.name, a.value] }])
         end
       end
       

@@ -12,7 +12,7 @@ def filter(file, fixture)
   # return ['affix_InterveningEmpty.json'].include?(File.basename(file))
   # File.basename(file) =~ /bugreports_greek/i
   # File.basename(file) =~ /sort_stripmark/i
-  # File.basename(file) =~ /date_/i && fixture['mode'] == 'citation'
+  # return File.basename(file) =~ /date_localizedtextdefault/i
   true
 end
 

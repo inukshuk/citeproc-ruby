@@ -38,6 +38,7 @@ module CSL
     def open(style)
       reset
       @doc = Nokogiri::XML(locate(style)) { |config| config.strict.noblanks }
+      self
     end
     
     # Returns the CSL Relax NG schema defintion.
