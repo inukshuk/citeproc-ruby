@@ -83,22 +83,17 @@ module Attributes
   def filter_value(value)
     value_filter[value] || value
   end
-  
-  
+    
   module ClassMethods
 
     def attr_fields(*args)
-      args = args.shift if args.first.is_a?(Array)
-      
-      @attr_fields ||= []
-      
+      args = args.shift if args.first.is_a?(Array) && args.length == 1
+
       args.each do |field|
-        field = field.to_s
+        field, default = (field.is_a?(Hash) ? field.to_a.flatten : [field]).map(&:to_s)
         method_id = field.downcase.gsub(/[-\s]+/, '_')
         
-        @attr_fields << field
-        
-        define_method method_id do; self[field]; end unless self.respond_to?(method_id)
+        define_method method_id do; self[field] ||= default; end unless self.respond_to?(method_id)
         
         define_method [method_id, '='].join do |value|
           self[field] = value

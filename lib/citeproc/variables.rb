@@ -434,13 +434,13 @@ module CiteProc
     alias :parts= :date_parts=
     
     def is_range?
-      date_parts.length > 1
+      !to.empty?
     end
     
     def is_open_range?
       is_range? && to.uniq == [0]
     end
-    
+        
     def uncertain!
       self['circa'] = true
     end

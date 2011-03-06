@@ -71,6 +71,8 @@ module CSL
             CiteProc.log.warn "cannot initialize Node from argument #{ argument.inspect }" unless argument.nil?
           end
         end
+
+        set_defaults
         
         yield self if block_given?
       end
@@ -130,8 +132,8 @@ module CSL
 
       protected
 
-      def extract_argument!(arguments, type)
-        argument
+      # Empty method; nodes may override this method.
+      def set_defaults
       end
       
       # Empty method; nodes may override this method.
@@ -381,7 +383,19 @@ module CSL
         return '' if date.nil? || date.parts.empty?
         return date.literal if date.literal?
         
-        parts(processor).map { |part| part.process(date, processor) }.join(delimiter)
+        parts = parts(processor)
+        
+        case
+        when date.is_open_range?
+          result = parts.map { |part| part.process(date, processor) }.join(delimiter)
+          result + parts.last.range_delimiter
+          
+        when date.is_range?
+          
+          
+        else
+          parts.map { |part| part.process(date, processor) }.join(delimiter)
+        end
       end
 
       format_on :process
@@ -409,8 +423,8 @@ module CSL
       attr_fields Nodes.formatting_attributes
       attr_fields %w{ name form range-delimiter strip-periods }
     
-      def process(data, processor)  
-        send(['process', self['name']].join('_'), data, processor)
+      def process(date, processor)  
+        send(['process', self['name']].join('_'), date, processor)
 
       rescue Exception => e
         CiteProc.log.error "failed to process node #{ self['name'] }: #{ e.message }"
@@ -463,6 +477,12 @@ module CSL
           date.day.to_s
         end
       end
+    
+      protected
+      
+      def set_defaults
+        self['range-delimiter'] ||= "\u2013"
+      end
     end
 
 
@@ -508,7 +528,7 @@ module CSL
           when 'roman'        then number.to_i.romanize
           when 'ordinal'      then processor.locale.ordinalize(number, attributes)
           when 'long-ordinal' then processor.locale.ordinalize(number, attributes)
-          else 
+          else
             number.to_i.to_s
           end unless number.empty?
         
@@ -624,16 +644,7 @@ module CSL
       attr_fields Nodes.formatting_attributes
       attr_fields Nodes.inheritable_name_attributes
       attr_fields %w{ form delimiter }
-        
-      def initialize(*args, &block)
-        super(*args, &block)
-
-        attributes['delimiter'] ||= ', '
-        attributes['delimiter-precedes-last'] ||= 'false'
-
-        children.each { |child| parts[child['name']] = child }        
-      end
-    
+            
       def parts
         @parts ||= Hash.new { |h, k| k.match(/(non-)?dropping-particle/) ? h['family'] : nil }
       end
@@ -662,7 +673,14 @@ module CSL
         et_al_min? && et_al_min.to_i <= names.length ? names[0, et_al_use_first.to_i] : names
       end
       
-      private      
+      protected
+      
+      def set_defaults
+        attributes['delimiter'] ||= ', '
+        attributes['delimiter-precedes-last'] ||= 'false'
+
+        children.each { |child| parts[child['name']] = child }        
+      end      
 
       # @returns the delimiter to be used between the penultimate and last
       # name in the list.
@@ -956,19 +974,6 @@ module CSL
       attr_fields Nodes.formatting_attributes
       attr_fields %w{ delimiter }    
 
-      def initialize(*args, &block)
-        super(*args, &block)
-        
-        formatting_attributes = collect_formatting_attributes(%w{ delimiter suffix prefix })        
-
-        children.each do |child|
-          formatting_attributes.each_pair do |key, value|
-            child[key] ||= value
-          end
-        end
-
-      end
-
       def process(data, processor)
         super
         processed = children.map { |child| child.process(data, processor) }
@@ -978,6 +983,16 @@ module CSL
       end
 
       protected
+
+      def set_defaults
+        formatting_attributes = collect_formatting_attributes(%w{ delimiter suffix prefix })        
+
+        children.each do |child|
+          formatting_attributes.each_pair do |key, value|
+            child[key] ||= value
+          end
+        end
+      end
       
       def collect_formatting_attributes(exceptions=[])
         formatting_attributes = {}
@@ -1122,12 +1137,10 @@ module CSL
           false
 
         when self.is_numeric?
-          value = data[is_numeric]
-          value && value.is_numeric?
+          data[is_numeric] && data[is_numeric].is_numeric?
           
         when self.is_uncertain_date?
-          date = data[is_uncertain_date]
-          date.is_a?(Date) && date.is_uncertain?
+          data[is_uncertain_date] && data[is_uncertain_date].is_uncertain?
           
         when self.locator?
           locator == data['locator'].to_s
@@ -1150,7 +1163,7 @@ module CSL
           
         end
       rescue Exception => e
-        CiteProc.log.error "Failed to evaluate item #{data.inspect}: #{ e.message }; returning false."
+        CiteProc.log.error "failed to evaluate item #{data.inspect}: #{ e.message }; returning false."
         false
       end
       
