@@ -114,6 +114,21 @@ module CSL
           it 'merges a list of date-parts and an empty list' do
             date.merge_parts(locale.date['text'], []).map(&:to_s).should == locale.date['text'].map(&:to_s)
           end
+
+          it 'merges a list of date-parts with itself' do
+            date.merge_parts(locale.date['text'], locale.date['text']).map(&:to_s).should == locale.date['text'].map(&:to_s)
+          end
+          
+          it 'filters according to the date-parts attribute' do
+            date.date_parts = 'year'
+            date.merge_parts(locale.date['text'], []).length.should == 1
+            date.date_parts = 'month-day'
+            date.merge_parts(locale.date['text'], []).length.should == 2
+          end
+          
+          it 'copies attribute values' do
+            date.merge_parts([DatePart.new({'name' => 'year'})], [DatePart.new({'name' => 'year', 'foo' => 'bar'})]).first['foo'].should == 'bar'
+          end
         end
       
         describe '#date_parts' do
