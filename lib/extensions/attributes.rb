@@ -95,14 +95,19 @@ module Attributes
         
         define_method method_id do; self[field] ||= default; end unless self.respond_to?(method_id)
         
-        define_method [method_id, '='].join do |value|
+        writer_id = [method_id, '='].join
+        define_method writer_id do |value|
           self[field] = value
-        end unless self.respond_to?([method_id, '='].join)
-        
-        define_method [method_id, '?'].join do
-          ![nil, false, '', [], 'false', 'no', 'never'].include?(self[field])
-        end unless self.respond_to?([method_id, '?'].join)
-        
+        end unless self.respond_to?(writer_id)
+
+        predicate = [method_id, '?'].join  
+        unless self.respond_to?(predicate)
+          define_method predicate do
+            ![nil, false, '', [], 'false', 'no', 'never'].include?(self[field])
+          end     
+          has_predicate = ['has_', predicate].join
+          alias_method(has_predicate, predicate) unless self.respond_to?(has_predicate)
+        end
       end
     end
     
