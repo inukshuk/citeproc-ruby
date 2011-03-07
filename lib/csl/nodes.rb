@@ -180,7 +180,12 @@ module CSL
           attributes.each { |attribute| self[attribute] ||= parent[[prefix, attribute].join] } if nodes.include?(parent.name)
           parent = parent.parent
         end
-
+      end
+      
+      def handle_processing_error(e, data, processor)
+        CiteProc.log.error "failed to process item #{ data['id'] }: #{ e.message }."
+        CiteProc.log.debug e.backtrace[0,10].join("\n").gsub(/^/, "\t")
+        ''
       end
     end
 
@@ -197,6 +202,8 @@ module CSL
       def process(data, processor)
         super
         children.map { |child| child.process(data, processor) }.join
+      rescue Exception => e
+        handle_processing_error(e, data, processor)
       end
       
       format_on :process
@@ -277,6 +284,8 @@ module CSL
         text = [processor.locale['open-quote'], text, processor.locale['close-quote']].join if quotes?
       
         text
+      rescue Exception => e
+        handle_processing_error(e, data, processor)      
       end
   
       format_on :process
@@ -388,30 +397,83 @@ module CSL
         super
         date = data[variable]
         
-        return '' if date.nil? || date.parts.empty?
-        return date.literal if date.literal?
-        
-        parts = parts(processor)
-        
         case
-        when date.open_range?
-          result = parts.map { |part| part.process(date, processor) }.join(delimiter)
-          result + parts.last.range_delimiter
-          
+        when date.nil? || date.parts.empty?
+          ''
+        when date.literal?
+          date.literal
         when date.range?
-          
-          
+          process_range(date, processor)
         else
-          parts.map { |part| part.process(date, processor) }.join(delimiter)
+          parts(processor).map { |part| part.process(date, processor) }.join(delimiter)
         end
+      rescue Exception => e
+        handle_processing_error(e, data, processor)
       end
 
       format_on :process
       
-      def parts(processor)
-        form? ? merge_parts(processor.locale.date[form], children) : children
+      # By default, date ranges are delimited by an en-dash (e.g. "May–July
+      # 2008"). The range-delimiter attribute can be used to specify custom
+      # date range delimiters. The attribute value set on the largest
+      # date-part ("day", "month" or "year") that differs between the two
+      # dates of the date range will then be used instead of the en-dash. For
+      # example,
+      #
+      # <style>
+      #   <citation>
+      #     <layout>
+      #       <date variable="issued">
+      #         <date-part name="month" suffix=" "/>
+      #         <date-part name="year" range-delimiter="/"/>
+      #       </date>
+      #     </layout>
+      #   </citation>
+      # </style>
+      # 
+      # would result in "May–July 2008" and "May 2008/June 2009".
+      #
+      def process_range(date, processor)
+        parts = parts(processor)
+        discriminator = date.range_discriminator
+        result = []
+        
+        case
+        when date.open_range?
+          result << parts.map { |part| part.process(date, processor) }.join(delimiter)
+          result << parts.last.range_delimiter
+          
+        when discriminator == 'month'
+          month_parts = parts.select { |part| part['name'] != 'year' }
+
+          result << month_parts.map { |part| part.process(date, processor) }.join(delimiter)
+          result << month_parts.last.range_delimiter
+          result << parts.map { |part| part.process(date.to_date, processor) }.join(delimiter)
+        
+        when discriminator == 'day'
+          day_parts = parts.select { |part| part['name'] == 'day' }
+
+          result << day_parts.map { |part| part.process(date, processor) }.join(delimiter)
+          result << day_parts.last.range_delimiter
+          result << parts.map { |part| part.process(date.to_date, processor) }.join(delimiter)
+          
+        else # year
+          year_parts = parts.select { |part| part['name'] == 'year' }
+
+          result << parts.map { |part| part.process(date, processor) }.join(delimiter)
+          result << year_parts.last.range_delimiter
+          result << year_parts.map { |part| part.process(date.to_date, processor) }.join(delimiter)
+          
+        end
+
+        result.join
       end
-            
+      
+      def parts(processor)
+        has_form? ? merge_parts(processor.locale.date[form], children) : children
+      end
+      
+      
       # Combines two lists of date-part elements; includes only the parts set
       # in the 'date-parts' attribute and retains the order of elements in the
       # first list.
@@ -433,11 +495,8 @@ module CSL
     
       def process(date, processor)  
         send(['process', self['name']].join('_'), date, processor)
-
       rescue Exception => e
-        CiteProc.log.error "failed to process node #{ self['name'] }: #{ e.message }"
-        CiteProc.log.debug e.backtrace[0,10].join("\n").gsub(/^/, "\t")
-        ''
+        handle_processing_error(e, data, processor)      
       end
     
       format_on :process
@@ -532,15 +591,20 @@ module CSL
         super
         number = data[variable].to_s
         
-        number = case form
-          when 'roman'        then number.to_i.romanize
-          when 'ordinal'      then processor.locale.ordinalize(number, attributes)
-          when 'long-ordinal' then processor.locale.ordinalize(number, attributes)
-          else
-            number.to_i.to_s
-          end unless number.empty?
-        
-        number
+        case
+        when number.empty?
+          number
+        when form == 'roman'
+          number.to_i.romanize
+        when form == 'ordinal'
+          processor.locale.ordinalize(number, attributes)
+        when form == 'long-ordinal'
+          processor.locale.ordinalize(number, attributes)
+        else
+          number.to_i.to_s
+        end
+      rescue Exception => e
+        handle_processing_error(e, data, processor)      
       end
 
       format_on :process
@@ -672,6 +736,8 @@ module CSL
         end
 
         names.join(ampersand(processor))
+      rescue Exception => e
+        handle_processing_error(e, data, processor)        
       end
 
       format_on :process_names
@@ -753,6 +819,8 @@ module CSL
       def process(data, processor)
         super
         processor.locale[term ||  'et-al'].to_s(attributes)
+      rescue Exception => e
+        handle_processing_error(e, data, processor)        
       end
     
       format_on :process
@@ -786,11 +854,15 @@ module CSL
       def process(data, processor)
         super
         processor.locale[data['label'].to_s].to_s(attributes.merge({ 'plural' =>  plural?(data, 0) ? 'true' : 'false' }))
+      rescue Exception => e
+        handle_processing_error(e, data, processor)        
       end
     
       def process_names(role, number, processor)
         format = processor.format
         processor.locale[role].to_s(attributes.merge({ 'plural' => plural?(nil, number) ? 'true' : 'false' }))        
+      rescue Exception => e
+        handle_processing_error(e, data, processor)        
       end
         
       format_on :process
@@ -846,6 +918,8 @@ module CSL
           return processed unless processed.empty?
         end
         ''
+      rescue Exception => e
+        handle_processing_error(e, data, processor)        
       end
     
     end
@@ -935,6 +1009,8 @@ module CSL
         else
           count_only ? '0' : substitute.nil? ? '' : substitute.process(data, processor)
         end
+      rescue Exception => e
+        handle_processing_error(e, data, processor)        
       end
     
       format_on :process
@@ -993,6 +1069,8 @@ module CSL
 
         # if any variable returned nil, skip the entire group
         @skip ? '' : apply_format(processed)
+      rescue Exception => e
+        handle_processing_error(e, data, processor)        
       end
 
       def start_observing(item)
@@ -1143,6 +1221,8 @@ module CSL
           return child.process(data, processor) if child.evaluate?(data, processor)
         end
         ''
+      rescue Exception => e
+        handle_processing_error(e, data, processor)        
       end
       
     end
@@ -1154,6 +1234,8 @@ module CSL
       def process(data, processor)
         super
         children.map { |child| child.process(data, processor) }.join
+      rescue Exception => e
+        handle_processing_error(e, data, processor)        
       end
       
       def evaluate?(data, processor)

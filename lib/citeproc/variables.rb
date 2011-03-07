@@ -451,11 +451,27 @@ module CiteProc
     alias :uncertain? :circa?
     
     def from
-      date_parts.first
+      date_parts[0]
     end
     
     def to
       date_parts[1] ||= []
+    end
+    
+    def to_date
+      Date.new('date-parts' => [to])
+    end
+    
+    def range_discriminator
+      return nil unless self.range?
+      
+      case
+      when from[0] != to[0] then 'year'
+      when from[1] != to[1] then 'month'
+      when from[2] != to[2] then 'day'
+      end
+      
+      'year'
     end
     
     def display(options={})

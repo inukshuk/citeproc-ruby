@@ -18,6 +18,7 @@
 
 module CSL
   
+  # TODO move formatting to CiteProc into Processor
   module Formatting
     
     def self.included(base)
