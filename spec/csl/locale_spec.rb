@@ -11,20 +11,25 @@ module CSL
     let(:fr) { Locale.new('fr-FR') }
         
     describe '#new' do
-      it 'defaults to empty language, region' do
-        locale.language.should be nil
-        locale.region.should be nil
+      it { should_not be_nil }
+      
+      it 'defaults to empty language' do
+        locale.language.should be_nil
+      end
+      
+      it 'defaults to empty region' do
+        locale.region.should be_nil
       end
     
       it 'contains no terms, date, and options content by default' do
         [:terms, :date, :options].each do |m|
-          locale.send(m).nil?.should_not be true
-          locale.send(m).empty?.should be true
+          locale.send(m).should_not be_nil
+          locale.send(m).should be_empty
         end
       end
 
       it 'parses an XML string' do
-        l = Locale.new <<-END
+        locale = Locale.new <<-END
         <locale xml:lang="en">
           <terms>
             <term name="editortranslator" form="short">
@@ -35,16 +40,15 @@ module CSL
         </locale>
         END
 
-        l.language.should == 'en'
-        l.options.empty?.should be true
-        l.terms['editortranslator'].pluralize('form' => 'short').should == 'eds. & trans.'
+        locale.language.should == 'en'
+        locale.options.should be_empty
+        locale.terms['editortranslator'].pluralize('form' => 'short').should == 'eds. & trans.'
       end
     end
   
     describe '#set' do
       it 'sets a new language' do
         language = 'de'
-      
         locale.language = language
         locale.language.should == language
         locale.region.should == 'DE'      
@@ -63,7 +67,7 @@ module CSL
   
     describe '#terms' do
       it 'contains common terms by default' do
-        en['book'].nil?.should_not be true
+        en['book'].should_not be_nil
       end
     
       it 'contains variants for form and number' do
