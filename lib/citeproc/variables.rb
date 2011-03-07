@@ -76,7 +76,7 @@ module CiteProc
       self.value.to_s
     end
     
-    def is_numeric?
+    def numeric?
       self.to_s.match(/^-?\d+$/)
     end
     
@@ -242,15 +242,15 @@ module CiteProc
       self
     end
     
-    def is_personal?
+    def personal?
       self.family?
     end
     
-    def is_romanesque?
+    def romanesque?
       (self['given'].nil? || self['given'].match(ROMANESQUE)) && (self['family'].nil? || self['family'].match(ROMANESQUE))
     end
     
-    alias :is_byzantine? :is_romanesque?
+    alias :byzantine? :romanesque?
         
     def comma_suffix
       self.comma_suffix? && self.suffix? ? comma : nil
@@ -261,7 +261,7 @@ module CiteProc
     end
     
     def delimiter
-      is_romanesque? ? ' ' : ''
+      romanesque? ? ' ' : ''
     end
     
     def value
@@ -277,18 +277,18 @@ module CiteProc
     # this is *not* sepcified in CSL 1.0).
     #
     def initialize?
-      options.has_key?('initialize-with') && family? && is_romanesque?
+      options.has_key?('initialize-with') && family? && romanesque?
     end
     
-    def is_static_order?
-      static_ordering? || !is_romanesque?
+    def static_order?
+      static_ordering? || !romanesque?
     end
     
-    def is_sort_order?
+    def sort_order?
       ['all', 'true', 'yes', 'always'].include?(options['name-as-sort-order'])
     end
  
-    def is_numeric?
+    def numeric?
       false
     end
        
@@ -301,16 +301,16 @@ module CiteProc
       when literal?
         return %w{ literal }
       
-      when is_static_order?
+      when static_order?
         return %w{ family given }
         
-      when options['form'] != 'short' && !is_sort_order?
+      when options['form'] != 'short' && !sort_order?
         return %w{ given dropping-particle non-dropping-particle family comma-suffix suffix }
 
-      when options['form'] != 'short' && is_sort_order? && ['never', 'sort-only'].include?(options['demote-non-dropping-particle'])
+      when options['form'] != 'short' && sort_order? && ['never', 'sort-only'].include?(options['demote-non-dropping-particle'])
         return %w{ non-dropping-particle family comma given dropping-particle comma suffix }
     
-      when options['form'] != 'short' && is_sort_order? && options['demote-non-dropping-particle'] == 'display-and-sort'
+      when options['form'] != 'short' && sort_order? && options['demote-non-dropping-particle'] == 'display-and-sort'
         return %w{ family comma given dropping-particle non-dropping-particle comma suffix }
     
       else # options['form'] == 'short'
@@ -433,12 +433,12 @@ module CiteProc
     alias :parts :date_parts
     alias :parts= :date_parts=
     
-    def is_range?
+    def range?
       !to.empty?
     end
     
-    def is_open_range?
-      is_range? && to.uniq == [0]
+    def open_range?
+      self.range? && to.uniq == [0]
     end
         
     def uncertain!
@@ -448,8 +448,7 @@ module CiteProc
     def bc?; year && year < 0; end
     def ad?; !bc? && year < 1000; end
     
-    alias :is_uncertain? :circa?
-    alias :is_season? :season?
+    alias :uncertain? :circa?
     
     def from
       date_parts.first
@@ -470,7 +469,7 @@ module CiteProc
 
     def value; self; end
     
-    def is_numeric?; false; end
+    def numeric?; false; end
     
     def sort_order
       "%04d%02d%02d-%04d%02d%02d" % ((from + [0,0,0])[0,3] + (to + [0,0,0])[0,3])

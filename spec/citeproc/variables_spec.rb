@@ -52,8 +52,8 @@ module CiteProc
 
       describe 'uncertain dates' do
         it 'are uncertain' do
-          Date.new({ 'date-parts' => [[-225]], 'circa' => '1' }).is_uncertain?
-          Date.new { |d| d.parts = [[-225]]; d.circa = true }.is_uncertain?
+          Date.new({ 'date-parts' => [[-225]], 'circa' => '1' }).should be_uncertain
+          Date.new { |d| d.parts = [[-225]]; d.circa = true }.should be_uncertain
         end
       end
     end

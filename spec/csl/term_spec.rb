@@ -7,7 +7,7 @@ module CSL
     
     describe '#new' do
       it 'defaults to an empty string' do
-        Term.new.to_s.should == ''
+        Term.new.to_s.should be_empty
       end
       
       it 'parses an XML string' do
@@ -39,15 +39,15 @@ module CSL
 
     describe 'gender' do
       it 'parses the gender attribute' do
-        Term.new(xml).has_gender?.should be true
-        Term.new(xml).is_neutral?.should be true
-        Term.new(xml).is_masculine?.should be false
-        Term.new(xml).is_feminine?.should be false
+        Term.new(xml).should have_gender
+        Term.new(xml).should be_neutral
+        Term.new(xml).should_not be_masculine
+        Term.new(xml).should_not be_feminine
       end
 
       it 'has no gender by default' do
-        Term.new.has_gender?.should be false
-        Term.new(hash).has_gender?.should be false
+        Term.new.should_not have_gender
+        Term.new(hash).should_not have_gender
       end
       
     end

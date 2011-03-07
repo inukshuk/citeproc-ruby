@@ -78,14 +78,13 @@ module CSL
       describe Number do
 
         describe '#new' do
-          it 'creates an empty node by default' do
-            Number.new.nil?.should be false
-          end
+
+          it { should_not be_nil }
         
           it 'parses an XML node' do
             number = Number.new('<number/>', style)
-            number.should_not be nil
-            number.style.should_not be nil
+            number.should_not be_nil
+            number.style.should_not be_nil
             number.form?.should be false
             number.variable?.should be false
           end
@@ -97,18 +96,16 @@ module CSL
         let(:date) { Date.new }
         
         describe '#new' do
-          it 'creates an empty node by default' do
-            Date.new.nil?.should be false
-          end
+          it { should_not be_nil }
         end
       
         describe '#merge_parts' do
           it 'merges two empty lists' do
-            date.merge_parts([], []).empty?.should be true
+            date.merge_parts([], []).should be_empty
           end
         
           it 'merges an empty list and a list of date-parts' do
-            date.merge_parts([], locale.date['text']).empty?.should be true
+            date.merge_parts([], locale.date['text']).should be_empty
           end
 
           it 'merges a list of date-parts and an empty list' do
@@ -121,9 +118,9 @@ module CSL
           
           it 'filters according to the date-parts attribute' do
             date.date_parts = 'year'
-            date.merge_parts(locale.date['text'], []).length.should == 1
+            date.merge_parts(locale.date['text'], []).should have(1).part
             date.date_parts = 'month-day'
-            date.merge_parts(locale.date['text'], []).length.should == 2
+            date.merge_parts(locale.date['text'], []).should have(2).parts
           end
           
           it 'copies attribute values' do

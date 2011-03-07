@@ -133,7 +133,7 @@ module CSL
     end
     
     %w{ masculine feminine neutral }.each do |gender|
-      define_method "is_#{gender}?" do
+      define_method "#{gender}?" do
         self['gender'] == gender
       end
     end

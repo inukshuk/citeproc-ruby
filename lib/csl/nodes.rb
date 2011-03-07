@@ -27,7 +27,22 @@ module CSL
       et-al-use-first et-al-subsequent-min et-al-subsequent-use-first
       initialize-with name-as-sort-order sort-separator }
   
-    class << self; attr_reader :formatting_attributes, :inheritable_name_attributes; end
+    class << self
+      attr_reader :formatting_attributes, :inheritable_name_attributes
+    
+      # Parses the given node an returns a new instance of Node or a suitable
+      # subclass corresponding to the node's name.
+      def parse(*args, &block)
+        node = args.detect { |argument| argument.is_a?(Nokogiri::XML::Node) }
+        raise(ArgumentException, "arguments must contain an XML node; was #{ args.map(&:class).inspect }") if node.nil?
+        
+        name = node.name.split(/[\s-]+/).map(&:capitalize).join
+        klass = Nodes.const_defined?(name) ? Nodes.const_get(name) : Node
+        
+        klass.new(*args, &block)
+      end
+    end
+    
     
     # == Node
     #
@@ -77,18 +92,6 @@ module CSL
         yield self if block_given?
       end
 
-      # Parses the given node an returns a new instance of Node or a suitable
-      # subclass corresponding to the node's name.
-      def self.parse(*args, &block)
-        node = args.detect { |argument| argument.is_a?(Nokogiri::XML::Node) }
-        raise(ArgumentException, "arguments must contain an XML node; was #{ args.map(&:class).inspect }") if node.nil?
-        
-        name = node.name.split(/[\s-]+/).map(&:capitalize).join
-        klass = Nodes.const_defined?(name) ? Nodes.const_get(name) : Node
-        
-        klass.new(*args, &block)
-      end
-
       # Parses the given XML node.
       def parse!(node)
         return if node.nil?
@@ -96,18 +99,23 @@ module CSL
         node.attributes.values.each { |a| attributes[a.name] = a.value }
         
         @children = node.children.map do |child|
-          Node.parse(self, child)
+          Nodes.parse(self, child)
         end
         
         inherit_attributes(node)
         self
       end
       
-      # @returns a new Node with the attributes of self and other merged.
+      # @returns a new Node with the attributes and style of self and other
+      # merged.
       def merge(other)
-        self.class.new(attributes).merge!(other)
+        return self.copy if other.nil?
+        self.class.new(attributes.merge(other.attributes), other.style || style)
       end
 
+      # @returns a new Node that contains the same attributes and style as self.
+      def copy; self.class.new(attributes, style); end
+      
       # @returns a new Node with the attributes of self and other merged;
       # attributes in other take precedence.      
       def reverse_merge(other)
@@ -386,11 +394,11 @@ module CSL
         parts = parts(processor)
         
         case
-        when date.is_open_range?
+        when date.open_range?
           result = parts.map { |part| part.process(date, processor) }.join(delimiter)
           result + parts.last.range_delimiter
           
-        when date.is_range?
+        when date.range?
           
           
         else
@@ -446,7 +454,7 @@ module CSL
       
       def process_month(date, processor)
         return '' if date.month.nil?      
-        return process_season(date, processor) if date.is_season?
+        return process_season(date, processor) if date.season?
 
         case
         when form == 'numeric'
@@ -777,18 +785,18 @@ module CSL
     
       def process(data, processor)
         super
-        processor.locale[data['label'].to_s].to_s(attributes.merge({ 'plural' =>  is_plural?(data, 0) ? 'true' : 'false' }))
+        processor.locale[data['label'].to_s].to_s(attributes.merge({ 'plural' =>  plural?(data, 0) ? 'true' : 'false' }))
       end
     
       def process_names(role, number, processor)
         format = processor.format
-        processor.locale[role].to_s(attributes.merge({ 'plural' => is_plural?(nil, number) ? 'true' : 'false' }))        
+        processor.locale[role].to_s(attributes.merge({ 'plural' => plural?(nil, number) ? 'true' : 'false' }))        
       end
         
       format_on :process
       format_on :process_names
       
-      def is_plural?(data, number)
+      def plural?(data, number)
         case
         when plural == 'always'
           true
@@ -1137,10 +1145,10 @@ module CSL
           false
 
         when self.is_numeric?
-          data[is_numeric] && data[is_numeric].is_numeric?
+          data[is_numeric] && data[is_numeric].numeric?
           
         when self.is_uncertain_date?
-          data[is_uncertain_date] && data[is_uncertain_date].is_uncertain?
+          data[is_uncertain_date] && data[is_uncertain_date].uncertain?
           
         when self.locator?
           locator == data['locator'].to_s
@@ -1150,10 +1158,10 @@ module CSL
           false
 
         when type?
-          self.is_match?(data['type'].to_s, type.split(/\s+/))
+          self.matches?(data['type'].to_s, type.split(/\s+/))
           
         when self.variable?
-          self.is_empty?(data, variable.split(/\s+/))
+          self.empty?(data, variable.split(/\s+/))
           
         when self.is_a?(Else)
           true
@@ -1168,13 +1176,13 @@ module CSL
       end
       
       # does a match any/all/none b in bs?
-      def is_match?(a, bs)
+      def matches?(a, bs)
         m = bs.map { |b| a == b }.inject { |a, b| self.match == 'any' ? a || b : a && b }
         self.match == 'none' ? !m : m
       end
       
       # is any/all/none v in vs non-empty?
-      def is_empty?(item, vs)
+      def empty?(item, vs)
         m = vs.map { |v| !item[v].nil? }.inject { |a, b| self.match == 'any' ? a || b : a && b }
         self.match == 'none' ? !m : m
       end
