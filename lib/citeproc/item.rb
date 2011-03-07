@@ -16,10 +16,13 @@
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 #++
 
+require 'observer'
+
 module CiteProc
 
   class Item
     include Comparable
+    include Observable
     include Attributes
     
     attr_fields Variable.fields
@@ -32,6 +35,13 @@ module CiteProc
     
     def self.filter(attributes, filter)
       # TODO
+    end
+    
+    # Around Alias to notify observers if a variable access returned nil.
+    # This is used by Group nodes.
+    alias :access :[]
+    def [](key)
+      value = access(key)
     end
     
     def merge!(other)
