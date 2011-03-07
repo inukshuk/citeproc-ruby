@@ -37,11 +37,12 @@ module CiteProc
       # TODO
     end
     
-    # Around Alias to notify observers if a variable access returned nil.
-    # This is used by Group nodes.
+    # @see CSL::Nodes::Group
     alias :access :[]
     def [](key)
       value = access(key)
+      notify_observers(key, value)
+      value
     end
     
     def merge!(other)

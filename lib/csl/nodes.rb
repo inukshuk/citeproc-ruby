@@ -984,12 +984,30 @@ module CSL
 
       def process(data, processor)
         super
-        processed = children.map { |child| child.process(data, processor) }
-        # TODO this must be changed to empty strings because of variable evaluation *only*
-        processed.include?('') ? '' : apply_format(processed.join(delimiter))
-        # apply_format(processed.join(delimiter))
+        
+        start_observing(data)
+
+        processed = children.map { |child| child.process(data, processor) }.reject(&:empty?).join(delimiter)
+
+        stop_observing(data)
+
+        # if any variable returned nil, skip the entire group
+        @skip ? '' : apply_format(processed)
       end
 
+      def start_observing(item)
+        @skip = false
+        item.add_observer(self)
+      end
+      
+      def stop_observing(item)
+        item.delete_observer(self)
+      end
+      
+      def update(key, value)
+        @skip = true if value.nil?
+      end
+      
       protected
 
       def set_defaults
