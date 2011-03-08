@@ -81,4 +81,8 @@ module CSL
     Locale.new(Locale.default)
   end
   
+  def self.default_style
+    Style.new(Style.default)
+  end
+  
 end

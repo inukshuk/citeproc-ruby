@@ -24,11 +24,27 @@ module CiteProc
     attr_writer :format
     
     def initialize
-      @bibliography = Bibliography.new
+      yield self if block_given?
     end
 
+    def self.process(item, options={})
+      return '' if item.nil? || item.empty?
+      
+      processor = Processor.new do |p|
+        p.style = options['style'] || CSL.default_style
+        p.locale = options['locale'] || CSL.default_locale
+        p.import(item)
+      end
+
+      if options[:mode] == :citation
+        processor.cite(:all)[0][1]
+      else
+        processor.bibliography.data.join
+      end
+    end
+    
     def style=(resource)
-      @style = CSL::Style.new(resource)
+      @style = resource.is_a?(CSL::Style) ? resource : CSL::Style.new(resource)
     end
 
     def language=(language)
@@ -37,6 +53,10 @@ module CiteProc
     
     def language
       self.locale.language
+    end
+    
+    def locale=(locale)
+      @locale = locale.is_a?(CSL::Locale) ? locale : CSL::Locale.new(locale)
     end
     
     def locale
@@ -86,7 +106,7 @@ module CiteProc
       end
     end
     
-    def bibliography
+    def bibliography(*args)
       data = extract_citation_data(:all)
       data.populate!(items)
       

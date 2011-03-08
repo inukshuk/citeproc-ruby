@@ -22,11 +22,12 @@ module CSL
 
     @schema = File.expand_path('../../resource/schema/csl.rnc', __FILE__)
     @path = File.expand_path('../../../resource/style', __FILE__)
+    @default = 'apa'
     
-    class << self; attr_accessor :path, :schema; end
+    class << self; attr_accessor :path, :schema, :default; end
         
-    def initialize(style='apa')
-      open(style)
+    def initialize(style=nil)
+      open(style || Style.default)
     end
     
     def reset
