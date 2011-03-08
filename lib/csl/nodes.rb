@@ -413,7 +413,7 @@ module CSL
 
       format_on :process
       
-      # By default, date ranges are delimited by an en-dash (e.g. "May–July
+      # By default, date ranges are delimited by an en-dash (e.g. "May-July
       # 2008"). The range-delimiter attribute can be used to specify custom
       # date range delimiters. The attribute value set on the largest
       # date-part ("day", "month" or "year") that differs between the two
@@ -431,42 +431,48 @@ module CSL
       #   </citation>
       # </style>
       # 
-      # would result in "May–July 2008" and "May 2008/June 2009".
+      # would result in "May-July 2008" and "May 2008/June 2009".
       #
       def process_range(date, processor)
-        parts = parts(processor)
-        discriminator = date.range_discriminator
-        result = []
-        
-        case
-        when date.open_range?
-          result << parts.map { |part| part.process(date, processor) }.join(delimiter)
-          result << parts.last.range_delimiter
-          
-        when discriminator == 'month'
-          month_parts = parts.select { |part| part['name'] != 'year' }
+        order = parts(processor)
 
-          result << month_parts.map { |part| part.process(date, processor) }.join(delimiter)
-          result << month_parts.last.range_delimiter
-          result << parts.map { |part| part.process(date.to_date, processor) }.join(delimiter)
-        
-        when discriminator == 'day'
-          day_parts = parts.select { |part| part['name'] == 'day' }
-
-          result << day_parts.map { |part| part.process(date, processor) }.join(delimiter)
-          result << day_parts.last.range_delimiter
-          result << parts.map { |part| part.process(date.to_date, processor) }.join(delimiter)
-          
-        else # year
-          year_parts = parts.select { |part| part['name'] == 'year' }
-
-          result << parts.map { |part| part.process(date, processor) }.join(delimiter)
-          result << year_parts.last.range_delimiter
-          result << year_parts.map { |part| part.process(date.to_date, processor) }.join(delimiter)
-          
+        parts = [order, order].zip(date.display_parts).map do |order, parts|
+          order.map { |part| parts.include?(part['name']) ? part : nil }.compact
         end
 
-        result.join
+        result = parts.zip([date, date.to]).map { |parts, date| parts.map { |part| part.process(date, processor) }.join(delimiter) }.compact
+        result[0].gsub!(/\s+$/, '')
+        result.join(parts[0].last.range_delimiter)
+
+        # case
+        # when date.open_range?
+        #   result << parts.map { |part| part.process(date, processor) }.join(delimiter)
+        #   result << parts.last.range_delimiter
+        #   
+        # when discriminator == 'month'
+        #   month_parts = parts.reject { |part| part['name'] == 'year' }
+        # 
+        #   result << month_parts.map { |part| part.process(date, processor) }.join(delimiter)
+        #   result << month_parts.last.range_delimiter
+        #   result << parts.map { |part| part.process(date.to, processor) }.join(delimiter)
+        # 
+        # when discriminator == 'day'
+        #   day_parts = parts.select { |part| part['name'] == 'day' }
+        # 
+        #   result << day_parts.map { |part| part.process(date, processor) }.join(delimiter)
+        #   result << day_parts.last.range_delimiter
+        #   result << parts.map { |part| part.process(date.to, processor) }.join(delimiter)
+        #   
+        # else # year
+        #   year_parts = parts.select { |part| part['name'] == 'year' }
+        # 
+        #   result << parts.map { |part| part.process(date, processor) }.join(delimiter)
+        #   result << year_parts.last.range_delimiter
+        #   result << year_parts.map { |part| part.process(date.to, processor) }.join(delimiter)
+        #   
+        # end
+        # 
+        # result.join
       end
       
       def parts(processor)

@@ -10,6 +10,7 @@ group :development do
 end
 
 group :testing do
+	gem 'autotest'
 	gem 'rspec'
 	gem 'cucumber'
 end

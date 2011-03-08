@@ -61,7 +61,9 @@ Dir.glob("#{File.expand_path('..', __FILE__)}/csl/formats/*.rb").each do |format
 end
 
 require 'citeproc/version'
-require 'citeproc/variables'
+require 'citeproc/variable'
+require 'citeproc/name'
+require 'citeproc/date'
 require 'citeproc/data'
 require 'citeproc/item'
 require 'citeproc/bibliography'
