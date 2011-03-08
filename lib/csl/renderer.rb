@@ -74,6 +74,10 @@ module CSL
   class Bibliography < Renderer
     attr_fields %w{ hanging-indent second-field-align line-spacing
       entry-spacing subsequent-author-substitute }
+      
+    def process(data, processor)
+      sort(data, processor).map { |item| @layout.process(item, processor) }
+    end
   end
 
   class Citation < Renderer

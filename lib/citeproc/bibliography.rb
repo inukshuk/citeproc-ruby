@@ -44,6 +44,10 @@ module CiteProc
       [options.merge('bibliography-errors' => errors), data].to_json
     end
     
+    def to_s
+      [options['bibstart'] || '<div class="csl-bib-body">', data.map { |d| "  <div class=\"csl-entry\">#{d}</div>" }, options['bibend'] || '</div>'].flatten.join("\n")
+    end
+    
     protected
     
     def parse_argument(argument)

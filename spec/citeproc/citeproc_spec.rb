@@ -51,7 +51,7 @@ module CiteProc
             end
         
           when 'bibliography'
-            pending('not yet implemented')
+            result = proc.bibliography.to_s
             
           when 'bibliography-header'
             pending('not yet implemented')

@@ -87,8 +87,12 @@ module CiteProc
     end
     
     def bibliography
+      data = extract_citation_data(:all)
+      data.populate!(items)
+      
+      data = @style.bibliography.process(data, self)
+      Bibliography.new(data)
     end
-    
     
 
     #
