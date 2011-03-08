@@ -23,13 +23,27 @@ module CiteProc
   # simply encapsulates two lists.
   class Bibliography
     
-    attr_accessor :data, :errors, :options
-    
-    def initialize
-      @data = []
-      @errors = []
-      @options = {}
+    def initialize(*args)
+      args.each do |argument|
+        case
+        when argument.is_a?(Hash)
+          parse_attributes(argument)
+        when argument.is_a?(Array) && argument.length == 2 && argument[0].is_a?(Hash) && argument[1].is_a?(Array)
+          parse_attributes(argument[0])
+          @data = argument[1]
+        when argument.is_a?(Array)
+          @data = argument
+        else
+          CiteProc.log.warn "failed to initialize Bibliography from argument #{ argument.inspect }." unless argument.nil?
+        end
+      end
+
+      yield self if block_given?
     end
+
+    def data; @data ||= []; end
+    def errors; @data ||= []; end
+    def options; @data ||= {}; end
 
     # @data proxy
     [:[], :[]=, :<<, :map, :each, :empty?, :push, :pop, :unshift, :+, :concat].each do |method_id|
@@ -38,5 +52,15 @@ module CiteProc
       end
     end
 
+    def to_json
+      [options.merge('bibliography-errors' => errors), data].to_json
+    end
+    
+    protected
+    
+    def parse_attributes(attributes)
+      @errors, @options = attributes.delete('bibliography'), attributes
+    end
+    
   end
 end
