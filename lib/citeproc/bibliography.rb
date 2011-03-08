@@ -24,26 +24,14 @@ module CiteProc
   class Bibliography
     
     def initialize(*args)
-      args.each do |argument|
-        case
-        when argument.is_a?(Hash)
-          parse_attributes(argument)
-        when argument.is_a?(Array) && argument.length == 2 && argument[0].is_a?(Hash) && argument[1].is_a?(Array)
-          parse_attributes(argument[0])
-          @data = argument[1]
-        when argument.is_a?(Array)
-          @data = argument
-        else
-          CiteProc.log.warn "failed to initialize Bibliography from argument #{ argument.inspect }." unless argument.nil?
-        end
-      end
-
+      args.each { |argument| parse_argument(argument) }
+      
       yield self if block_given?
     end
 
     def data; @data ||= []; end
-    def errors; @data ||= []; end
-    def options; @data ||= {}; end
+    def errors; @errors ||= []; end
+    def options; @options ||= {}; end
 
     # @data proxy
     [:[], :[]=, :<<, :map, :each, :empty?, :push, :pop, :unshift, :+, :concat].each do |method_id|
@@ -58,8 +46,25 @@ module CiteProc
     
     protected
     
+    def parse_argument(argument)
+      case
+      when argument.is_a?(String)
+        parse_argument(JSON.parse(argument))
+      when argument.is_a?(Hash)
+        parse_attributes(argument)
+      when argument.is_a?(Array) && argument.length == 2 && argument[0].is_a?(Hash) && argument[1].is_a?(Array)
+        parse_attributes(argument[0])
+        @data = argument[1]
+      when argument.is_a?(Array)
+        @data = argument
+      else
+        CiteProc.log.warn "failed to initialize Bibliography from argument #{ argument.inspect }." unless argument.nil?
+      end
+    end
+    
     def parse_attributes(attributes)
-      @errors, @options = attributes.delete('bibliography'), attributes
+      @errors = attributes.delete('bibliography-errors') || []
+      @options = {}.merge(attributes)
     end
     
   end
