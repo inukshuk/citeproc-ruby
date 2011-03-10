@@ -26,7 +26,7 @@ module CiteProc
   
     def format(*args)
       @format ||= CiteProc.default_format
-      args.empty? ? @format : apply(args[0], args[1] || {})
+      args.empty? ? @format : apply(args[0], args[1])
     end
 
     def format=(format)
@@ -36,7 +36,7 @@ module CiteProc
     end
     
     def apply(input='', attributes={})
-      return input if attributes.nil? || input.empty?
+      return input if attributes.nil? || input.nil? || input.empty?
 
       format.input = input
       

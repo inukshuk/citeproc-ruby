@@ -238,7 +238,7 @@ module CSL
       end
       
       def handle_processing_error(e, data, processor)
-        CiteProc.log :error, "failed to process item #{ data['id'] }", e
+        CiteProc.log :error, "failed to process item #{ data.inspect }", e
         ''
       end
     end
@@ -657,7 +657,6 @@ module CSL
       attr_fields %w{ variable form }
     
       def process(data, processor)
-        super
         number = data[variable].to_s
         
         case
@@ -785,9 +784,9 @@ module CSL
       attr_fields Nodes.formatting_attributes
       attr_fields Nodes.inheritable_name_attributes
       attr_fields %w{ form delimiter }
-            
+
       def parts
-        @parts ||= Hash.new { |h, k| k.match(/(non-)?dropping-particle/) ? h['family'] : nil }
+        @parts ||= Hash.new { |h, k| k.match(/(non-)?dropping-particle/) ? h['family'] : {} }
       end
   
       def process_names(role, names, processor)
@@ -797,9 +796,12 @@ module CSL
         names.first.options['name-as-sort-order'] = 'true' if name_as_sort_order == 'first'
 
         # name-part formatting
-        # TODO name part formatting
-        names.map! { |name| name.display({}, {}) }
-        
+        names.map! do |name|
+          name.normalize(name.display_order.map do |token|
+            processor.format(name.send(token.tr('-', '_')), parts[token])
+          end.compact.join(name.delimiter))
+        end        
+
         # join names
         if names.length > 2
           names = [names[0..-2].join(delimiter), names.last]
@@ -823,7 +825,7 @@ module CSL
         attributes['delimiter'] ||= ', '
         attributes['delimiter-precedes-last'] ||= 'false'
 
-        children.each { |child| parts[child['name']] = child }        
+        children.each { |child| parts[child['name']] = child.attributes }        
       end      
 
       # @returns the delimiter to be used between the penultimate and last
@@ -865,6 +867,7 @@ module CSL
     class NamePart < Node
       attr_fields Nodes.formatting_attributes
       attr_fields %w{ name }
+            
     end
   
     # Et-al abbreviation, controlled via the et-al attributes on cs:name (see
@@ -1134,13 +1137,13 @@ module CSL
         stop_observing(data)
 
         # if any variable returned nil, skip the entire group
-        @skip ? '' : processor.format(processed, attributes)
+        skip? ? '' : processor.format(processed, attributes)
       rescue Exception => e
         handle_processing_error(e, data, processor)        
       end
 
       def start_observing(item)
-        @skip = false
+        @variables = []
         item.add_observer(self)
       end
       
@@ -1149,8 +1152,13 @@ module CSL
       end
       
       def update(key, value)
-        @skip = true if value.nil?
+        @variables << [key, value]
       end
+
+      def skip?
+        @variables && @variables.map(&:last).uniq == [nil]
+      end
+      
       
       protected
 

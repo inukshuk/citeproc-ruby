@@ -264,19 +264,16 @@ module CiteProc
     
     # @returns a string representing the name according to the given set of
     # display order options.
-    def display(opts={}, filters={})
-      tokens = self.display_order(opts).map do |token|
-        part = self.send(token.gsub(/-/,'_'))
-        part = filters[token].apply(part, opts) unless filters[token].nil?
-        part
-      end
-      
-      tokens.reject!(&:nil?)
-      tokens.join(delimiter).squeeze(' ').gsub(/^[\s,]+|[\s,]+$|\s(,)/, '\1').squeeze(',')
+    def display(options={})
+      normalize((display_order(options).map { |token| send(token.tr('-', '_')) }.compact.join(delimiter)))
+    end
+    
+    def normalize(string)
+      string.squeeze(' ').gsub(/^[\s,]+|[\s,]+$|\s(,)/, '\1').squeeze(',')
     end
     
     def to_s
-      self.display
+      display
     end
     
     def literal_as_sort_order
