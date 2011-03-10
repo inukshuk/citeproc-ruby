@@ -267,7 +267,7 @@ module CiteProc
     def display(opts={}, filters={})
       tokens = self.display_order(opts).map do |token|
         part = self.send(token.gsub(/-/,'_'))
-        part = filters[token].apply_format(part) unless filters[token].nil?
+        part = filters[token].apply(part, opts) unless filters[token].nil?
         part
       end
       

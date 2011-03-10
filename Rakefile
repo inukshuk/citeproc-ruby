@@ -17,18 +17,30 @@ rescue LoadError
   exit(0)
 end
 
-desc "Run rspec-2 on the specs in ./specs"
+
 RSpec::Core::RakeTask.new(:spec) do |t|
-  t.rspec_opts = ['-c', '-f progress', '-r ./spec/spec_helper.rb']
-  t.pattern = 'spec/**/*_spec.rb'
+  t.rspec_opts = ['--color', '--format progress', '-r ./spec/spec_helper.rb']
 end
 
-desc "Run the citeproc-test suite"
-RSpec::Core::RakeTask.new(:test) do |t|
-  # t.rspec_opts = ['-c', '-f html', '-o ./doc/citeproc-tests.html', '-p', '-r ./spec/spec_helper.rb']
-  t.rspec_opts = ['-c', '-f progress', '-p', '-r ./spec/spec_helper.rb']
-  t.fail_on_error = false
-  t.pattern = 'spec/citeproc/citeproc_spec.rb'
+namespace :spec do
+  desc "Run the citeproc-test suite"
+  RSpec::Core::RakeTask.new(:test) do |t|
+    t.rspec_opts = ['--color', '--format progress', '--format documentation --out doc/tests.txt', '-r ./spec/spec_helper.rb']
+    t.pattern = 'spec/citeproc/citeproc_spec.rb'
+  end
+
+  desc "Run all RSpec code examples"
+  task :all => [:citeproc, :csl]
+
+  RSpec::Core::RakeTask.new(:citeproc) do |t|
+    t.rspec_opts = ['--color', '--format progress', '--format documentation --out doc/citeproc_spec.txt --no-color', '-r ./spec/spec_helper.rb']
+    t.pattern = 'spec/citeproc/**/*_spec.rb'
+  end
+
+  RSpec::Core::RakeTask.new(:csl) do |t|
+    t.rspec_opts = ['--color', '--format progress', '--format documentation --out doc/csl_spec.txt --no-color', '-r ./spec/spec_helper.rb']
+    t.pattern = 'spec/csl/**/*_spec.rb'
+  end  
 end
 
 

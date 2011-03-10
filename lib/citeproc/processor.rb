@@ -20,10 +20,10 @@ module CiteProc
 
   class Processor
     
-    attr_reader :style
-    attr_writer :format
+    attr_reader :style, :formatter
     
     def initialize
+      @formatter = Formatter.new
       yield self if block_given?
     end
 
@@ -47,6 +47,10 @@ module CiteProc
       @style = resource.is_a?(CSL::Style) ? resource : CSL::Style.new(resource)
     end
 
+    def format(*args); @formatter.format(*args); end
+    
+    def format=(format); @formatter.format = format; end
+    
     def language=(language)
       self.locale.set(language).language
     end
@@ -90,10 +94,6 @@ module CiteProc
       self.abbreviations[list][category][name]
     end
     
-    def format
-      @format ||= :default
-    end
-    
     def items
       @items ||= {}
     end
@@ -127,7 +127,7 @@ module CiteProc
       data = extract_citation_data(data)
 
       data.populate!(items)
-      citation = @style.citation.process(data, self)
+      citation = @style.citation.render(data, self)
       
       [[register(citation), citation]]
     end

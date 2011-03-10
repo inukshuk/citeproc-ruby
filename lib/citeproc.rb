@@ -37,7 +37,16 @@ module CiteProc
   
   @log.level = ENV.has_key?('DEBUG') ? :debug : :info
   
-  class << self; attr_reader :log; end
+  class << self
+    def log(*args)
+      return @log if args.empty?
+      
+      level, message, exception = args
+      
+      @log.send(level, [message, exception && exception.message || nil].compact.join(': '))
+      @log.debug exception.backtrace[0,10].join("\n\t") unless exception.nil?
+    end
+  end
   
 end
 
@@ -50,15 +59,9 @@ require 'extensions/attributes'
 
 require 'csl/term'
 require 'csl/locale'
-require 'csl/formatting'
 require 'csl/nodes'
 require 'csl/renderer'
 require 'csl/style'
-
-# load available output formats
-Dir.glob("#{File.expand_path('..', __FILE__)}/csl/formats/*.rb").each do |format|
-  require format
-end
 
 require 'citeproc/version'
 require 'citeproc/variable'
@@ -67,14 +70,29 @@ require 'citeproc/date'
 require 'citeproc/data'
 require 'citeproc/item'
 require 'citeproc/bibliography'
+require 'citeproc/formatter'
 require 'citeproc/processor'
 
-# load available input filters
-Dir.glob("#{File.expand_path('..', __FILE__)}/citeproc/filters/*.rb").each do |format|
+# Load filter and format plugins
+Dir.glob("#{File.expand_path('..', __FILE__)}/plugins/formats/*.rb").each do |format|
   require format
 end
 
+require 'plugins/formats/default'
+
+Dir.glob("#{File.expand_path('..', __FILE__)}/plugins/filters/*.rb").each do |format|
+  require format
+end
+
+
 # Top-level CSL utility functions
+
+module CiteProc
+  
+  def self.default_format; Format.default; end
+  
+end
+
 module CSL
   
   def self.default_locale

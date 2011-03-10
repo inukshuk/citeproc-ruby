@@ -20,7 +20,7 @@ module CiteProc
       end
     end
   
-    describe '#style' do    
+    describe '#style' do
       it 'accepts a style name' do
         processor.style = 'apa'
         processor.style.should_not be_nil

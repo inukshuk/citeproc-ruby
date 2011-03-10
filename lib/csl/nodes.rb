@@ -58,11 +58,35 @@ module CSL
     #
     class Node
       include Attributes
-      include Formatting
 
       attr_reader :children
       attr_accessor :style, :parent
-          
+
+      class << self
+        # Chains the format method to the given methods
+        def format_on(*args)
+          args = args.shift if args.first.is_a?(Array)
+          args.each do |method_id|
+
+            # Set up Around Alias Chain
+            original_method = [method_id, 'without_formatting'].join('_')
+            alias_method original_method, method_id
+
+            define_method method_id do |*args, &block|
+              begin
+                string = send(original_method, *args, &block)
+                processor = args.detect { |argument| argument.is_a?(CiteProc::Processor) }
+                
+                processor.nil? ? string : processor.format(string, attributes)
+              rescue Exception => e
+                CiteProc.log :error, "failed to format string #{ string.inspect }", e
+                args[0]
+              end
+            end
+          end
+        end
+      end
+
       def initialize(*args)
         @style = args.detect { |argument| argument.is_a?(Style) }
         args.delete(@style) unless @style.nil?
@@ -130,10 +154,9 @@ module CSL
       
       # Processes the supplied data. @returns a formatted string.
       def process(data, processor)
-        self.format = processor.format
         ''
       end
-
+        
       def to_s
         attributes.merge('node' => self.class.name).inspect
       end
@@ -183,8 +206,7 @@ module CSL
       end
       
       def handle_processing_error(e, data, processor)
-        CiteProc.log.error "failed to process item #{ data['id'] }: #{ e.message }."
-        CiteProc.log.debug e.backtrace[0,10].join("\n").gsub(/^/, "\t")
+        CiteProc.log :error, "failed to process item #{ data['id'] }", e
         ''
       end
     end
@@ -200,7 +222,6 @@ module CSL
       attr_fields %w{ delimiter }
     
       def process(data, processor)
-        super
         children.map { |child| child.process(data, processor) }.join
       rescue Exception => e
         handle_processing_error(e, data, processor)
@@ -249,8 +270,6 @@ module CSL
       attr_fields %w{ variable form macro term plural value quotes }
     
       def process(data, processor)
-        super
-
         case
         when value?
           text = value
@@ -394,7 +413,6 @@ module CSL
       attr_fields %w{ variable form date-parts delimiter }
       
       def process(data, processor)
-        super
         date = data[variable]
         
         case
@@ -734,7 +752,8 @@ module CSL
         names.first.options['name-as-sort-order'] = 'true' if name_as_sort_order == 'first'
 
         # name-part formatting
-        names.map! { |name| name.display({}, parts) }
+        # TODO name part formatting
+        names.map! { |name| name.display({}, {}) }
         
         # join names
         if names.length > 2
@@ -743,7 +762,7 @@ module CSL
 
         names.join(ampersand(processor))
       rescue Exception => e
-        handle_processing_error(e, data, processor)        
+        CiteProc.log :error, "failed to process names #{ names.inspect }", e
       end
 
       format_on :process_names
@@ -1065,8 +1084,6 @@ module CSL
       attr_fields %w{ delimiter }    
 
       def process(data, processor)
-        super
-        
         start_observing(data)
 
         processed = children.map { |child| child.process(data, processor) }.reject(&:empty?).join(delimiter)
@@ -1074,7 +1091,7 @@ module CSL
         stop_observing(data)
 
         # if any variable returned nil, skip the entire group
-        @skip ? '' : apply_format(processed)
+        @skip ? '' : processor.format(processed, attributes)
       rescue Exception => e
         handle_processing_error(e, data, processor)        
       end
@@ -1222,7 +1239,6 @@ module CSL
     class Choose < Node
 
       def process(data, processor)
-        super
         children.each do |child|
           return child.process(data, processor) if child.evaluate?(data, processor)
         end
@@ -1238,7 +1254,6 @@ module CSL
         position type variable match }
       
       def process(data, processor)
-        super
         children.map { |child| child.process(data, processor) }.join
       rescue Exception => e
         handle_processing_error(e, data, processor)        

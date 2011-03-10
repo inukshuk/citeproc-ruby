@@ -21,11 +21,12 @@ module CSL
   # Represents a cs:citation or cs:bibliography element.
   class Renderer
     include Attributes
-    include Formatting
   
     attr_fields Nodes.inheritable_name_attributes
 
-    attr_reader :layout, :sort_keys
+    attr_reader :layout, :sort_keys, :style
+  
+    alias :parent :style
   
     def initialize(node, style)
       @node = node
@@ -65,8 +66,13 @@ module CSL
       end
     end
 
+    def render(data, processor=nil)
+      # TODO add support for one-off processor instance
+      processor.format(process(data, processor).join(delimiter), attributes)
+    end  
+      
     def process(data, processor)
-      sort(data, processor).map { |item| @layout.process(item, processor) }.join(self['delimiter'])
+      sort(data, processor).map { |item| @layout.process(item, processor) }
     end
     
   end
@@ -75,9 +81,6 @@ module CSL
     attr_fields %w{ hanging-indent second-field-align line-spacing
       entry-spacing subsequent-author-substitute }
       
-    def process(data, processor)
-      sort(data, processor).map { |item| @layout.process(item, processor) }
-    end
   end
 
   class Citation < Renderer
@@ -89,13 +92,10 @@ module CSL
     
     def initialize(node, style)
       super
-      
       %w{ delimiter suffix prefix }.each do |attribute|
         self[attribute] = @layout.attributes.delete(attribute)
       end
     end
-    
-    format_on :process
     
   end
 end

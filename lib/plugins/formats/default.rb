@@ -16,64 +16,10 @@
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 #++
 
-module CSL
-  
-  # TODO move formatting to CiteProc into Processor
-  module Formatting
-    
-    def self.included(base)
-      base.extend(ClassMethods)
-    end
-    
-    def format
-      @format || CSL::Format::Default
-    end
+module CiteProc
 
-    def format=(formatter)
-      @format = CSL::Format.const_get(formatter.to_s.split(/[\s_-]+/).map(&:capitalize).join)
-    rescue Exception => e
-      CiteProc.log.warn "failed to set format to #{formatter}: #{e.message}."
-    end
-    
-    def apply_format(input)
-      return input if input.to_s.empty?
-      
-      formatter = format.new
-      formatter.input = input
-
-      Nodes.formatting_attributes.each do |attribute|
-        method_id = ['set', attribute.gsub(/-/, '_')].join('_')
-
-        if attributes.has_key?(attribute) && formatter.respond_to?(method_id)
-          formatter.send(method_id, attributes[attribute])
-        end
-      end
-      
-      formatter.finalize
-    end
-
-    module ClassMethods
-          
-      # Chains the format method to the given methods
-      def format_on(*args)
-        args = args.shift if args.first.is_a?(Array)
-        args.each do |method_id|
-          
-          # Set up Around Alias Chain
-          original_method = [method_id, 'without_formatting'].join('_')
-          alias_method original_method, method_id
-          
-          define_method method_id do |*args, &block|
-            apply_format(send(original_method, *args, &block))            
-          end
-        end
-      end
-      
-    end    
-  end
-  
   module Format
-    
+
     class Default
 
       attr_reader :input
@@ -82,17 +28,24 @@ module CSL
       AffixFilter = /([\.,\s!?()])/
       
       def initialize
+        reset
+      end
+      
+      def name; "CiteProc default style (plain text)"; end
+      
+      def reset
         @styles = {}
         @tokens = []
         @affixes = [nil, nil]
       end
       
       def input=(input)
+        reset
         @tokens = input.split(/(<span[^>]*>[^<]*<\/span>)/).map do |t|
           token = Token.new
           
           if t.match(/^<span(?:\s+class=['"]([\w\s]*)["'])?>([^<]*)<\/span>$/)
-            token.content = $2
+            token.content = $2 || ''
             token.annotations = $1.split(/\s+/)
           else
             token = Token.new
@@ -105,7 +58,7 @@ module CSL
       end
       
       def finalize
-        [prefix, @tokens.map(&:content).join, suffix].reject(&:nil?).join
+        [prefix, @tokens.map(&:content).join, suffix].compact.join
       end
       
       def prefix
@@ -182,7 +135,7 @@ module CSL
           
         # TODO exact specification?
         when 'title'
-          @tokens.each { |token| token.content = token.content.split(/(\s+)/).map { |w| w.match(/^(and|of|a|an|the)$/i) ? w : w.gsub(/\b\w/) { UnicodeUtils ? UnicodeUtils.upcase($&) : $&.upcase } }.join unless token.annotations.include?('nocase') }
+          @tokens.each { |token| token.content = token.content.split(/(\s+)/).map { |w| w.match(/^(and|of|a|an|the)$/i) ? w : w.gsub(/\b\w/) { UnicodeUtils ? UnicodeUtils.upcase($&) : $&.upcase } }.join.sub(/^(\w)/) {$&.upcase} unless token.annotations.include?('nocase') }
 
         # TODO exact specification?
         when 'sentence'
