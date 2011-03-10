@@ -79,7 +79,7 @@ module CSL
 
     [:title, :id].each do |method_id|
       define_method method_id do
-        @attributes[method_id] ||= info.at_css(method_id.to_s).content
+        @attributes[method_id] ||= info[method_id.to_s]
       end
     end
     

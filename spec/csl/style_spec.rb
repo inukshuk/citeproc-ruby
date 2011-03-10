@@ -6,17 +6,16 @@ module CSL
     let(:apa) { Style.new.open('apa') }
     
     describe '#open' do
-    
       it 'accepts a style name' do
-        style.open('apa').id.empty?.should be false
+        style.open('apa').id.should_not be_empty
       end
     
       it 'accepts a filename' do
-        style.open(File.expand_path('../../../resource/style/apa.csl', __FILE__)).id.empty?.should be false
+        style.open(File.expand_path('../../../resource/style/apa.csl', __FILE__)).id.should_not be_empty
       end
 
       it 'accepts an inline style' do
-        style.open(File.read(File.expand_path('../../../resource/style/apa.csl', __FILE__))).id.empty?.should be false
+        style.open(File.read(File.expand_path('../../../resource/style/apa.csl', __FILE__))).id.should_not be_empty
       end
 
       # -- requires internet connection
