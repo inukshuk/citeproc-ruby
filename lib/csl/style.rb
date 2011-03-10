@@ -25,20 +25,26 @@ module CSL
     @default = 'apa'
     
     class << self; attr_accessor :path, :schema, :default; end
-        
+    
     def initialize(style=nil)
       open(style || Style.default)
     end
     
-    def reset
-      @doc = nil
-      @attributes = {}
-    end
-    
     # @param style A CSL stream, a file, the name of Style in the local repository, or an URI
     def open(style)
-      reset
-      @doc = Nokogiri::XML(locate(style)) { |config| config.strict.noblanks }
+      @attributes = {}
+      doc = Nokogiri::XML(locate(style)) { |config| config.strict.noblanks }
+
+      [:citation, :bibliography].each do |element|
+        @attributes[element] ||= CSL.const_get(element.to_s.capitalize).new(doc.at_css("style > #{element}"), self)
+      end
+
+      @attributes[:locales] = doc.css('style > locale').map { |locale| Locale.new(locale) }
+
+      @attributes[:info] = Hash[*doc.at_css('style > info').children.map { |node| [node.name.downcase, node.content] }.flatten]
+      @attributes[:options] = Hash[doc.root.attributes.values.map { |a| [a.name, a.value] }]
+      @attributes[:macros] = Hash[doc.css('style > macro').map { |m| [m[:name], Nodes::Macro.new(m, self)] } ]
+      
       self
     end
     
@@ -50,7 +56,7 @@ module CSL
     
     # Validates the current style's source document against the CSL defintion.
     def validate
-      schema.validate(@doc)
+      [] # schema.validate(@doc)
     end
     
     # Returns true if the current style's source document conforms to the CSL definition.
@@ -64,35 +70,33 @@ module CSL
     end
     
     def options
-      @attributes[:options] ||= Hash[@doc.root.attributes.values.map { |a| [a.name, a.value] }]
+      @attributes[:options]
     end
     
     def info
-      @attributes[:info] ||= @doc.at_css('style > info')
+      @attributes[:info]
     end
 
-    def locale
-      @locale ||= @doc.at_css('style > locale')
-    end
-    
     [:title, :id].each do |method_id|
       define_method method_id do
         @attributes[method_id] ||= info.at_css(method_id.to_s).content
       end
     end
     
+    [:info, :options, :macros, :citation, :bibliography].each do |method_id|
+      define_method method_id do; @attributes[method_id]; end
+    end
+    
+    alias :macro macros
+    
+    # @returns the style's locales.
+    def locales(language=nil, region=nil)
+      # TODO region priority
+      @attributes[:locales].select { |locale| locale.language.nil? || language.nil? || locale.language == language }.sort
+    end
+      
     def link
       @attributes[:link] ||= info.at_css('link')['href']
-    end
-    
-    def macros
-      @attributes[:macros] ||= Hash[@doc.css('style > macro').map { |m| [m[:name], Nodes::Macro.new(m, self)] } ]
-    end
-    
-    [:citation, :bibliography].each do |method_id|
-      define_method method_id do
-        @attributes[method_id] ||= CSL.const_get(method_id.to_s.capitalize).new(@doc.at_css("style > #{method_id}"), self)
-      end
     end
     
     
@@ -100,7 +104,7 @@ module CSL
     
     def locate(resource)
       resource = resource.to_s
-      return resource if resource.match(/^<(\?xml|style)/)
+      return resource if resource.match(/^\s*<(\?xml|style)/)
       return File.read(resource) if File.exists?(resource)
       
       local = File.join(Style.path, "#{resource}.csl")

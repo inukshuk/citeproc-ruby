@@ -146,11 +146,26 @@ module CSL
         other.merge(self)
       end
       
-      # @returns the localized term with the given name.
-      def term(name, processor=nil)
-        locale = processor && processor.locale || CSL.default_locale
-        locale[name]
+      # @returns the localized term with the given key.
+      def localized_terms(key, processor=nil)
+        localize(:term, key, processor) do |hash|
+          return hash[key] if hash.has_key?(key) && !hash[key].empty?
+        end        
       end
+
+      # @returns the localized date parts.
+      def localized_date_parts(key, processor=nil)
+        localize(:date, key, processor) do |hash|
+          return hash[key] if hash.has_key?(key) && !hash[key].empty?
+        end
+      end
+      
+      def localized_options(key, processor=nil)
+        localize(:options, key, processor) do |hash|
+          return hash[key] if hash.has_key?(key)
+        end
+      end
+      
       
       # Processes the supplied data. @returns a formatted string.
       def process(data, processor)
@@ -166,6 +181,23 @@ module CSL
       # Empty method; nodes may override this method.
       def set_defaults
       end
+      
+      # Prioritized locale look-up.
+      def localize(type, key, processor, &block)
+        unless @style.nil?
+          @style.locales(processor && processor.language || nil).each do |locale|
+            yield locale.send(type)
+          end
+        end 
+        
+        unless processor.nil?
+          yield processor.locale.send(type) 
+          yield CSL::Locale.new(processor.language)
+        end
+        
+        CSL.default_locale.send(type)[key]
+      end
+      
       
       # Empty method; nodes may override this method.
       def inherit_attributes(node)
@@ -271,16 +303,16 @@ module CSL
     
       def process(data, processor)
         case
-        when value?
+        when has_value?
           text = value
           
-        when macro?
+        when has_macro?
           text = @style.macros[macro].process(data, processor) 
           
-        when term?
-          text = processor.locale[term].to_s(attributes)
+        when has_term?
+          text = localized_terms(term).to_s(attributes)
           
-        when variable?
+        when has_variable?
           text = (data["short#{variable.capitalize}"] || data[['short', variable].join('-')] || data[variable]).to_s
 
           if form == 'short'
@@ -296,11 +328,24 @@ module CSL
           end
           
         else
-          ''
+          text = ''
         end
         
         # Add localized quotes
-        text = [processor.locale['open-quote'], text, processor.locale['close-quote']].join if quotes?
+        if has_quotes? && !text.empty?
+          prefix = [self['prefix'], localized_terms('open-quote')].compact.join
+          
+          if localized_options('punctuation-in-quote', processor) == 'true'
+            suffix = self['suffix'].to_s.sub(/^([\.,!?;:]+)/, '')
+            suffix = [$1, localized_terms('close-quote'), suffix].compact.join
+          else
+            text = text.sub(/([\.,!?;:]+)$/, '')
+            suffix = [localized_terms('close-quote'), $1, self['suffix']].compact.join
+          end
+          
+          self['prefix'] = prefix
+          self['suffix'] = suffix
+        end
       
         text
       rescue Exception => e
@@ -494,7 +539,7 @@ module CSL
       end
       
       def parts(processor)
-        has_form? ? merge_parts(processor.locale.date[form], children) : children
+        has_form? ? merge_parts(localized_date_parts(form, processor), children) : children
       end
       
       
@@ -530,8 +575,8 @@ module CSL
         
         year = date.year.abs.to_s
         year = year[-2..-1] if form == 'short'
-        year = [year, processor.locale['ad']].join if date.ad?
-        year = [year, processor.locale['bc']].join if date.bc?
+        year = [year, localized_terms('ad')].join if date.ad?
+        year = [year, localized_terms('bc')].join if date.bc?
         year
       end
       
@@ -545,14 +590,14 @@ module CSL
         when form == 'numeric-leading-zeros'
           "%02d" % date.month
         else
-          processor.locale["month-%02d" % date.month].to_s(attributes)
+          localized_terms("month-%02d" % date.month).to_s(attributes)
         end      
       end
       
       def process_season(date, processor)
         season = date.season.to_s
         season = date.month.to_s if season.match(/true|always|yes/i)
-        season = processor.locale['season-%02d' % season.to_i].to_s if season.match(/0?[1-4]/)
+        season = localized_terms('season-%02d' % season.to_i).to_s if season.match(/0?[1-4]/)
         season
       end
 
@@ -785,7 +830,7 @@ module CSL
       # name in the list.
       def ampersand(processor)
         if self.and?
-          ampersand = self.and == 'symbol' ? '&' : processor.locale[self.and == 'text' ? 'and' : self.and].to_s(attributes)
+          ampersand = self.and == 'symbol' ? '&' : localized_terms(self.and == 'text' ? 'and' : self.and).to_s(attributes)
           delimiter_precedes_last? ? [delimiter, ampersand, ' '].join : ampersand.center(ampersand.length + 2)
         else
           delimiter
@@ -843,7 +888,7 @@ module CSL
 
       def process(data, processor)
         super
-        processor.locale[term ||  'et-al'].to_s(attributes)
+        localized_terms(term ||  'et-al').to_s(attributes)
       rescue Exception => e
         handle_processing_error(e, data, processor)        
       end
@@ -877,15 +922,13 @@ module CSL
       attr_fields %w{ variable plural form }
     
       def process(data, processor)
-        super
-        processor.locale[data['label'].to_s].to_s(attributes.merge({ 'plural' =>  plural?(data, 0) ? 'true' : 'false' }))
+        localized_terms(data['label'].to_s).to_s(attributes.merge({ 'plural' =>  plural?(data, 0) ? 'true' : 'false' }))
       rescue Exception => e
         handle_processing_error(e, data, processor)        
       end
     
       def process_names(role, number, processor)
-        format = processor.format
-        processor.locale[role].to_s(attributes.merge({ 'plural' => plural?(nil, number) ? 'true' : 'false' }))        
+        localized_terms(role).to_s(attributes.merge({ 'plural' => plural?(nil, number) ? 'true' : 'false' }))        
       rescue Exception => e
         handle_processing_error(e, data, processor)        
       end
@@ -1016,7 +1059,7 @@ module CSL
             
               if names.length > truncated.length
                 # use delimiter before et al. if there is more than a single name; squeeze whitespace
-                others = (self.et_al.nil? ? processor.locale['et-al'].to_s : self.et_al.process(data, processor))
+                others = (self.et_al.nil? ? localized_terms('et-al').to_s : self.et_al.process(data, processor))
                 link = (self.name.et_al_use_first.to_i > 1 ? self.name.delimiter : ' ')
 
                 processed << [link, others].join.squeeze(' ')

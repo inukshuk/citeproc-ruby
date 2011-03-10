@@ -28,10 +28,32 @@ module CSL
   
     alias :parent :style
   
-    def initialize(node, style)
-      @node = node
-      @style = style
+    def initialize(*args, &block)
+      @style = args.detect { |argument| argument.is_a?(Style) }
+      args.delete(@style) unless @style.nil?
       
+      args.each do |argument|
+        case          
+        when argument.is_a?(String) && argument.match(/^\s*</)
+          parse!(Nokogiri::XML.parse(argument) { |config| config.strict.noblanks }.root)
+        
+        when argument.is_a?(Nokogiri::XML::Node)
+          parse!(argument)
+        
+        when argument.is_a?(Hash)
+          merge!(argument)
+        
+        else
+          CiteProc.log.warn "failed to initialize Renderer from argument #{ argument.inspect }" unless argument.nil?
+        end
+      end
+
+      set_defaults
+      
+      yield self if block_given?
+    end
+    
+    def parse!(node)      
       @layout = Nodes.parse(node.at_css('layout'), style)
       @sort_keys = node.css('sort key').map do |key|
         Hash[key.attributes.values.map { |a| [a.name, a.value] }]
@@ -69,10 +91,17 @@ module CSL
     def render(data, processor=nil)
       # TODO add support for one-off processor instance
       processor.format(process(data, processor).join(delimiter), attributes)
+    rescue Exception => e
+      CiteProc.log :error, "failed to render data #{ data.inspect }", e
     end  
       
     def process(data, processor)
       sort(data, processor).map { |item| @layout.process(item, processor) }
+    end
+    
+    protected
+    
+    def set_defaults
     end
     
   end

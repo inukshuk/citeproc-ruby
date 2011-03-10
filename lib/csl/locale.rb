@@ -51,23 +51,25 @@ module CSL
     end
     
     
-    attr_reader :language, :region
+    attr_reader :language, :region, :style
 
     # @param argument a language tag; or an XML node
-    def initialize(argument=nil, &block)
+    def initialize(argument=nil, style=nil, &block)
       case
       when argument.is_a?(Nokogiri::XML::Node)
-        @language, @region = argument['lang'].split(/-/)
+        @language, @region = argument['lang'].split(/-/) if argument['lang']
         parse!(argument)
       
       when argument.is_a?(String) && argument.match(/^\s*<locale/)
         argument = Nokogiri::XML.parse(argument) { |config| config.strict.noblanks }.root
-        @language, @region = argument['lang'].split(/-/)
+        @language, @region = argument['lang'].split(/-/) if argument['lang']
         parse!(argument)
       
       when argument.is_a?(String) || argument.is_a?(Symbol)
         set(argument)
       end
+      
+      @style = style
       
       yield self if block_given?
     end
@@ -87,12 +89,12 @@ module CSL
       
       @terms = Term.build(node)
       
-      @options = Hash[node.css('style-options').map(&:attributes).map { |a| a.map { |name, a| [name, a.value] } }.flatten]    
+      @options = Hash[*node.css('style-options').map(&:attributes).map { |a| a.map { |name, a| [name, a.value] } }.flatten]    
       
       @date = Hash.new([])
       ['text', 'numeric'].each do |form|
         @date[form] = node.css("date[form='#{form}'] > date-part").map do |part|
-          Nodes::DatePart.new(Hash[part.attributes.values.map { |a| [a.name, a.value] }])
+          Nodes::DatePart.new(Hash[*part.attributes.values.map { |a| [a.name, a.value] }.flatten])
         end
       end
       
@@ -104,15 +106,21 @@ module CSL
     end
     
     def tag
-      [@language, @region].join('-')
+      [@language, @region].compact.join('-')
     end
   
     def terms
       @terms ||= Term.build
     end
     
-    def [](tag)
-      terms[tag.to_s]
+    alias :term :terms
+    
+    def has_term?(term)
+      terms.has_key?(term.to_s)
+    end
+    
+    def [](term)
+      terms[term.to_s]
     end
 
     # @example
@@ -156,7 +164,7 @@ module CSL
     end
 
     def <=>(other)
-      self.tag <=> other.tag
+      self.tag.empty? ? (other.tag.empty? ? 0 : 1) : (other.tag.empty? ? -1 : self.tag <=> other.tag)
     end
     
     # Returns an ordinalized number according to the rules specified in the
