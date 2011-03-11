@@ -49,7 +49,7 @@ module CSL
   # and "short" both revert to "long".
   #
   class Term
-    include Attributes
+    include Support::Attributes
 
     attr_fields %w{ name long short verb verb-short symbol gender feminine
       masculine neutral }

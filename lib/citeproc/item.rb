@@ -23,7 +23,7 @@ module CiteProc
   class Item
     include Comparable
     include Observable
-    include Attributes
+    include Support::Attributes
     
     attr_fields Variable.fields
     attr_fields %w{ locator label suppress-author author-only prefix suffix }

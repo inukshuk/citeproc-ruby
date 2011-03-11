@@ -55,7 +55,8 @@ require 'ruby-debug'
 Debugger.start
 
 require 'extensions/core'
-require 'extensions/attributes'
+require 'support/attributes'
+require 'support/tree'
 
 require 'csl/term'
 require 'csl/locale'

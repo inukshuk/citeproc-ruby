@@ -57,7 +57,7 @@ module CSL
     # information.
     #
     class Node
-      include Attributes
+      include Support::Attributes
 
       attr_reader :children
       attr_accessor :style, :parent

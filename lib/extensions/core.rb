@@ -16,6 +16,15 @@
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 #++
 
+# ---------- Open Class ----------
+
+module Kernel
+  alias :is_an? :is_a? unless defined?(is_an?)
+end
+
+
+# ---------- Extensions ----------
+
 module Extensions
   module Core
   
