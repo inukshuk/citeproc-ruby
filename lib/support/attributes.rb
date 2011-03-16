@@ -56,12 +56,8 @@ module Support
     end
   
     alias_method :to_hash, :attributes
-  
-    [:empty?, :map].each do |method_id|
-      define_method method_id do |*args, &block|
-        attributes.send(method_id, *args, &block)
-      end
-    end
+
+    def empty?; attributes.empty?; end
 
     def key_filter
       @key_filter ||= Hash.new { |hash, key| hash[key] = key.to_s }
@@ -88,9 +84,7 @@ module Support
     module ClassMethods
 
       def attr_fields(*args)
-        args = args.shift if args.first.is_a?(Array) && args.length == 1
-
-        args.each do |field|
+        args.flatten.each do |field|
           field, default = (field.is_a?(Hash) ? field.to_a.flatten : [field]).map(&:to_s)
           method_id = field.downcase.gsub(/[-\s]+/, '_')
         
