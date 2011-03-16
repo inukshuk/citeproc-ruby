@@ -20,6 +20,7 @@
 module CSL
   
   class Locale
+    include Support::Tree
     include Comparable
 
     # Class Instance Variables
@@ -51,7 +52,9 @@ module CSL
     end
     
     
-    attr_reader :language, :region, :style
+    attr_reader :language, :region
+
+    alias :style :parent
 
     # @param argument a language tag; or an XML node
     def initialize(argument=nil, style=nil, &block)
@@ -69,7 +72,7 @@ module CSL
         set(argument)
       end
       
-      @style = style
+      @parent = style
       
       yield self if block_given?
     end

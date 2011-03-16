@@ -21,6 +21,7 @@ module CSL
   # Represents a cs:citation or cs:bibliography element.
   class Renderer
     include Support::Attributes
+    include Support::Tree
   
     attr_fields Nodes.inheritable_name_attributes
 
@@ -54,7 +55,7 @@ module CSL
     end
     
     def parse!(node)      
-      @layout = Nodes.parse(node.at_css('layout'), self)
+      @layout = Nodes.parse(node.at_css('layout'), style)
       @sort_keys = node.css('sort key').map do |key|
         Hash[key.attributes.values.map { |a| [a.name, a.value] }]
       end

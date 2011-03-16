@@ -60,8 +60,7 @@ module CSL
       include Support::Attributes
       include Support::Tree
 
-      attr_reader :children
-      attr_accessor :style, :parent
+      attr_reader :style
 
       class << self
         # Chains the format method to the given methods
@@ -98,10 +97,10 @@ module CSL
             @style = @parent.style || @style
             
           when argument.is_a?(String) && argument.match(/^\s*</)
-            parse!(Nokogiri::XML.parse(argument) { |config| config.strict.noblanks }.root)
+            parse(Nokogiri::XML.parse(argument) { |config| config.strict.noblanks }.root)
           
           when argument.is_a?(Nokogiri::XML::Node)
-            parse!(argument)
+            parse(argument)
           
           when argument.is_a?(Hash)
             merge!(argument)
@@ -117,7 +116,7 @@ module CSL
       end
 
       # Parses the given XML node.
-      def parse!(node)
+      def parse(node)
         return if node.nil?
         
         node.attributes.values.each { |a| attributes[a.name] = a.value }

@@ -18,6 +18,14 @@
 
 module CSL
 
+  # class StyleOptions < Node
+  #   attr_fields %w{ punctuation-in-quote }
+  # end
+  # 
+  # class Info < Node
+  # end
+  
+  
   class Style
 
     @schema = File.expand_path('../../resource/schema/csl.rnc', __FILE__)
@@ -25,8 +33,6 @@ module CSL
     @default = 'apa'
     
     class << self; attr_accessor :path, :schema, :default; end
-    
-    attr_reader :parent
     
     def initialize(style=nil)
       open(style || Style.default)

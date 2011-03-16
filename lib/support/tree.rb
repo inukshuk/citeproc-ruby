@@ -61,8 +61,5 @@ module Support
     
     def root?; parent.nil?; end
     
-    def to_xml
-    end
-    
   end
 end
