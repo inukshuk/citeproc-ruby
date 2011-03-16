@@ -87,7 +87,7 @@ module CiteProc
   #   rendered in the order in which they are presented in citationItems.
   #
   class CitationData
-    include Attributes
+    include Support::Attributes
     
     attr_fields %w{ citation-id citation-items properites sorted-items }
 

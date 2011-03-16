@@ -20,7 +20,7 @@ module CSL
   
   # Represents a cs:citation or cs:bibliography element.
   class Renderer
-    include Attributes
+    include Support::Attributes
   
     attr_fields Nodes.inheritable_name_attributes
 

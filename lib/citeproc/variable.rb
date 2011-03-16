@@ -19,7 +19,7 @@
 module CiteProc
     
   class Variable
-    include Attributes
+    include Support::Attributes
     include Comparable
 
     @date_fields = %w{ accessed container event-date issued original-date }
