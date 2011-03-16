@@ -41,18 +41,12 @@ module Support
   
     def merge!(other)
       return self if other.nil?
-    
-      other = other.attributes unless other.is_a?(Hash)
-      other.each_pair { |key, value| self[key] = value }
+      other.to_hash.each_pair { |k,v| self[k] = v }
       self
     end
 
     def reverse_merge!(other)
-      return self if other.nil?
-    
-      other = other.attributes unless other.is_a?(Hash)
-      other.each_pair { |key, value| self[key] ||= value }
-      self
+      other.merge!(self)
     end
   
     alias_method :to_hash, :attributes
