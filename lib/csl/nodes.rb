@@ -58,6 +58,7 @@ module CSL
     #
     class Node
       include Support::Attributes
+      include Support::Tree
 
       attr_reader :children
       attr_accessor :style, :parent
@@ -65,8 +66,7 @@ module CSL
       class << self
         # Chains the format method to the given methods
         def format_on(*args)
-          args = args.shift if args.first.is_a?(Array)
-          args.each do |method_id|
+          args.flatten.each do |method_id|
 
             # Set up Around Alias Chain
             original_method = [method_id, 'without_formatting'].join('_')
@@ -1291,7 +1291,7 @@ module CSL
 
       def process(data, processor)
         children.each do |child|
-          return child.process(data, processor) if child.evaluate?(data, processor)
+          return child.process(data, processor) if child.evaluate(data, processor)
         end
         ''
       rescue Exception => e
@@ -1310,35 +1310,36 @@ module CSL
         handle_processing_error(e, data, processor)        
       end
       
-      def evaluate?(data, processor)
+      def evaluate(data, processor)
         case
-        when self.disambiguate?
+        when disambiguate?
           # CiteProc.log.warn "Choose disambiguate not implemented yet"
           false
 
-        when self.is_numeric?
+        when is_numeric?
           data[is_numeric] && data[is_numeric].numeric?
           
-        when self.is_uncertain_date?
+        when is_uncertain_date?
           data[is_uncertain_date] && data[is_uncertain_date].uncertain?
           
-        when self.locator?
+        when has_locator?
           locator == data['locator'].to_s
           
-        when self.position?
+        when has_position?
           # CiteProc.log.warn "Choose position not implemented yet"
           false
 
-        when type?
-          self.matches?(data['type'].to_s, type.split(/\s+/))
+        when has_type?
+          matches?(type.split(/\s+/)) { |type| type == data['type'].to_s }
           
-        when self.variable?
-          self.empty?(data, variable.split(/\s+/))
+        when has_variable?
+          matches?(variable.split(/\s+/)) { |variable| !data[variable].nil? }
           
         when self.is_a?(Else)
           true
           
         else
+          CiteProc.log :warn, "conditional block #{ inspect } could not be evaluated"
           false
           
         end
@@ -1347,17 +1348,11 @@ module CSL
         false
       end
       
-      # does a match any/all/none b in bs?
-      def matches?(a, bs)
-        m = bs.map { |b| a == b }.inject { |a, b| self.match == 'any' ? a || b : a && b }
-        self.match == 'none' ? !m : m
+      # @returns true if &condition is true for any/all/none elements in the list
+      def matches?(list, &condition)
+        list.send([self['match'] || 'all', '?'].join, &condition)
       end
       
-      # is any/all/none v in vs non-empty?
-      def empty?(item, vs)
-        m = vs.map { |v| !item[v].nil? }.inject { |a, b| self.match == 'any' ? a || b : a && b }
-        self.match == 'none' ? !m : m
-      end
     end
 
   end
