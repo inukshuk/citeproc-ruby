@@ -26,6 +26,8 @@ module CSL
     
     class << self; attr_accessor :path, :schema, :default; end
     
+    attr_reader :parent
+    
     def initialize(style=nil)
       open(style || Style.default)
     end
@@ -70,7 +72,11 @@ module CSL
     end
     
     def options
-      @attributes[:options]
+      @attributes[:options] ||= {}
+    end
+    
+    def [](key)
+      options[key.to_s]
     end
     
     def info
@@ -83,7 +89,7 @@ module CSL
       end
     end
     
-    [:info, :options, :macros, :citation, :bibliography].each do |method_id|
+    [:info, :macros, :citation, :bibliography].each do |method_id|
       define_method method_id do; @attributes[method_id]; end
     end
     
