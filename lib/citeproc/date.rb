@@ -110,7 +110,7 @@ module CiteProc
 
       case
       when !range? || open_range?
-         [%w{day month year}]
+         [%w{day month year}, []]
       when rm == 1
         [%w{day month}, %w{day month year} ]
       when rm == 2
