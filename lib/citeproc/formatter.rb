@@ -42,8 +42,8 @@ module CiteProc
       
       CSL::Nodes.formatting_attributes.each do |attribute|
         method_id = ['set', attribute.gsub(/-/, '_')].join('_')
-
-        if attributes.has_key?(attribute) && format.respond_to?(method_id)
+        
+        if !attributes[attribute].nil? && format.respond_to?(method_id)
           format.send(method_id, attributes[attribute])
         end
       end

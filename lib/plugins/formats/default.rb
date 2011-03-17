@@ -81,7 +81,7 @@ module CiteProc
       
       # @param display 'block', 'left-margin', 'right-inline', 'inline'
       def set_display(display)
-        @styles['display'] = display
+        @styles['display'] = display || 'inline'
       end
       
       def set_strip_periods(strip)
@@ -89,28 +89,28 @@ module CiteProc
       end
             
       # @param style 'normal', 'italic', 'oblique' 
-      def set_font_style(style='normal')
-        @styles['font-style'] = style
+      def set_font_style(style)
+        @styles['font-style'] = style || 'normal'
       end
       
       # @param variant 'normal', 'small-caps'
-      def set_font_variant(variant='normal')
-        @styles['font-variant'] = variant
+      def set_font_variant(variant)
+        @styles['font-variant'] = variant || 'normal'
       end
    
       # @param weight 'normal', 'bold', 'light' 
-      def set_font_weight(weight='normal')
-        @styles['font-weight'] = weight
+      def set_font_weight(weight)
+        @styles['font-weight'] = weight || 'normal'
       end
 
       # @param decoration 'none', 'underline'
-      def set_text_decoration(decoration='none')
-        @styles['text-decoration'] = decoration
+      def set_text_decoration(decoration)
+        @styles['text-decoration'] = decoration || 'none'
       end
 
       # @param align 'baseline', 'sub', 'sup' 
-      def set_vertical_align(align='baseline')
-        @styles['vertical-align'] = align        
+      def set_vertical_align(align)
+        @styles['vertical-align'] = align || 'baseline'
       end
 
       # @param case 'lowercase', 'uppercase', 'capitalize-first', 'capitalize-all', 'title', 'sentence'

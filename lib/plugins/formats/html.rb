@@ -64,6 +64,8 @@ module CiteProc
             content = content_tag(:b, content)
           when style == 'font-style' && value == 'italic'
             content = content_tag(:i, content)
+          else
+            content = content_tag(:span, content, style => value)
           end
         end
       
@@ -74,7 +76,7 @@ module CiteProc
         if styles.nil?
           %Q{<#{name}>#{content}</#{name}>}
         else
-          %Q{<#{name} style="#{ styles.map { |k,v| [[k,v].join(': ')].join('; ') } }">#{content}</#{name}>}
+          %Q{<#{name} style="#{ styles.map { |k,v| [k,v].join(': ') }.join('; ') }">#{content}</#{name}>}
         end
       end
     end
