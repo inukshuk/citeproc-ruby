@@ -782,7 +782,7 @@ module CSL
     class Name < Node
       attr_fields Nodes.formatting_attributes
       attr_fields Nodes.inheritable_name_attributes
-      attr_fields %w{ form delimiter }
+      attr_fields %w{ form delimiter delimiter-precedes-et-al }
 
       def parts
         @parts ||= Hash.new { |h, k| k.match(/(non-)?dropping-particle/) ? h['family'] : {} }
@@ -842,6 +842,7 @@ module CSL
         inherit_attributes_from(node, ['citation', 'bibliography', 'style'], Nodes.inheritable_name_attributes)
         inherit_attributes_from(node, ['citation', 'bibliography', 'style'], ['form', 'delimiter'], 'name-')
         inherit_attributes_from(node, ['style'], ['demote-non-dropping-particle', 'initialize-with-hyphen'])
+        inherit_attributes_from(node, ['bibliography', 'citation'], ['delimiter-precedes-et-al'])
       end
       
     end
@@ -1022,7 +1023,7 @@ module CSL
     #
     class Names < Node
       attr_fields Nodes.formatting_attributes
-      attr_fields %w{ variable delimiter delimiter-precedes-et-al }
+      attr_fields %w{ variable delimiter }
     
       [:name, :et_al, :label, :substitute].each do |method_id|
         klass = CSL::Nodes.const_get(method_id.to_s.split(/_/).map(&:capitalize).join)
@@ -1054,20 +1055,20 @@ module CSL
           names = names.map do |role, names|
             processed = []
             
-            truncated = self.name.truncate(names)
+            truncated = name.truncate(names)
             
             unless count_only
-              processed << self.name.process_names(role, truncated, processor)
+              processed << name.process_names(role, truncated, processor)
             
               if names.length > truncated.length
                 # use delimiter before et al. if there is more than a single name; squeeze whitespace
-                others = (self.et_al.nil? ? localized_terms('et-al').to_s : self.et_al.process(data, processor))
-                link = (self.name.et_al_use_first.to_i > 1 || delimiter_precedes_et_al? ? self.name.delimiter : ' ')
+                others = (et_al.nil? ? localized_terms('et-al').to_s : et_al.process(data, processor))
+                link = (name.et_al_use_first.to_i > 1 || name.delimiter_precedes_et_al? ? name.delimiter : ' ')
 
                 processed << [link, others].join.squeeze(' ')
               end
             
-              processed << self.label.process_names(role, names.length, processor) unless self.label.nil?
+              processed << label.process_names(role, names.length, processor) unless label.nil?
             else
               processed << truncated.length
             end
@@ -1097,7 +1098,6 @@ module CSL
     
       def inherit_attributes(node)
         inherit_attributes_from(node, ['citation', 'bibliography', 'style'], ['delimiter'], 'names-')
-        inherit_attributes_from(node, ['bibliography', 'citation'], ['delimiter-precedes-et-al'])
       end
       
     end
