@@ -1027,7 +1027,7 @@ module CSL
       [:name, :et_al, :label, :substitute].each do |method_id|
         klass = CSL::Nodes.const_get(method_id.to_s.split(/_/).map(&:capitalize).join)
         define_method method_id do
-          elements = parent.is_a?(Substitute) && klass != Substitute ? parent.parent.children : children
+          elements = children.empty? && parent.is_a?(Substitute) && klass != Substitute ? parent.parent.children : children
           elements.detect { |child| child.class == klass }
         end
       end
