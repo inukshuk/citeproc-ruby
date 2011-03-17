@@ -36,10 +36,10 @@ module CSL
       args.each do |argument|
         case          
         when argument.is_a?(String) && argument.match(/^\s*</)
-          parse!(Nokogiri::XML.parse(argument) { |config| config.strict.noblanks }.root)
+          parse(Nokogiri::XML.parse(argument) { |config| config.strict.noblanks }.root)
         
         when argument.is_a?(Nokogiri::XML::Node)
-          parse!(argument)
+          parse(argument)
         
         when argument.is_a?(Hash)
           merge!(argument)
@@ -54,7 +54,7 @@ module CSL
       yield self if block_given?
     end
     
-    def parse!(node)      
+    def parse(node)      
       @layout = Nodes.parse(node.at_css('layout'), style)
       @sort_keys = node.css('sort key').map do |key|
         Hash[key.attributes.values.map { |a| [a.name, a.value] }]
@@ -97,7 +97,9 @@ module CSL
     end  
       
     def process(data, processor)
-      sort(data, processor).map { |item| @layout.process(item, processor) }
+      sort(data, processor).map do |item|
+        [item['prefix'], @layout.process(item, processor), item['suffix']].compact.join(' ')
+      end
     end
     
     protected
