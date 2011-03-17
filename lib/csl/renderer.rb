@@ -24,6 +24,7 @@ module CSL
     include Support::Tree
   
     attr_fields Nodes.inheritable_name_attributes
+    attr_fields %w{ delimiter-precedes-et-al }
 
     attr_reader :layout, :sort_keys, :style
   
@@ -111,7 +112,7 @@ module CSL
 
   class Bibliography < Renderer
     attr_fields %w{ hanging-indent second-field-align line-spacing
-      entry-spacing subsequent-author-substitute delimiter-precedes-et-al }
+      entry-spacing subsequent-author-substitute }
       
   end
 

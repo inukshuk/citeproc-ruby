@@ -1097,7 +1097,7 @@ module CSL
     
       def inherit_attributes(node)
         inherit_attributes_from(node, ['citation', 'bibliography', 'style'], ['delimiter'], 'names-')
-        inherit_attributes_from(node, ['bibliography'], ['delimiter-precedes-et-al'])
+        inherit_attributes_from(node, ['bibliography', 'citation'], ['delimiter-precedes-et-al'])
       end
       
     end
