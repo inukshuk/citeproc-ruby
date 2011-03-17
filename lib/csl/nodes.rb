@@ -823,7 +823,8 @@ module CSL
       def set_defaults
         attributes['delimiter'] ||= ', '
         attributes['delimiter-precedes-last'] ||= 'false'
-
+        attributes['et-al-use-first']  ||= '1'
+        
         children.each { |child| parts[child['name']] = child.attributes }        
       end      
 
@@ -840,7 +841,7 @@ module CSL
 
       def inherit_attributes(node)
         inherit_attributes_from(node, ['citation', 'bibliography', 'style'], Nodes.inheritable_name_attributes)
-        inherit_attributes_from(node, ['citation', 'bibliography', 'style'], ['delimiter-precedes-et-al'])
+        inherit_attributes_from(node, ['citation', 'bibliography', 'style'], ['et-al-use-first', 'delimiter-precedes-et-al'])
         inherit_attributes_from(node, ['citation', 'bibliography', 'style'], ['form', 'delimiter'], 'name-')
         inherit_attributes_from(node, ['style'], ['demote-non-dropping-particle', 'initialize-with-hyphen'])
       end
@@ -1056,7 +1057,7 @@ module CSL
             processed = []
             
             truncated = name.truncate(names)
-            
+
             unless count_only
               processed << name.process_names(role, truncated, processor)
             
