@@ -111,7 +111,7 @@ module CSL
 
   class Bibliography < Renderer
     attr_fields %w{ hanging-indent second-field-align line-spacing
-      entry-spacing subsequent-author-substitute }
+      entry-spacing subsequent-author-substitute delimiter-precedes-et-al }
       
   end
 
