@@ -840,9 +840,9 @@ module CSL
 
       def inherit_attributes(node)
         inherit_attributes_from(node, ['citation', 'bibliography', 'style'], Nodes.inheritable_name_attributes)
+        inherit_attributes_from(node, ['citation', 'bibliography', 'style'], ['delimiter-precedes-et-al'])
         inherit_attributes_from(node, ['citation', 'bibliography', 'style'], ['form', 'delimiter'], 'name-')
         inherit_attributes_from(node, ['style'], ['demote-non-dropping-particle', 'initialize-with-hyphen'])
-        inherit_attributes_from(node, ['bibliography', 'citation'], ['delimiter-precedes-et-al'])
       end
       
     end
