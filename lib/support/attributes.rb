@@ -16,11 +16,15 @@
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 #++
 
+require 'forwardable'
 require 'json'
 
+
 module Support
-  module Attributes
   
+  module Attributes
+    extend Forwardable
+    
     def self.included(base)
       base.extend(ClassMethods)
     end
@@ -30,6 +34,8 @@ module Support
     def attributes
       @attributes ||= {}
     end
+
+    def_delegators :attributes, :empty?, :to_json
   
     def [](id)
       attributes[filter_key(id)]
@@ -51,8 +57,6 @@ module Support
   
     alias_method :to_hash, :attributes
 
-    def empty?; attributes.empty?; end
-
     def key_filter
       @key_filter ||= Hash.new { |hash, key| hash[key] = key.to_s }
     end
@@ -61,10 +65,7 @@ module Support
       @value_filter ||= Hash.new { |hash, key| hash[key] = key }
     end
   
-    def to_json
-      self.attributes.to_json
-    end
-  
+
     private
   
     def filter_key(key)
