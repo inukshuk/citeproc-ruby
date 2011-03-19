@@ -38,10 +38,11 @@ module Support
     def descendants; @descendants || descendants!; end
     
     def add_children(*args)
-      args = args.shift if args.length == 1 && args[0].is_a?(Array)
-      args.each { |node| node.parent = self; children << node }
+      args.flatten.compact.each { |node| node.parent = self; children << node }
       self
     end
+    
+    alias :add_child :add_children
     
     def ancestors!
       @ancestors = root? ? [] : [parent] + parent.ancestors!

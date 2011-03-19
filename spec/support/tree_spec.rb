@@ -42,6 +42,27 @@ describe Support::Tree do
     it 'sets self as parent of the added nodes' do
       node.add_children([Object.new, Object.new]).children.map(&:parent).uniq.should == [node]
     end
+
+    it 'does not alter the state if no argument given' do
+      node.add_children().children.should be_empty
+    end
+    
+    it 'does not alter the state if nil argument given' do
+      node.add_children(nil).children.should be_empty
+    end
+
+    it 'does not alter the state if nil arguments given' do
+      node.add_children(nil, nil).children.should be_empty
+    end
+
+    it 'does not alter the state if empty list argument given' do
+      node.add_children([]).children.should be_empty
+    end
+
+    it 'does not alter the state if nil list argument given' do
+      node.add_children([nil, nil]).children.should be_empty
+    end
+    
   end
   
   describe '#ancestors' do
