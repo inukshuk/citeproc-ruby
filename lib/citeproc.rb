@@ -62,6 +62,7 @@ require 'csl/node'
 require 'csl/term'
 require 'csl/locale'
 require 'csl/nodes'
+require 'csl/sort'
 require 'csl/renderer'
 require 'csl/style'
 

@@ -45,15 +45,19 @@ module Support
       attributes[filter_key(id)] = filter_value(value)
     end
   
-    def merge!(other)
+    def merge(other)
       return self if other.nil?
       other.to_hash.each_pair { |k,v| self[k] = v }
       self
     end
 
-    def reverse_merge!(other)
+    alias :merge! :merge #deprecated
+
+    def reverse_merge(other)
       other.merge!(self)
     end
+
+    alias :reverse_merge! :reverse_merge #deprecated
   
     alias_method :to_hash, :attributes
 

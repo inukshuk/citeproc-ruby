@@ -20,9 +20,22 @@ module CSL
   class Node
     include Support::Attributes
     include Support::Tree
+
+    def self.parse(*args, &block)
+      return if args.compact.empty?
+      
+      node = args.detect { |argument| argument.is_a?(Nokogiri::XML::Node) } ||
+        raise(ArgumentError, "arguments must contain an XML node; was #{ args.map(&:class).inspect }")
+    
+      name = node.name.split(/[\s-]+/).map(&:capitalize).join
+      klass = CSL.const_defined?(name) ? CSL.const_get(name) : Node
+
+      klass.new({ :node => node }, &block)
+    end
     
     def initialize(arguments = {})
       parse(normalize(arguments[:node])) if arguments.has_key?(:node)
+      merge!(arguments[:attributes])
       yield self if block_given?
     end
 
@@ -33,7 +46,7 @@ module CSL
     def style!
       @style = root!.is_a?(Style) ? nil : root
     end
-
+    
     def style; @style || style!; end
 
     def parse(node)      
@@ -58,7 +71,6 @@ module CSL
         raise(ArgumentError, "failed to parse #{ node.inspect }")
       end
     end
-  end
 
   end
 end

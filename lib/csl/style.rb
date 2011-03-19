@@ -26,7 +26,7 @@ module CSL
   # end
   
   
-  class Style
+  class Style < Node
 
     @schema = File.expand_path('../../resource/schema/csl.rnc', __FILE__)
     @path = File.expand_path('../../../resource/style', __FILE__)

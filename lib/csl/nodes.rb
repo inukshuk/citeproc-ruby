@@ -34,7 +34,7 @@ module CSL
       # subclass corresponding to the node's name.
       def parse(*args, &block)
         node = args.detect { |argument| argument.is_a?(Nokogiri::XML::Node) }
-        raise(ArgumentException, "arguments must contain an XML node; was #{ args.map(&:class).inspect }") if node.nil?
+        raise(ArgumentError, "arguments must contain an XML node; was #{ args.map(&:class).inspect }") if node.nil?
         
         name = node.name.split(/[\s-]+/).map(&:capitalize).join
         klass = Nodes.const_defined?(name) ? Nodes.const_get(name) : Node

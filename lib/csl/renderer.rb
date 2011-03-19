@@ -18,29 +18,18 @@
 
 module CSL
   
-  class Sort < Node; end
-  
-  class SortKey < Node
-    attr_fields %w{ variable macro sort names-min names-use-first names-use-last }
-    
-    def convert(item)
-    end
-    
-  end
-  
   # Represents a cs:citation or cs:bibliography element.
   class Renderer < Node
     
     attr_fields Nodes.inheritable_name_attributes
     attr_fields %w{ delimiter-precedes-et-al }
 
-    attr_reader :layout, :sort_keys, :style
-  
-    alias :parent :style
+    attr_reader :layout, :style
   
     def initialize(*args, &block)
       @style = args.detect { |argument| argument.is_a?(Style) }
       args.delete(@style) unless @style.nil?
+      @parent = @style
       
       args.each do |argument|
         case          
@@ -62,47 +51,17 @@ module CSL
       
       yield self if block_given?
     end
+
+    def sort(data, processor)
+      sort = find_children_by_name('sort').first
+      sort.nil? ? data : sort.apply(data, processor)
+    end
     
-    def parse(node)      
+    def parse(node)
       @layout = Nodes.parse(node.at_css('layout'), style)
-      @sort_keys = node.css('sort key').map do |key|
-        Hash[key.attributes.values.map { |a| [a.name, a.value] }]
-      end
+      add_children(Node.parse(node.at_css('sort')))
     end
   
-    # :call-seq:
-    # sort(items, processor) -> array
-    #
-    # @returns an array contining the items sorted accroding to this style's
-    # sort keys.
-    def sort(data, processor)
-      data.sort do |a,b|
-        comparison = 0
-        sort_keys.each do |key|
-          case
-          when key.has_key?('variable')
-            variable = key['variable']
-            this, that = a[variable], b[variable]
-
-          when key.has_key?('macro')
-            macro = processor.style.macros[key['macro']]
-            this, that = macro.process(a, processor), macro.process(b, processor) 
-
-          else
-            CiteProc.log.warn "sort key #{ key.inspect } contains no variable or macro definition."
-          end
-
-          comparison = this <=> that
-          comparison = comparison ? comparison : that.nil? ? 1 : -1
-        
-          comparison = comparison * -1 if key['sort'] == 'descending'
-          break unless comparison.zero?
-        end
-        
-        comparison
-      end
-    end
-
     def render(data, processor=nil)
       # TODO add support for one-off processor instance
       processor.format(process(data, processor).join(delimiter), attributes)
@@ -119,12 +78,6 @@ module CSL
     protected
     
     def set_defaults
-    end
-    
-    def to_sort_key(items, processor)
-      items.map do |item|
-        
-      end
     end
     
   end
