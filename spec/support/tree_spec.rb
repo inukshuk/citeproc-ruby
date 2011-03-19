@@ -134,7 +134,28 @@ describe Support::Tree do
         node3.should_not be_root
         node3.depth.should == 3
       end
-  
     end
   end
+  
+  describe 'named child accessors' do
+    
+    before(:all) { Object.instance_eval { attr_children :object } }
+    
+    context 'when it has no children' do
+      it 'returns an empty list by default' do
+        Object.new.object.should be_empty
+      end
+    end
+    
+    context 'when it has children' do
+      it 'returns a list of a single child with the matching name' do
+        Object.new.add_children(Object.new).object.should have(1).item
+      end
+
+      it 'returns a list of all children with the matching name' do
+        Object.new.add_children(Object.new, Object.new).object.should have(2).items
+      end
+    end
+  end
+  
 end
