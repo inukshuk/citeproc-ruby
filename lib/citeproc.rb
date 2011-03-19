@@ -58,6 +58,7 @@ require 'extensions/core'
 require 'support/attributes'
 require 'support/tree'
 
+require 'csl/node'
 require 'csl/term'
 require 'csl/locale'
 require 'csl/nodes'

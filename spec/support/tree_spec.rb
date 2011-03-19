@@ -5,14 +5,13 @@ describe Support::Tree do
   let(:node) { Object.new }
   
   describe '#children' do
-    context 'has no children' do
+    context 'when it has no children' do
       it 'returns an empty list' do
         node.children.should be_empty
-        node.should_not have_children
       end
     end
     
-    context 'has children' do
+    context 'when it has children' do
       before(:each) { node.add_children([Object.new, Object.new, Object.new]) }
       
       it 'returns a list of all children' do
@@ -46,13 +45,13 @@ describe Support::Tree do
   end
   
   describe '#ancestors' do
-    context 'has no ancestors' do
+    context 'when it has no ancestors' do
       it 'returns and empty list' do
         node.ancestors.should be_empty
       end
     end
     
-    context 'has ancestors' do
+    context 'when it has ancestors' do
       
       let(:node1) { node.add_children(Object.new).children[0] }
       let(:node2) { node1.add_children(Object.new).children[0] }
@@ -78,14 +77,14 @@ describe Support::Tree do
   end
 
   describe '#root' do
-    context 'has no ancestors' do
+    context 'when it has no ancestors' do
       it 'returns itself' do
         node.root.should == node
         node.should be_root
       end
     end
     
-    context 'has ancestors' do
+    context 'when it has ancestors' do
       
       let(:node1) { node.add_children(Object.new).children[0] }
       let(:node2) { node1.add_children(Object.new).children[0] }

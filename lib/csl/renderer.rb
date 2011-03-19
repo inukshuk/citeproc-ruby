@@ -18,11 +18,19 @@
 
 module CSL
   
-  # Represents a cs:citation or cs:bibliography element.
-  class Renderer
-    include Support::Attributes
-    include Support::Tree
+  class Sort < Node; end
   
+  class SortKey < Node
+    attr_fields %w{ variable macro sort names-min names-use-first names-use-last }
+    
+    def convert(item)
+    end
+    
+  end
+  
+  # Represents a cs:citation or cs:bibliography element.
+  class Renderer < Node
+    
     attr_fields Nodes.inheritable_name_attributes
     attr_fields %w{ delimiter-precedes-et-al }
 
@@ -62,6 +70,11 @@ module CSL
       end
     end
   
+    # :call-seq:
+    # sort(items, processor) -> array
+    #
+    # @returns an array contining the items sorted accroding to this style's
+    # sort keys.
     def sort(data, processor)
       data.sort do |a,b|
         comparison = 0
@@ -106,6 +119,12 @@ module CSL
     protected
     
     def set_defaults
+    end
+    
+    def to_sort_key(items, processor)
+      items.map do |item|
+        
+      end
     end
     
   end
