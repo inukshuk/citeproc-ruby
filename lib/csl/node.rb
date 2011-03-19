@@ -20,5 +20,45 @@ module CSL
   class Node
     include Support::Attributes
     include Support::Tree
+    
+    def initialize(arguments = {})
+      parse(normalize(arguments[:node])) if arguments.has_key?(:node)
+      yield self if block_given?
+    end
+
+    def name
+      node_name || self.class.name.split(/::/).last.gsub(/([[:lower:]])([[:upper:]])/) { [$1, $2].join('-') }.downcase
+    end
+
+    def style!
+      @style = root!.is_a?(Style) ? nil : root
+    end
+
+    def style; @style || style!; end
+
+    def parse(node)      
+      @node_name = node.name
+
+      node.attributes.values.each { |a| attributes[a.name] = a.value }
+      add_children(node.children.map { |child| Node.parse(child) })
+    end
+
+    def to_xml
+    end
+
+    protected
+
+    def normalize(node)
+      case node
+      when Nokogiri::XML::Node
+        node
+      when String
+        Nokogiri::XML.parse(node) { |config| config.strict.noblanks }.root
+      else
+        raise(ArgumentError, "failed to parse #{ node.inspect }")
+      end
+    end
+  end
+
   end
 end
