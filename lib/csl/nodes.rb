@@ -165,6 +165,9 @@ module CSL
         end
       end
       
+      def ordinalize(number, processor = nil)
+        #TODO localize
+      end
       
       # Processes the supplied data. @returns a formatted string.
       def process(data, processor)

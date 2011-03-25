@@ -17,6 +17,13 @@
 #++
 
 module CSL
+  
+  def Node(*args, &block)
+    Node.parse(*args, &block)
+  end
+  
+  module_function :Node
+  
   class Node
     include Support::Attributes
     include Support::Tree
@@ -28,20 +35,26 @@ module CSL
         raise(ArgumentError, "arguments must contain an XML node; was #{ args.map(&:class).inspect }")
     
       name = node.name.split(/[\s-]+/).map(&:capitalize).join
-      klass = CSL.const_defined?(name) ? CSL.const_get(name) : Node
+      klass = CSL.const_defined?(name) ? CSL.const_get(name) : self
 
       klass.new({ :node => node }, &block)
     end
     
     def initialize(arguments = {})
       parse(normalize(arguments[:node])) if arguments.has_key?(:node)
+      
       merge!(arguments[:attributes])
+      
+      @node_name = arguments[:name].to_s if arguments.has_key?(:name)
+      
       yield self if block_given?
     end
 
     def name
       node_name || self.class.name.split(/::/).last.gsub(/([[:lower:]])([[:upper:]])/) { [$1, $2].join('-') }.downcase
     end
+    
+    alias :name= :node_name=
 
     def style!
       @style = root!.is_a?(Style) ? nil : root
@@ -66,6 +79,7 @@ module CSL
       when Nokogiri::XML::Node
         node
       when String
+        # TODO file path (e.g. locale or style)
         Nokogiri::XML.parse(node) { |config| config.strict.noblanks }.root
       else
         raise(ArgumentError, "failed to parse #{ node.inspect }")

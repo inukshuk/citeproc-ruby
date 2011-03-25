@@ -68,7 +68,7 @@ module CSL
         parse!(Nokogiri::XML.parse(argument).root)
       
       when argument.is_a?(String) || argument.is_a?(Symbol)
-        self['name'] = argument.to_s
+        attributes['name'] = argument.to_s
       
       else
         CiteProc.log.warn "failed to create new Term from #{ argument.inspect }"
