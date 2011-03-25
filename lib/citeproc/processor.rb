@@ -16,9 +16,12 @@
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 #++
 
+require 'forwardable'
+
 module CiteProc
 
   class Processor
+    extend Forwardable
     
     attr_reader :style, :formatter
     
@@ -50,15 +53,7 @@ module CiteProc
     def format(*args); @formatter.format(*args); end
     
     def format=(format); @formatter.format = format; end
-    
-    def language=(language)
-      self.locale.set(language).language
-    end
-    
-    def language
-      self.locale.language
-    end
-    
+        
     def locale=(locale)
       @locale = locale.is_a?(CSL::Locale) ? locale : CSL::Locale.new(locale)
     end
@@ -66,6 +61,8 @@ module CiteProc
     def locale
       @locale ||= CSL.default_locale
     end
+    
+    def_delegators :locale, :language, :language=, :region, :region=
     
     # @returns the abbreviations, a self-recording hash.
     def abbreviations

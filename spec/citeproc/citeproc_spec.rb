@@ -12,7 +12,7 @@ def filter(file, fixture)
   # return ['affix_InterveningEmpty.json'].include?(File.basename(file))
   # File.basename(file) =~ /bugreports_greek/i
   # File.basename(file) =~ /sort_stripmark/i
-  # return File.basename(file) =~ /^number_dateordinalmasculine/i
+  # return File.basename(file) =~ /^number_editionordinal/i
   true
 end
 
@@ -31,6 +31,8 @@ module CiteProc
         name = tokens[1].gsub(/([[:lower:]])([[:upper:]])/, '\1 \2').downcase
       
         it name do
+          pending if tokens[0] =~ /^(position|disambiguate|integration|flipflop|collapse|parallel)/
+          
           proc.style = fixture['csl']
           proc.import(fixture['input'])
           proc.format = :html

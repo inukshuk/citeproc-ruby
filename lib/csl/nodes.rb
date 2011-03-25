@@ -180,10 +180,12 @@ module CSL
       def set_defaults
       end
       
+      # TODO Refactor: move all processor-dependencies to citeproc
+      
       # Prioritized locale look-up.
       def localize(type, key, processor, &block)
         unless @style.nil?
-          @style.locales(processor && processor.language || nil).each do |locale|
+          style.locales(processor && processor.language || nil).each do |locale|
             yield locale.send(type)
           end
         end 
@@ -198,10 +200,15 @@ module CSL
 
       # @returns the locale with the highest priority
       def locale(processor = nil)
-        @style && @style.locales.first || processor && (processor.locale || Locale.new(processor.language)) || Locale.default
+        locales(processor).first
       end
       
       def locales(processor = nil)
+        if processor.nil?
+          style && style.locales || []
+        else
+          (style && style.locales(processor.language, processor.region) || []) + [Locale.new(processor.language)]
+        end  + [Locale.default]
       end
 
       
@@ -612,7 +619,7 @@ module CSL
         
         case
         when form == 'ordinal'
-          processor.locale.ordinalize(date.day)
+          locale(processor).ordinalize(date.day)
         when form == 'numeric-leading-zeros'
           "%02d" % date.day
         else # 'numeric'
@@ -671,9 +678,9 @@ module CSL
         when form == 'roman'
           number.to_i.romanize
         when form == 'ordinal'
-          processor.locale.ordinalize(number, attributes)
+          locale(processor).ordinalize(number, attributes)
         when form == 'long-ordinal'
-          processor.locale.ordinalize(number, attributes)
+          locale(processor).ordinalize(number, attributes)
         else
           number.to_i.to_s
         end
