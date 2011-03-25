@@ -16,9 +16,13 @@
 # along with this program.	If not, see <http://www.gnu.org/licenses/>.
 #++
 
+require 'forwardable'
+
 module CiteProc
     
   class Variable
+    extend Forwardable
+    
     include Support::Attributes
     include Comparable
 
@@ -42,6 +46,8 @@ module CiteProc
     @types = Hash.new(Variable)
 
     attr_fields :value
+    
+    def_delegators :value, :empty?, :to_s, :match
     
     class << self
       attr_reader :date_fields, :name_fields, :text_fields, :filters, :types
@@ -69,14 +75,15 @@ module CiteProc
       argument = argument.to_hash if argument.is_a?(Variable)
       argument.is_a?(Hash) ?  self.merge!(argument) : self.value = argument.to_s
     end
-    
-    def to_s
-      self.value.to_s
-    end
-    
+        
     def numeric?
-      self.to_s.match(/^-?\d+$/)
+      to_s =~ /\d/
     end
+    
+    def to_i
+      to_s =~ /(-?\d[\d,\.]*)/ && $1.to_i || 0
+    end
+    
     
     def <=>(other)
       strip_markup(self.to_s) <=> strip_markup(other.to_s)

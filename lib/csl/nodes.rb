@@ -670,17 +670,17 @@ module CSL
       attr_fields %w{ variable form }
     
       def process(data, processor)
-        number = data[variable].to_s
+        number = data[variable]
         
         case
-        when number.empty?
-          number
+        when number.nil? || number.empty? || !number.numeric?
+          number.to_s
         when form == 'roman'
           number.to_i.romanize
         when form == 'ordinal'
-          locale(processor).ordinalize(number, attributes)
+          locale(processor).ordinalize(number.to_i, attributes)
         when form == 'long-ordinal'
-          locale(processor).ordinalize(number, attributes)
+          locale(processor).ordinalize(number.to_i, attributes)
         else
           number.to_i.to_s
         end
