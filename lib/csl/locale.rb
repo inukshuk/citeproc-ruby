@@ -166,8 +166,38 @@ module CSL
       end
     end
 
+    # Locales are sorted first by language, then by region; sort order is
+    # alphabetical with the following exceptions: en_US (the default locale)
+    # is prioritised; in case of a language-match the default region of that
+    # language will be prioritised (thus, de_DE will comes before de_AT even
+    # though the alphabetical order would be different).
     def <=>(other)
-      self.tag.empty? ? (other.tag.empty? ? 0 : 1) : (other.tag.empty? ? -1 : self.tag <=> other.tag)
+      Locale.sort.call(self, other)
+    end
+    
+    def self.sort(language = nil, region = nil)
+      Proc.new do |a,b|
+        if a.language != b.language
+          case
+          when a.language == language.to_s || b.language.nil? then -1
+          when b.language == language.to_s || a.language.nil? then 1
+          when a.language == 'en' then -1
+          when b.language == 'en' then 1
+          else
+            a.language <=> b.language
+          end
+        else
+          case
+          when a.region == b.region then 0
+          when a.region == region.to_s || b.region.nil? then -1
+          when b.region == region.to_s || a.region.nil? then 1
+          when a.region == Locale.regions[a.language] then -1
+          when b.region == Locale.regions[a.language] then 1
+          else
+            a.region <=> b.region
+          end
+        end
+      end
     end
     
     # Returns an ordinalized number according to the rules specified in the

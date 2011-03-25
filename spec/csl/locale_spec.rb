@@ -156,7 +156,53 @@ module CSL
         
       end
       
+    end
+    
+    describe 'sorting' do
+      
+      context 'default priority' do
+        [['da-DK', 'de-DE'],  ['ar-AR', 'el-GR'], ['en-US', 'it-IT'], ['en-US', 'ar-AR'], ['en-US', 'de-DE']].each do |a,b|
+          it "sorts by default and alphabetically by language (#{a} < #{b})" do
+            (Locale.new(a) < Locale.new(b)).should be true
+          end
+        end
+
+        [['de-AT', 'de-CH'],  ['de-DE', 'de-CH'], ['de-DE', 'de-AT'], ['pt-PT', 'pt-BR'], ['zh-CN', 'zh-TW']].each do |a,b|
+          it "sorts by default and alphabetically by region (#{a} < #{b})" do
+            (Locale.new(a) < Locale.new(b)).should be true
+          end
+        end
+        
+        it 'sorts nil languages last' do
+          [Locale.new, Locale.new('de'), Locale.new('sv-SE')].sort.last.language.should be_nil
+        end
+
+        it 'sorts nil regions as default' do
+          %w{ de de-AT de-DE de-CH }.map { |lc| Locale.new(lc) }.sort.map(&:tag).should == %w{ de-DE de-DE de-AT de-CH }
+        end
+      end
+          
+      context 'language priority (de)' do
+        [['de-DE', 'da-DK'],  ['ar-AR', 'el-GR'], ['en-US', 'it-IT'], ['en-US', 'ar-AR'], ['de-DE', 'en-US']].each do |a,b|
+          it "sorts by default and alphabetically by language (#{a} < #{b})" do
+            [Locale.new(a), Locale.new(b)].sort(&Locale.sort('de')).map(&:tag).should == [a,b]
+          end
+        end
+
+        [['de-DE', 'de-AT'],  ['de-AT', 'ar-AR'], ['en-US', 'ar-AR'], ['de-CH', 'en-US']].each do |a,b|
+          it "sorts by default and alphabetically by region (#{a} < #{b})" do
+            [Locale.new(a), Locale.new(b)].sort(&Locale.sort('de')).map(&:tag).should == [a,b]
+          end
+        end
+      end
+      
+      context 'regional priority (CH)' do
+        it 'sorts by default and alphabetically' do
+          %w{ de-AT de-DE de-CH }.map { |lc| Locale.new(lc) }.sort(&Locale.sort(nil, 'CH')).map(&:tag).should == %w{ de-CH de-DE de-AT }          
+        end
+      end
       
     end
+    
   end
 end

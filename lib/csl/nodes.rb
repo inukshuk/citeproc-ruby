@@ -165,10 +165,6 @@ module CSL
         end
       end
       
-      def ordinalize(number, processor = nil)
-        #TODO localize
-      end
-      
       # Processes the supplied data. @returns a formatted string.
       def process(data, processor)
         ''
@@ -199,7 +195,15 @@ module CSL
         
         CSL.default_locale.send(type)[key]
       end
+
+      # @returns the locale with the highest priority
+      def locale(processor = nil)
+        @style && @style.locales.first || processor && (processor.locale || Locale.new(processor.language)) || Locale.default
+      end
       
+      def locales(processor = nil)
+      end
+
       
       # Empty method; nodes may override this method.
       def inherit_attributes(node)

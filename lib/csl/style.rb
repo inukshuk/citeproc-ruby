@@ -102,11 +102,10 @@ module CSL
     alias :macro macros
     
     # @returns the style's locales.
-    def locales(language=nil, region=nil)
-      # TODO region priority
-      @attributes[:locales].select { |locale| locale.language.nil? || language.nil? || locale.language == language }.sort
+    def locales(language = nil, region = nil)
+      @attributes[:locales].select { |lc| lc.language.nil? || language.nil? || lc.language == language }.sort(&Locale.sort(language, region))
     end
-      
+    
     def link
       @attributes[:link] ||= info.at_css('link')['href']
     end
