@@ -12,7 +12,7 @@ def filter(file, fixture)
   # return ['affix_InterveningEmpty.json'].include?(File.basename(file))
   # File.basename(file) =~ /bugreports_greek/i
   # File.basename(file) =~ /sort_stripmark/i
-  # return File.basename(file) =~ /^condition/i
+  # return File.basename(file) =~ /^condition_singleton/i
   true
 end
 

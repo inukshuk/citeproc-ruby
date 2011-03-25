@@ -940,13 +940,13 @@ module CSL
       attr_fields %w{ variable plural form }
     
       def process(data, processor)
-        localized_terms(data['label'].to_s).to_s(attributes.merge({ 'plural' =>  plural?(data, 0) ? 'true' : 'false' }))
+        localized_terms(data['label'].to_s).to_s(attributes.merge({ 'plural' =>  plural?(data, 0).to_s }))
       rescue Exception => e
         handle_processing_error(e, data, processor)        
       end
     
       def process_names(role, number, processor)
-        localized_terms(role).to_s(attributes.merge({ 'plural' => plural?(nil, number) ? 'true' : 'false' }))        
+        localized_terms(role).to_s(attributes.merge({ 'plural' => plural?(nil, number).to_s }))        
       rescue Exception => e
         handle_processing_error(e, data, processor)        
       end
@@ -1047,9 +1047,12 @@ module CSL
           elements.detect { |child| child.class == klass }
         end
       end
-      
+         
+      def prefix_label?
+        children.map {|c| [Label, Name].include?(c.class) ? c.class : nil }.compact == [Label, Name]
+      end
+         
       def process(data, processor)
-        super
         names = collect_names(data)
         
         count_only = self.name.form == 'count'
@@ -1083,11 +1086,11 @@ module CSL
                 processed << [link, others].join.squeeze(' ')
               end
             
-              processed << label.process_names(role, names.length, processor) unless label.nil?
+              processed.send(prefix_label? ? :unshift : :push, label.process_names(role, names.length, processor)) unless label.nil?
             else
               processed << truncated.length
             end
-            
+
             processed.join
           end
           
