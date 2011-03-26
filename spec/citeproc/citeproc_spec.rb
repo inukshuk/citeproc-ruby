@@ -53,7 +53,7 @@ module CiteProc
             end
         
           when 'bibliography'
-            result = proc.bibliography.to_s
+            result = proc.bibliography(fixture['bibsection'] || :all).to_s
             
           when 'bibliography-header'
             pending('not yet implemented')

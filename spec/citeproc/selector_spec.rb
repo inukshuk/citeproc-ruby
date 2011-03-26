@@ -2,6 +2,14 @@ module CiteProc
   describe Selector do
     describe '#new' do
       it { should_not be_nil }
+
+      %w{ all any none select include exclude }.each do |mode|
+        it "accepts string/symbol values (#{mode})" do
+          Selector.new(mode).type.should_not be_nil
+          Selector.new(mode.to_sym).type.should_not be_nil
+        end
+      end
+      
       describe 'json API support' do
       
         it 'accepts a json object (select)' do

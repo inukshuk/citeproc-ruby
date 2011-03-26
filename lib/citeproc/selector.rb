@@ -24,8 +24,12 @@ module CiteProc
     attr_fields :select, :include, :exclude, :quash
     
     
-    def initialize(arguments = {})
-      merge(arguments)
+    def initialize(argument = {})
+      key_filter['all'] = 'select'
+      key_filter['any'] = 'include'
+      key_filter['none'] = 'exclude'
+      
+      merge(normalize(argument))
     end
     
     def type
@@ -47,6 +51,17 @@ module CiteProc
       end
     end
         
+    protected
+    
+    def normalize(argument)
+      case
+      when [String, Symbol].include?(argument.class) && !(argument.to_s =~ /^\s*\{/)
+        { argument.to_s => [] }
+      else
+        argument
+      end
+    end
+    
   end
 
 end

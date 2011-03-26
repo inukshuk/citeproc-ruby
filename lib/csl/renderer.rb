@@ -95,7 +95,7 @@ module CSL
     
     attr_fields %w{ delimiter suffix prefix }
     
-    def initialize(node, style)
+    def initialize(*arguments, &block)
       super
       %w{ delimiter suffix prefix }.each do |attribute|
         self[attribute] = @layout.attributes.delete(attribute)
