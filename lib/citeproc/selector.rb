@@ -28,6 +28,7 @@ module CiteProc
       key_filter['all'] = 'select'
       key_filter['any'] = 'include'
       key_filter['none'] = 'exclude'
+      key_filter['skip'] = 'quash'
       
       merge(normalize(argument))
     end
@@ -44,17 +45,25 @@ module CiteProc
     def conditions
       attributes[type] || []
     end
+
+    def matches?(item)
+      conditions.send(matcher) { |condition| match(item, condition) }
+    end
+    
+    def skip?(item)
+      has_quash? && quash.all? { |condition| match(item, condition) }
+    end
         
     def to_proc
-      Proc.new do |item|
-        conditions.send(matcher) do |c|
-          values, expected = [item[c['field']]].flatten.map(&:to_s), [c['value']].flatten
-          expected & values != []
-        end
-      end
+      Proc.new { |item| matches?(item) && !skip?(item) }
     end
         
     protected
+    
+    def match(item, condition)
+      values, expected = [item[condition['field']]].flatten.map(&:to_s), [condition['value']].flatten
+      expected & values != []
+    end
     
     def normalize(argument)
       case
