@@ -59,6 +59,8 @@ module CiteProc
     describe '#to_proc' do
       
       let(:books) { Selector.new('select' => [{'field' => 'type', 'value' => 'book'}]) }
+      let(:english_books) { Selector.new('select' => [{'field' => 'type', 'value' => 'book'}, {'field' => 'language', 'value' => 'en'}]) }
+      
       
       it 'can be used as a block to Array#select' do
         [{ 'type' => 'book'}, { 'type' => 'article'}].select(&books).should have(1).item
@@ -66,6 +68,12 @@ module CiteProc
       
       it 'does not filter out anything by default' do
         [1,2,3].select(&Selector.new).should == [1,2,3]
+      end
+      
+      describe 'when the type is :select' do
+        it 'selects items that match all conditions' do
+          [{ 'type' => 'book'}, { 'type' => 'article'}, { 'type' => 'book', 'language' => 'en'}].select(&english_books).should have(1).item          
+        end
       end
       
     end

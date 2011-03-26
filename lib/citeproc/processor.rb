@@ -96,6 +96,7 @@ module CiteProc
     end
     
     def import(items)
+      # TODO assign default ids if no id
       items = to_a(items)
       items.each do |item|
         item = Item.new(item)
@@ -107,7 +108,7 @@ module CiteProc
       data = items.values.select(&Selector.new(selector)).map { |i| { 'id' => i.id } }
       data = CitationData.new(data).populate!(items)
       
-      data = @style.bibliography.process(data, self)
+      data = style.bibliography.process(data, self)
       Bibliography.new(data)
     end
     
@@ -124,7 +125,7 @@ module CiteProc
       data = extract_citation_data(data)
 
       data.populate!(items)
-      citation = @style.citation.render(data, self)
+      citation = style.citation.render(data, self)
       
       [[register(citation), citation]]
     end

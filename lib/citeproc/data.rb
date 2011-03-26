@@ -120,7 +120,7 @@ module CiteProc
       when argument.is_a?(Array) && argument.map(&:class).uniq == [Hash]
         super('citation-items' => argument.map { |argument| Item.new(argument) })
 
-      when argument.is_a?(Array) && argument.map(&:class).uniq == [Item]
+      when argument.is_a?(Array) && (argument.empty? || argument.map(&:class).uniq == [Item])
         super('citation-items' => argument)
 
       when argument.is_a?(Hash)

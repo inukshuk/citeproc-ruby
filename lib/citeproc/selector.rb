@@ -44,10 +44,13 @@ module CiteProc
     def conditions
       attributes[type] || []
     end
-    
+        
     def to_proc
       Proc.new do |item|
-        conditions.send(matcher) { |c| item[c['field']] == c['value'] }
+        conditions.send(matcher) do |c|
+          values, expected = [item[c['field']]].flatten.map(&:to_s), [c['value']].flatten
+          expected & values != []
+        end
       end
     end
         
