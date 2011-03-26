@@ -80,6 +80,7 @@ module CiteProc
       to_s =~ /\d/
     end
     
+    # @returns (first) numeric data contained in the variable's value
     def to_i
       to_s =~ /(-?\d[\d,\.]*)/ && $1.to_i || 0
     end

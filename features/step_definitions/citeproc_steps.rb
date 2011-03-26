@@ -1,4 +1,4 @@
-Given /^a processor$/ do
+Given /^a CSL processor$/ do
   @processor = CiteProc::Processor.new
 end
 
@@ -17,6 +17,10 @@ end
 
 Then /^the result should be$/ do |string|
   @result.should == string
+end
+
+When /^I generate a bibliography with the argument$/ do |argument|
+  @result = @processor.bibliography(JSON.parse(argument)).to_s
 end
 
 When /^I set the format to "([^"]*)"$/ do |format|

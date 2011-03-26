@@ -103,8 +103,8 @@ module CiteProc
       end
     end
     
-    def bibliography(*args)
-      data = extract_citation_data(:all)
+    def bibliography(selector = :all)
+      data = extract_citation_data(selector)
       data.populate!(items)
       
       data = @style.bibliography.process(data, self)
@@ -153,10 +153,16 @@ module CiteProc
       case
       when argument == :all
         argument = items.keys.map { |id| { 'id' => id } }
-                
+      
+      # when argument.is_a?(Hash)
+      #   if argument.has_key?('select')
+      #     conditions = argument['select'].map
+      #     argument = items.values.select { || }
+      #   end
+        
       when items.has_key?(argument.to_s)
         argument = { 'id' => argument.to_s }
-        
+          
       end
 
       CitationData.new(argument)

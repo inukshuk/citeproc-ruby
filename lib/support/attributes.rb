@@ -47,6 +47,8 @@ module Support
   
     def merge(other)
       return self if other.nil?
+      other = JSON.parse(other) if other.is_a?(String) && other =~ /^\s*\{/
+      
       other.to_hash.each_pair { |k,v| self[k] = v }
       self
     end
