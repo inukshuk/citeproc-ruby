@@ -84,6 +84,10 @@ module Support
     
     module ClassMethods
 
+      def create(parameters)
+        new.merge(parameters)
+      end
+      
       def attr_fields(*args)
         args.flatten.each do |field|
           field, default = (field.is_a?(Hash) ? field.to_a.flatten : [field]).map(&:to_s)
