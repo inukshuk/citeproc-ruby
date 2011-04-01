@@ -1174,7 +1174,7 @@ module CSL
       end
 
       def skip?
-        @variables && @variables.map(&:last).uniq == [nil]
+        @variables && @variables.map(&:last).all?(&:nil?)
       end
       
       

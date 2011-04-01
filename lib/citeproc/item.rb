@@ -41,6 +41,7 @@ module CiteProc
     alias :access :[]
     def [](key)
       value = access(key)
+      changed
       notify_observers(key, value)
       value
     end
