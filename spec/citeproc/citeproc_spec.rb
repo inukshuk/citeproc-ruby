@@ -47,7 +47,7 @@ module CiteProc
             data = fixture['citation_items']
         
             unless data
-              result = proc.cite(:all).map { |d| d[1] }.join
+              result = proc.cite((fixture['bibentries'] && fixture['bibentries'].last) || :all).map { |d| d[1] }.join
             else
               result = data.map { |d| proc.cite(d).map { |c| c[1] }.join }.join("\n")
             end

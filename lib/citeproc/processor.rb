@@ -157,7 +157,10 @@ module CiteProc
               
       when items.has_key?(argument.to_s)
         argument = { 'id' => argument.to_s }
-          
+
+      when argument.is_a?(Array) && items.has_key?(argument.first.to_s)
+        argument = argument.map { |id| { 'id' => id } }
+      
       end
 
       CitationData.new(argument)
