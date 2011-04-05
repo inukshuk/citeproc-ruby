@@ -57,6 +57,21 @@ module CiteProc
       end
     end
 
+    describe 'literal dates' do
+      
+      it 'is not literal by default' do
+        Date.new.should_not be_literal
+      end
+      
+      it 'is literal if it contains only a literal field' do
+        Date.create(:literal => 'foo').should be_literal
+      end
+      
+      it 'is literal if it contains a literal field' do
+        Date.create('date-parts' => [[2000]], :literal => 'foo').should be_literal
+      end
+    end
+    
     describe 'uncertain dates' do
       it 'are uncertain' do
         Date.new({ 'date-parts' => [[-225]], 'circa' => '1' }).should be_uncertain
