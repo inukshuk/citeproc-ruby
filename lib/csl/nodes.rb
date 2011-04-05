@@ -594,8 +594,8 @@ module CSL
       end
       
       def process_month(date, processor)
+        return process_season(date, processor) if date.has_season?
         return '' if date.month.nil?      
-        return process_season(date, processor) if date.season?
 
         case
         when form == 'numeric'
