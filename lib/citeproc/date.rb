@@ -57,8 +57,13 @@ module CiteProc
     end
     
     def merge!(argument)
-      parse_date!(argument.delete('raw')) if argument.has_key?('raw')
-      argument['date-parts'].map! { |parts| parts.map(&:to_i)  } if argument.has_key?('date-parts')
+      case
+      when argument.has_key?('raw')
+        parse_date!(argument.delete('raw'))
+        argument.delete('date-parts')
+      when argument.has_key?('date-parts')
+        argument['date-parts'].map! { |parts| parts.map(&:to_i)  }
+      end
       super
     end
     

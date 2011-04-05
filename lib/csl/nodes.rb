@@ -472,7 +472,7 @@ module CSL
       
       def process(data, processor)
         date = data[variable]
-
+        
         case
         when date.nil?
           ''
