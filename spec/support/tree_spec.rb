@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe Support::Tree do
   
   before(:each) { Object.instance_eval { include Support::Tree } }

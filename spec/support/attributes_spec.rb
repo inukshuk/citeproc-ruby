@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe Support::Attributes do
   
   before(:each) { Object.instance_eval { include Support::Attributes } }

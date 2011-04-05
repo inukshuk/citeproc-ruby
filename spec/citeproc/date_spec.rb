@@ -1,8 +1,40 @@
+require 'spec_helper'
+
 module CiteProc
 
   describe Date do
-    Test::Fixtures::Dates.keys.each do |feature|
+    
+    describe '#new' do
+      it { should_not be_nil }
+    end
+    
+    describe '.create' do
+      it 'should accept parameters and return a new instance' do
+        Date.create('date-parts' => [[2001, 1]]).year.should == 2001
+      end
+    end
+    
+    describe '#sort' do
+      
+      let(:ad2k) { Date.create('date-parts' => [[2000]])}
+      let(:may) { Date.create('date-parts' => [[2000, 5]])}
+      let(:first_of_may) { Date.create('date-parts' => [[2000, 5, 1]])}
+      
+      let(:bc100) { Date.create('date-parts' => [[-100]]) }
+      let(:bc50) { Date.create('date-parts' => [[-50]]) }
+      let(:ad50) { Date.create('date-parts' => [[50]]) }
+      let(:ad100) { Date.create('date-parts' => [[100]]) }
 
+      it 'dates with more date-parts will come after those with fewer parts' do
+        (ad2k < may  && may < first_of_may).should be true
+      end
+      
+      it 'negative years are sorted inversely' do
+        [ad50, bc100, bc50, ad100].sort.map(&:year).should == [-100, -50, 50, 100]
+      end
+    end
+    
+    Test::Fixtures::Dates.keys.each do |feature|
       describe feature do
         Test::Fixtures::Dates[feature].each do |example|
 
@@ -23,14 +55,15 @@ module CiteProc
 
         end
       end
+    end
 
-      describe 'uncertain dates' do
-        it 'are uncertain' do
-          Date.new({ 'date-parts' => [[-225]], 'circa' => '1' }).should be_uncertain
-          Date.new { |d| d.parts = [[-225]]; d.circa = true }.should be_uncertain
-        end
+    describe 'uncertain dates' do
+      it 'are uncertain' do
+        Date.new({ 'date-parts' => [[-225]], 'circa' => '1' }).should be_uncertain
+        Date.new { |d| d.parts = [[-225]]; d.circa = true }.should be_uncertain
       end
     end
+
     
   end
 

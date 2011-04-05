@@ -139,7 +139,7 @@ module CiteProc
         
     def <=>(other)
       return nil unless other.is_a?(Date)
-      self.sort_order <=> other.sort_order
+      [year, sort_order] <=> [other.year, other.sort_order]
     end
   end
   
