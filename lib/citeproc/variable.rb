@@ -87,7 +87,7 @@ module CiteProc
     
     
     def <=>(other)
-      strip_markup(self.to_s) <=> strip_markup(other.to_s)
+      strip_markup(to_s) <=> strip_markup(other.to_s)
     end
     
     protected

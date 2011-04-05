@@ -11,10 +11,10 @@ module CiteProc
     
     describe '.create' do
       it 'accepts parameters and returns a new item containing the parameters' do
-        Item.new(:author => 'Poe, Edgar A.').author.family == 'Poe'
+        pending #Item.new(:author => 'Poe, Edgar A.').author.family == 'Poe'
       end
     end
-    
+        
     describe '#add_observers' do
       it 'adds a new observer to the empty list of observers' do
         expect {

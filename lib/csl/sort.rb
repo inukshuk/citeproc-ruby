@@ -30,7 +30,7 @@ module CSL
           this, that = key.convert(a, processor), key.convert(b, processor)
 
           comparison = this <=> that
-          comparison = comparison ? comparison : that.nil? ? 1 : -1
+          comparison = comparison ? comparison : that.nil? ? -1 : 1
         
           comparison = comparison * -1 if key.descending?
           break unless comparison.zero?
