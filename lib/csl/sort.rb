@@ -31,7 +31,7 @@ module CSL
 
           comparison = this <=> that
           comparison = comparison * -1 if comparison && key.descending?
-          
+
           comparison = comparison ? comparison : that.nil? ? -1 : 1
         
           break unless comparison.zero?

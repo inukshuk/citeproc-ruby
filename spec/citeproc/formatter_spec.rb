@@ -49,7 +49,7 @@ module CiteProc
         it 'returns the formatted string (strip periods)' do
           format.apply('foo', 'strip-periods' => 'true').should == 'foo'
           format.apply('foo.', 'strip-periods' => 'true').should == 'foo'
-          format.apply('f.oo.', 'strip-periods' => 'true').should == 'foo'
+          format.apply('f.oo.', 'strip-periods' => 'true').should == 'f oo'
           format.apply('.foo.', 'strip-periods' => 'true').should == 'foo'
           format.apply('foo...', 'strip-periods' => 'true').should == 'foo'
         end

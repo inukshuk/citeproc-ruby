@@ -85,7 +85,7 @@ module CiteProc
       end
       
       def set_strip_periods(strip)
-        @tokens.each { |token| token.content.gsub!(/\./, '') } if strip == 'true'
+        @tokens.each { |token| token.content = token.content.gsub(/\.+/, ' ').squeeze(' ').gsub(/^\s+|\s+$/, '') } if strip == 'true'
       end
             
       # @param style 'normal', 'italic', 'oblique' 
