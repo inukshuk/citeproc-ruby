@@ -93,18 +93,26 @@ end
 
 module CiteProc
   
-  def self.default_format; Format.default; end
+  module_function
+  
+  def default_format; Format.default; end
+  
+  def process(*arguments, &block); Processor.process(*arguments, &block); end
   
 end
 
 module CSL
   
-  def self.default_locale
+  module_function
+  
+  def default_locale
     Locale.new(Locale.default)
   end
   
-  def self.default_style
+  def default_style
     Style.new(Style.default)
   end
+  
+  def process(*arguments, &block); CiteProc.process(*arguments, &block); end
   
 end

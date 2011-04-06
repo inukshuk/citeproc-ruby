@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 module CiteProc
   
   describe Processor do
