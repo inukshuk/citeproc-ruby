@@ -6,11 +6,11 @@ Gem::Specification.new do |s|
   s.version = CiteProc::VERSION.dup
   s.required_rubygems_version = Gem::Requirement.new('>= 1.3.6') if s.respond_to? :required_rubygems_version=
   s.authors = ['Sylvester Keil']
-  s.description = %q{A CSL (Citation Style Language) Cite Processor}
+  s.description = %q{A CSL (Citation Style Language)Processor}
   s.email = ['http://sylvester.keil.or.at']
   s.homepage = 'http://github.com/inukshuk/citeproc-ruby'
   s.require_paths = ['lib']
-  s.summary = %q{A CSL 1.0 (Citation Style Language) Cite Processor}
+  s.summary = %q{A CSL 1.0 (Citation Style Language) Processor}
   s.executables = [] # `git ls-files -- bin/*`.split('\n').map{ |f| File.basename(f) }
   s.files = `git ls-files -- {lib,spec}/* resource/{locale,schema,style}`.split("\n")  
   s.test_files = `git ls-files -- {spec}/*`.split("\n")

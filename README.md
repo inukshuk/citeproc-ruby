@@ -50,7 +50,6 @@ kind feedback and support at the [xbiblio mailing list](http://sourceforge.net/m
 License
 -------
 
-CiteProc-Ruby
 Copyright 2009-2011 Sylvester Keil. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

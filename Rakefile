@@ -44,17 +44,6 @@ namespace :spec do
 end
 
 
-desc 'Builds the gem file'
-task :build => ['manifest'] do
-  system 'gem build citeproc-ruby.gemspec'
-end
-
-desc 'Pushes the gem file to rubygems.org'
-task :release => ['build'] do
-  system "gem push citeproc-ruby-#{CiteProc::VERSION}.gem"
-end
-
-
 Rake::RDocTask.new(:rdoc_task) do |rd|
   rd.main = 'README.md'
   rd.title = "CiteProc-Ruby Documentation"
