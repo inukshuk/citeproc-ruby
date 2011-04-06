@@ -44,12 +44,23 @@ namespace :spec do
 end
 
 
+desc 'Builds the gem file'
+task :build => ['manifest'] do
+  system 'gem build citeproc-ruby.gemspec'
+end
+
+desc 'Pushes the gem file to rubygems.org'
+task :release => ['build'] do
+  system "gem push citeproc-ruby-#{CiteProc::VERSION}.gem"
+end
+
+
 Rake::RDocTask.new(:rdoc_task) do |rd|
   rd.main = 'README.md'
   rd.title = "CiteProc-Ruby Documentation"
-  rd.rdoc_files.include('README.md',"lib/**/*.rb")
+  rd.rdoc_files.include('README.md','LICENSE',"lib/**/*.rb")
   rd.rdoc_dir = "doc/html"
-  rd.options << '--webcvs=http://github.com/inukshuk/csl-ruby/tree/master/'
+  rd.options << '--webcvs=http://github.com/inukshuk/citeproc-ruby/tree/master/'
 end
 
 CLEAN.include('doc/html')
