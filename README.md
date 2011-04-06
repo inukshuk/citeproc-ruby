@@ -6,7 +6,8 @@ Processor written in Ruby.
 
 A word of caution: this release of CiteProc-Ruby is purely experimental; the API
 is not complete and liable to change frequently. This release is expected to
-work in Ruby version 1.9.2.
+work in Ruby version 1.9.2. only. CiteProc-Ruby currently passes approximately
+350 of the 550 tests in the citeproc-test suite.
 
 
 Quickstart
