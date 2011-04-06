@@ -18,16 +18,21 @@ module CiteProc
       processor = Processor.new do |p|
         p.style = options[:style] || CSL.default_style
         p.locale = options[:locale] || CSL.default_locale
-        p.format = options[:format] || CiteProc.default_format
+        p.format = options[:format] || :default
         p.import(items)
       end
 
-      if options[:mode] == :citation
-        processor.cite(:all)[0][1]
+      if options[:mode].to_s.match(/cit(e|ation)/i)
+        processor.cite(:all).map(&:last)
       else
         processor.bibliography.data.join
       end
     end
+    
+    def self.cite(items, options = {})
+      process(items, options.merge(:mode => 'citation'))
+    end
+
     
     def style=(resource)
       @style = resource.is_a?(CSL::Style) ? resource : CSL::Style.new(resource)
