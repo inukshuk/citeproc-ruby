@@ -14,7 +14,7 @@ module CiteProc
       
       it 'returns a formatted citation' do
         Processor.process(item, :mode => :citation, :style => :apa).should == '(Poe, 1996)'
-        Processor.process(item, :mode => :citation, :style => :mla).should == '(Poe, 1996)'
+        Processor.process(item, :mode => :citation, :style => :mla).should == '(Poe)'
       end
 
       it 'returns a formatted bibliographic entry' do

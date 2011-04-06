@@ -92,11 +92,11 @@ end
 # Top-level CSL utility functions
 
 module CiteProc
-  
+
   module_function
   
   def default_format; Format.default; end
-  
+
   def process(*arguments, &block); Processor.process(*arguments, &block); end
   
 end

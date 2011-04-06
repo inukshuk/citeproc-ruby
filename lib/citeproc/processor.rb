@@ -30,13 +30,14 @@ module CiteProc
       yield self if block_given?
     end
 
-    def self.process(item, options={})
-      return '' if item.nil? || item.empty?
+    def self.process(items, options = {})
+      return '' if items.nil? || items.empty?
       
       processor = Processor.new do |p|
-        p.style = options['style'] || CSL.default_style
-        p.locale = options['locale'] || CSL.default_locale
-        p.import(item)
+        p.style = options[:style] || CSL.default_style
+        p.locale = options[:locale] || CSL.default_locale
+        p.format = options[:format] || CiteProc.default_format
+        p.import(items)
       end
 
       if options[:mode] == :citation
