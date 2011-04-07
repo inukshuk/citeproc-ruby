@@ -2,7 +2,7 @@ Feature: Condition is numeric
 
   @citeproc-test @citation @v1.0
   Scenario: is numeric
-		Given a CSL processor
+    Given a CSL processor
     And the following items
     """
     [
