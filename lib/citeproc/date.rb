@@ -35,7 +35,7 @@ module CiteProc
     
     def parse!(argument)
       return super unless argument.is_a?(::Date) || argument.is_a?(String)
-      parse_date!(date)
+      parse_date!(argument)
     end
     
     def merge!(argument)

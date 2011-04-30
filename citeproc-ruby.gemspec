@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.version = CiteProc::VERSION.dup
   s.required_rubygems_version = Gem::Requirement.new('>= 1.3.6') if s.respond_to? :required_rubygems_version=
   s.authors = ['Sylvester Keil']
-  s.description = %q{A CSL (Citation Style Language)Processor}
+  s.description = %q{A CSL (Citation Style Language) Processor}
   s.email = ['http://sylvester.keil.or.at']
   s.homepage = 'http://github.com/inukshuk/citeproc-ruby'
   s.require_paths = ['lib']
@@ -19,8 +19,8 @@ Gem::Specification.new do |s|
   s.rdoc_options = %w{--charset=UTF-8 --line-numbers --inline-source --title "CiteProc-Ruby Documentation" --main README.md --webcvs=http://github.com/inukshuk/citeproc-ruby/tree/master/}
   s.extra_rdoc_files = %w{README.md}
 
-  s.add_dependency('logging', '~> 1.5')
-  s.add_dependency('nokogiri', '~> 1.4')
+  s.add_runtime_dependency('logging', '~> 1.5')
+  s.add_runtime_dependency('nokogiri', '~> 1.4')
 
   s.add_development_dependency('bundler', '~> 1.0')
   s.add_development_dependency('rdoc', '~> 2.5')

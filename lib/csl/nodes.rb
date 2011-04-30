@@ -454,7 +454,7 @@ module CSL
       
       def process(data, processor)
         date = data[variable]
-        
+
         case
         when date.nil?
           ''
@@ -585,14 +585,14 @@ module CSL
         when form == 'numeric-leading-zeros'
           "%02d" % date.month
         else
-          localized_terms("month-%02d" % date.month).to_s(attributes)
+          localized_terms("month-%02d" % date.month, processor).to_s(attributes)
         end      
       end
       
       def process_season(date, processor)
         season = date.season.to_s
         season = date.month.to_s if season.match(/true|always|yes/i)
-        season = localized_terms('season-%02d' % season.to_i).to_s if season.match(/0?[1-4]/)
+        season = localized_terms('season-%02d' % season.to_i, processor).to_s if season.match(/0?[1-4]/)
         season
       end
 
@@ -601,12 +601,16 @@ module CSL
         
         case
         when form == 'ordinal'
-          locale(processor).ordinalize(date.day)
+          locale(processor).ordinalize(date.day, 'gender-form' => gender(date, processor))
         when form == 'numeric-leading-zeros'
           "%02d" % date.day
         else # 'numeric'
           date.day.to_s
         end
+      end
+      
+      def gender(date, processor)
+        localized_terms("month-%02d" % date.month, processor).gender
       end
     
       protected
@@ -653,6 +657,9 @@ module CSL
     
       def process(data, processor)
         number = data[variable]
+   
+        term = localized_terms(variable)
+        attributes['gender-form'] = term.gender if term.has_gender?
         
         case
         when number.nil? || number.empty? || !number.numeric?

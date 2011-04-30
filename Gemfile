@@ -1,4 +1,4 @@
-source :rubyforge
+source :rubygems
 
 gemspec
 

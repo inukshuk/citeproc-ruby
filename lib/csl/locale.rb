@@ -203,7 +203,7 @@ module CSL
       ordinal = self[key % number].to_s(options)
       mod = 100
       
-      while ordinal.empty? && mod > 1
+      while ordinal.empty? && mod >= 1
         key = 'ordinal-%02d'
         ordinal = self[key % (number % mod)].to_s(options)
         mod = mod / 10
