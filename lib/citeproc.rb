@@ -59,12 +59,14 @@ require 'citeproc/bibliography'
 require 'citeproc/formatter'
 require 'citeproc/processor'
 
+
+require 'plugins/formats/default'
+
 # Load filter and format plugins
 Dir.glob("#{File.expand_path('..', __FILE__)}/plugins/formats/*.rb").each do |format|
   require format
 end
 
-require 'plugins/formats/default'
 
 Dir.glob("#{File.expand_path('..', __FILE__)}/plugins/filters/*.rb").each do |format|
   require format
