@@ -8,5 +8,3 @@ group :development do
 end
 
 gem 'json', :platforms => [:ruby_18]
-
-gem 'unicode_utils', :platforms => [:ruby_19]

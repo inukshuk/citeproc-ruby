@@ -33,8 +33,8 @@ module CiteProc
 end
 
 # Load debugger
-require 'ruby-debug'
-Debugger.start
+# require 'ruby-debug'
+# Debugger.start
 
 require 'extensions/core'
 require 'support/attributes'

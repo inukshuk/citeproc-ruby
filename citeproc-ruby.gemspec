@@ -15,16 +15,16 @@ Gem::Specification.new do |s|
   s.files = `git ls-files -- {lib,spec}/* resource/{locale,schema,style}`.split("\n")  
   s.test_files = `git ls-files -- {spec}/*`.split("\n")
 
-  s.has_rdoc = true
-  s.rdoc_options = %w{--charset=UTF-8 --line-numbers --inline-source --title "CiteProc-Ruby Documentation" --main README.md --webcvs=http://github.com/inukshuk/citeproc-ruby/tree/master/}
+  s.rdoc_options = %w{--charset=UTF-8 --line-numbers --inline-source --title "CiteProc-Ruby\ Documentation" --main README.md --webcvs=http://github.com/inukshuk/citeproc-ruby/tree/master/}
   s.extra_rdoc_files = %w{README.md}
 
   s.add_runtime_dependency('logging', '~> 1.5')
   s.add_runtime_dependency('nokogiri', '~> 1.4')
+  s.add_runtime_dependency('unicode_utils', '~> 1.0')
 
   s.add_development_dependency('bundler', '~> 1.0')
   s.add_development_dependency('rdoc', '~> 2.5')
-  s.add_development_dependency('rake', '>= 0.8')
+  s.add_development_dependency('rake', '>= 0.8.0')
   s.add_development_dependency('rspec', '~> 2.5')
   s.add_development_dependency('cucumber', '~> 0.3')
 end
