@@ -9,6 +9,11 @@ is not complete and liable to change frequently. This release is expected to
 work in Ruby version 1.9.2. only. CiteProc-Ruby currently passes approximately
 350 of the 550 tests in the citeproc-test suite.
 
+Note: the citeproc-ruby gem is going to be integrated with the separate `citeproc`
+and `citeproc-js` gems; meanwhile, however, these gems are not compatible, so if
+you want to use the current `citeproc-ruby` gem, make sure that neither of the
+other gems is installed.
+
 
 Quickstart
 ----------
