@@ -26,6 +26,11 @@ module CSL
           child.children.first.parent.should == child
         end
         
+        it 'parses comments and the comment node provides an evaluate method' do
+          child = Node.new('<node><!-- <node/> --></node>')
+          child.children.first.respond_to?(:evaluate).should be true
+        end
+
         it 'pushes style to children' do
           child = Node.new('<node><node/></node>', style)
           child.children.first.style.should == style
