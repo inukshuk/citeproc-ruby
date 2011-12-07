@@ -151,7 +151,11 @@ module CSL
       def process(data, processor)
         ''
       end
-        
+
+      def evaluate(data, processor)
+        false
+      end
+      
       def to_s
         attributes.merge('node' => self.class.name).inspect
       end
