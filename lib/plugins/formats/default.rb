@@ -102,14 +102,14 @@ module CiteProc
         
         case text_case
         when 'lowercase'
-          @tokens.each { |token| token.content = UnicodeUtils ? UnicodeUtils.downcase(token.content) : token.content.downcase }
+          @tokens.each { |token| token.content = Support.downcase(token.content) }
           
         when 'uppercase'
-          @tokens.each { |token| token.content = UnicodeUtils ? UnicodeUtils.upcase(token.content) : token.content.upcase }
+          @tokens.each { |token| token.content = Support.upcase(token.content) }
           
         when 'capitalize-first'
           token = @tokens.detect { |token| !token.annotations.include?('nocase') }
-          token.content.sub!(/^./) { UnicodeUtils ? UnicodeUtils.upcase($&) : $&.upcase }
+          token.content.sub!(/^./) { Support.upcase($&) }
           
         when 'capitalize-all'
           # @tokens.each { |token| token.content.gsub!(/\b\w/) { $&.upcase } unless token.annotations.include?('nocase') }
@@ -117,7 +117,7 @@ module CiteProc
           
         # TODO exact specification?
         when 'title'
-          @tokens.each { |token| token.content = token.content.split(/(\s+)/).map { |w| w.match(/^(and|of|a|an|the)$/i) ? w : w.gsub(/\b\w/) { UnicodeUtils ? UnicodeUtils.upcase($&) : $&.upcase } }.join.sub(/^(\w)/) {$&.upcase} unless token.annotations.include?('nocase') }
+          @tokens.each { |token| token.content = token.content.split(/(\s+)/).map { |w| w.match(/^(and|of|a|an|the)$/i) ? w : w.gsub(/\b\w/) { Support.upcase($&) } }.join.sub(/^(\w)/) {$&.upcase} unless token.annotations.include?('nocase') }
 
         # TODO exact specification?
         when 'sentence'

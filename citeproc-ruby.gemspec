@@ -20,7 +20,6 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency('logging', '~> 1.5')
   s.add_runtime_dependency('nokogiri', '~> 1.4')
-  s.add_runtime_dependency('unicode_utils', '~> 1.0')
 
   s.add_development_dependency('bundler', '~> 1.0')
   s.add_development_dependency('rdoc', '~> 2.5')
