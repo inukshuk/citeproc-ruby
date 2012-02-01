@@ -1,6 +1,8 @@
 $:.unshift(File.dirname(__FILE__)) unless
   $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
 
+$KCODE = 'UTF-8' if RUBY_VERSION < '1.9.0' && $KCODE.nil?
+
 require 'open-uri'
 
 require 'logging'
