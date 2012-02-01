@@ -368,7 +368,7 @@ module CSL
       def format_page_range(value, format)
         return value unless value.match(/([a-z]*)(\d+)\s*\D\s*([a-z]*)(\d+)/i)
 
-        tokens = [$1, $2, "\u2013", $3, $4]
+        tokens = [$1, $2, "\xe2\x80\x93", $3, $4]
 
         # normalize page range to expanded form
         f, t = tokens[1].chars.to_a, tokens[4].chars.to_a
@@ -620,7 +620,7 @@ module CSL
       protected
       
       def set_defaults
-        self['range-delimiter'] ||= "\u2013"
+        self['range-delimiter'] ||= "\xe2\x80\x93"
       end
     end
 
