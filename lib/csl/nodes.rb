@@ -369,6 +369,7 @@ module CSL
         return value unless value.match(/([a-z]*)(\d+)\s*\D\s*([a-z]*)(\d+)/i)
 
         tokens = [$1, $2, "\xe2\x80\x93", $3, $4]
+        tokens[2].force_encoding("UTF-8") if RUBY_VERSION >= '1.9.0'
 
         # normalize page range to expanded form
         f, t = tokens[1].chars.to_a, tokens[4].chars.to_a
@@ -620,7 +621,10 @@ module CSL
       protected
       
       def set_defaults
-        self['range-delimiter'] ||= "\xe2\x80\x93"
+        unless self['range-delimiter']
+          self['range-delimiter'] = "\xe2\x80\x93"
+          self['range-delimiter'].force_encoding("UTF-8") if RUBY_VERSION >= '1.9.0'
+        end
       end
     end
 
