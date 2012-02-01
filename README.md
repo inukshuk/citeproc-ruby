@@ -14,11 +14,19 @@ and `citeproc-js` gems; meanwhile, however, these gems are not compatible, so if
 you want to use the current `citeproc-ruby` gem, make sure that neither of the
 other gems is installed.
 
+Unicode support may be provided by the `unicode-utils` gem (on Ruby 1.9 only),
+by ActiveSupport, by the `unicode` gem (on Ruby 1.8 only), by the Java-based
+support in JRuby, or naively by the `upcase` and `downcase` methods present
+in Ruby by default.  These gems are not installed automatically; install one
+manually if you want enhanced Unicode support.
+
 
 Quickstart
 ----------
 
 		$ [sudo] gem install citeproc-ruby
+		$ [sudo] gem install unicode-utils # Ruby 1.9
+		$ [sudo] gem install unicode # Ruby 1.8
 		$ irb
 		>> require 'citeproc'
 		>> book = {

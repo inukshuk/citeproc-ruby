@@ -11,7 +11,15 @@ module CSL
         keys.each do |key|
           this, that = key.convert(a, processor), key.convert(b, processor)
 
-          comparison = this <=> that
+          # Duplicate Ruby 1.9's <=> behavior for nil
+          if this.nil? && that.nil?
+            comparison = 0
+          elsif this.nil? || that.nil?
+            comparison = nil
+          else
+            comparison = this <=> that
+          end
+          
           comparison = comparison * -1 if comparison && key.descending?
 
           comparison = comparison ? comparison : that.nil? ? -1 : 1
