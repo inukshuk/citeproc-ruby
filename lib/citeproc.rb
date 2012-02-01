@@ -1,16 +1,13 @@
 $:.unshift(File.dirname(__FILE__)) unless
   $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
 
+$KCODE = 'UTF-8' if RUBY_VERSION < '1.9.0' && $KCODE.nil?
+
 require 'open-uri'
 
 require 'logging'
 require 'nokogiri'
 require 'json'
-
-#require 'activesupport'
-
-require 'unicode_utils/upcase'
-require 'unicode_utils/downcase'
 
 module CiteProc
 
@@ -39,6 +36,7 @@ end
 require 'extensions/core'
 require 'support/attributes'
 require 'support/tree'
+require 'support/compatibility'
 
 require 'csl/node'
 require 'csl/term'
