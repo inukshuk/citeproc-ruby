@@ -15,8 +15,7 @@ Feature: Invalid Date Error
         ],
         "container": "Developing paradigms in self-directed learning",
         "editor": [
-          { "family": "Long", "given":"H."},
-          { "family": "Associates"}
+          { "family": "Long", "given":"H."}
         ],
         "location": "Oklahoma, OK : Oklahoma",
         "page": "27–44",
