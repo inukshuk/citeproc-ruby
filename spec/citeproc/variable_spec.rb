@@ -15,7 +15,7 @@ module CiteProc
       
       it 'supports self yielding block' do
         Variable.new { |v| v.value = 'test' }.value.should == 'test'
-      end
+      end      
     end
     
     describe '#to_s' do

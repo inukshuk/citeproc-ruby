@@ -13,7 +13,7 @@ Feature: Invalid Date Error
           { "family": "Hrimech", "given": "M." },
           { "family": "Bouchard", "given": "Paul" }
         ],
-        "container": "Developing paradigms in self-directed learning",
+        "collection-title": "Developing paradigms in self-directed learning",
         "editor": [
           { "family": "Long", "given":"H."}
         ],
@@ -24,6 +24,7 @@ Feature: Invalid Date Error
         "issued": { "date-parts": [[1998]] }
       }]
       """
-    Then the result should be:
+    Then the result should match:
       """
+      ^Hrimech, M\., & Bouchard, P\. \(1998\)\. Spontaneous learning strategies in the natural setting
       """

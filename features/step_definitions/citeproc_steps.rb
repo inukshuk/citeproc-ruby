@@ -25,6 +25,10 @@ Then /^the result should be:?$/ do |string|
   @result.should == string
 end
 
+Then /^the result should match:?$/ do |pattern|
+  @result.should =~ Regexp.compile(pattern)
+end
+
 When /^I generate a bibliography with the argument$/ do |argument|
   @processor.style = @style if @style
   @procesor.format = @format if @format
@@ -36,7 +40,7 @@ When /^I set the format to "([^"]*)"$/ do |format|
 end
 
 When /^I generate an? (\w+)-style bibliography for:$/ do |style, items|
-  @result = CiteProc.process(JSON.parse(items), :style => style).join("\n")
+  @result = CiteProc.process(JSON.parse(items), :style => style)
 end
 
 When /^I process the items using with the style "([^"]+)"$/ do |style|

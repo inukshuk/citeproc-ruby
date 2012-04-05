@@ -6,12 +6,17 @@ module CiteProc
     
     describe '#new' do
       it { should_not be_nil }
+      
+      it 'accepts date-parts containing a single year' do
+        Date.new('date-parts' => [[1998]]).year.should == 1998
+      end
+      
     end
     
     describe '.create' do
-      it 'should accept parameters and return a new instance' do
+      it 'accepts parameters and returns a new instance' do
         Date.create('date-parts' => [[2001, 1]]).year.should == 2001
-      end
+      end      
     end
     
     describe '#sort' do
@@ -79,7 +84,6 @@ module CiteProc
       end
     end
 
-    
   end
 
 end
