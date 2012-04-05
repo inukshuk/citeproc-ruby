@@ -34,3 +34,12 @@ end
 When /^I set the format to "([^"]*)"$/ do |format|
   @format = format.downcase
 end
+
+When /^I generate an? (\w+)-style bibliography for:$/ do |style, items|
+  @result = CiteProc.process(JSON.parse(items), :style => style).join("\n")
+end
+
+When /^I process the items using with the style "([^"]+)"$/ do |style|
+  @result = CiteProc.process(@items, :style => style)
+end
+
