@@ -19,13 +19,13 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = %w{README.md}
 
   s.add_runtime_dependency('logging', '~> 1.5')
-  s.add_runtime_dependency('nokogiri', '~> 1.4')
+  s.add_runtime_dependency('nokogiri', '~> 1.5')
 
-  s.add_development_dependency('bundler', '~> 1.0')
-  s.add_development_dependency('rdoc', '~> 2.5')
+  s.add_development_dependency('bundler', '~> 1.1')
+  s.add_development_dependency('rdoc')
   s.add_development_dependency('rake', '>= 0.8.0')
-  s.add_development_dependency('rspec', '~> 2.5')
-  s.add_development_dependency('cucumber', '~> 0.3')
+  s.add_development_dependency('rspec', '~> 2.7')
+  s.add_development_dependency('cucumber', '~> 1.1')
 end
 
 # vim: syntax=ruby
