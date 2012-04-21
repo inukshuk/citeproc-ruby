@@ -1128,7 +1128,7 @@ module CSL
       # followed by the list proper.
       def collect_names(item)
         return [] unless self.variable?
-        self.variable.split(/\s+/).map { |variable| [variable, (item[variable] || []).map(&:clone)] }
+        self.variable.split(/\s+/).map { |variable| [variable, (item[variable] || []).map(&:clone)] }.reject { |(_, n)| n.empty? }
       end
     
       def inherit_attributes(node)
