@@ -575,8 +575,8 @@ module CSL
         
         year = date.year.abs.to_s
         year = year[-2..-1] if form == 'short'
-        year = [year, localized_terms('ad')].join if date.ad?
-        year = [year, localized_terms('bc')].join if date.bc?
+        year = [year, localized_terms('ad', processor)].join if date.ad?
+        year = [year, localized_terms('bc', processor)].join if date.bc?
         year
       end
       
@@ -666,7 +666,7 @@ module CSL
       def process(data, processor)
         number = data[variable]
    
-        term = localized_terms(variable)
+        term = localized_terms(variable, processor)
         attributes['gender-form'] = term.gender if term.has_gender?
         
         case
@@ -843,7 +843,7 @@ module CSL
       # name in the list.
       def ampersand(processor)
         if self.and?
-          ampersand = self.and == 'symbol' ? '&' : localized_terms(self.and == 'text' ? 'and' : self.and).to_s(attributes)
+          ampersand = self.and == 'symbol' ? '&' : localized_terms(self.and == 'text' ? 'and' : self.and, processor).to_s(attributes)
           delimiter_precedes_last? ? [delimiter, ampersand, ' '].join : ampersand.center(ampersand.length + 2)
         else
           delimiter
@@ -902,8 +902,7 @@ module CSL
       attr_accessor :parent
 
       def process(data, processor)
-        super
-        localized_terms(term ||  'et-al').to_s(attributes)
+        localized_terms(term ||  'et-al', processor).to_s(attributes)
       rescue Exception => e
         handle_processing_error(e, data, processor)        
       end
@@ -937,13 +936,13 @@ module CSL
       attr_fields %w{ variable plural form }
     
       def process(data, processor)
-        localized_terms(data['label'].to_s).to_s(attributes.merge({ 'plural' =>  plural?(data, 0).to_s }))
+        localized_terms(data['label'].to_s, processor).to_s(attributes.merge({ 'plural' =>  plural?(data, 0).to_s }))
       rescue Exception => e
         handle_processing_error(e, data, processor)        
       end
     
       def process_names(role, number, processor)
-        localized_terms(role).to_s(attributes.merge({ 'plural' => plural?(nil, number).to_s }))        
+        localized_terms(role, processor).to_s(attributes.merge({ 'plural' => plural?(nil, number).to_s }))        
       rescue Exception => e
         handle_processing_error(e, data, processor)        
       end
@@ -1097,7 +1096,7 @@ module CSL
             
               if names.length > truncated.length
                 # use delimiter before et al. if there is more than a single name; squeeze whitespace
-                others = (et_al.nil? ? localized_terms('et-al').to_s : et_al.process(data, processor))
+                others = (et_al.nil? ? localized_terms('et-al', processor).to_s : et_al.process(data, processor))
                 link = (name.et_al_use_first.to_i > 1 || name.delimiter_precedes_et_al? ? name.delimiter : ' ')
 
                 processed << [link, others].join.squeeze(' ')

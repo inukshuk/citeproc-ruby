@@ -1,6 +1,6 @@
-Feature: Article Editors
+Feature: Only Editors
   As a user of CiteProc-Ruby
-  I want to process books that have no author but only editors
+  I want to process books that have no authors but only editors
   And I do not want the editors to be duplicated
 
 	Scenario: APA Book Editors

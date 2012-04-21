@@ -159,7 +159,7 @@ module CiteProc
     end
     
     def new_self_recording_hash
-      Hash.new { |h,k| h[k] = Hash.new { |h,k| h[k] = k } }
+      Hash.new { |hash, key| hash[key] = Hash.new { |h,k| h[k] = k } }
     end
   end
   

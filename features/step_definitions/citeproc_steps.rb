@@ -43,6 +43,11 @@ When /^I generate an? (\w+)-style bibliography for:$/ do |style, items|
   @result = CiteProc.process(JSON.parse(items), :style => style)
 end
 
+When /^I generate an? (\w+)-style bibliography in the language "([\w-]+)" for:$/ do |style, locale, items|
+  @result = CiteProc.process(JSON.parse(items), :style => style, :locale => locale)
+end
+
+
 When /^I process the items using with the style "([^"]+)"$/ do |style|
   @result = CiteProc.process(@items, :style => style)
 end
