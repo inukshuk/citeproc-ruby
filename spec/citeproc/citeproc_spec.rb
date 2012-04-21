@@ -37,6 +37,10 @@ module CiteProc
           proc.import(fixture['input'])
           proc.format = :html
 
+          if tokens[1] =~ /LocalizedDateFormats-([\w-]+)/
+            proc.locale = $1
+          end
+            
           proc.add_abbreviations(fixture['abbreviations']) if fixture['abbreviations']
       
           case fixture['mode']

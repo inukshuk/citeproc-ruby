@@ -178,7 +178,7 @@ module CSL
         
         unless processor.nil?
           yield processor.locale.send(type) 
-          yield CSL::Locale.new(processor.language)
+          yield CSL::Locale.new(processor.language).send(type)
         end
         
         CSL.default_locale.send(type)[key]
