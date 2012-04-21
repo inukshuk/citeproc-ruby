@@ -996,6 +996,8 @@ module CSL
         
       def process(data, processor)
         super
+				start_observing(data)
+				
         children.each do |child|
           processed = child.process(data, processor)
           return processed unless processed.empty?
@@ -1003,8 +1005,26 @@ module CSL
         ''
       rescue Exception => e
         handle_processing_error(e, data, processor)        
+			ensure
+				stop_observing(data)
       end
     
+			def start_observing(item)
+				@item = item
+        item.add_observer(self)
+      end
+      
+      def stop_observing(item)
+        item.delete_observer(self)
+			ensure
+				@item = nil
+      end
+      
+      def update(key, value)
+				if key.to_s =~ /author|editor|translator/ && !value.nil?
+					@item[key] = nil
+				end
+      end
     end
 
     # The cs:names element can be used to display the contents of one or more
