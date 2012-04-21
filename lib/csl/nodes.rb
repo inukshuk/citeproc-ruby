@@ -46,8 +46,8 @@ module CSL
 
       class << self
         # Chains the format method to the given methods
-        def format_on(*args)
-          args.flatten.each do |method_id|
+        def format_on(*arguments)
+          arguments.flatten.each do |method_id|
 
             # Set up Around Alias Chain
             original_method = [method_id, 'without_formatting'].join('_')
@@ -1147,7 +1147,27 @@ module CSL
       def process(data, processor)
         start_observing(data)
 
-        processed = children.map { |child| child.process(data, processor) }.reject(&:empty?).join(delimiter)
+				if delimiter.nil? || children.length < 2
+					processed = children.map { |c| c.process(data, processor) }.reject(&:empty?).join('')
+				else
+	        processed = children.reduce('') do |ps, child|
+		 				p = child.process(data, processor)
+
+						unless p.empty?
+							if delimiter && !ps.empty?
+								ps.chop! if ps[-1] =~ /[\s\.,:!\?]/ && ps[-1] == delimiter[0]
+								
+								ps << delimiter
+								
+								ps.chop! if ps[-1] =~ /[\s\.,:!\?]/ && ps[-1] == p[0]
+							end
+						
+							ps << p
+						end
+						
+						ps
+					end
+				end
 
         stop_observing(data)
 

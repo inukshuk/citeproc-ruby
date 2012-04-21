@@ -71,6 +71,9 @@
     <term name="ordinal-07">th</term>
     <term name="ordinal-08">th</term>
     <term name="ordinal-09">th</term>
+    <term name="ordinal-11">th</term>
+    <term name="ordinal-12">th</term>
+    <term name="ordinal-13">th</term>
 
     <!-- LONG ORDINALS -->
     <term name="long-ordinal-01">first</term>
