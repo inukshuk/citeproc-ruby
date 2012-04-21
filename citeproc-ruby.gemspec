@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency('bundler', '~> 1.1')
   s.add_development_dependency('rdoc')
-  s.add_development_dependency('rake', '>= 0.8.0')
+  s.add_development_dependency('rake', '~> 0.9')
   s.add_development_dependency('rspec', '~> 2.9')
   s.add_development_dependency('cucumber', '~> 1.1')
 end
