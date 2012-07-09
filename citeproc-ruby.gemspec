@@ -21,12 +21,12 @@ Gem::Specification.new do |s|
   s.license     = 'AGPL'
   s.date        = Time.now.strftime('%Y-%m-%d')
 
-  s.add_runtime_dependency('citeproc', '~> 0.0.8')
-  s.add_runtime_dependency('csl-ruby', '~> 1.0.0-pre1')
+  s.add_dependency 'citeproc', '~>0.0.8'
+  s.add_dependency 'csl', '1.0.0.pre1'
 
-  s.add_development_dependency('cucumber', ['~>1.1'])
-  s.add_development_dependency('rspec', ['~>2.7'])
-  s.add_development_dependency('rake', ['~>0.9'])
+  s.add_development_dependency 'cucumber', '~>1.1'
+  s.add_development_dependency 'rspec', '~>2.7'
+  s.add_development_dependency 'rake', '~>0.9'
 
   s.files        = `git ls-files`.split("\n")
   s.test_files   = `git ls-files -- {test,spec,features}/*`.split("\n")

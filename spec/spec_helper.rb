@@ -5,8 +5,6 @@ rescue LoadError
   # ignore
 end
 
-require 'nokogiri'
-
 require 'citeproc/ruby'
 
 
