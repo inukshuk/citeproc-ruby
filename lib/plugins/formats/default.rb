@@ -50,7 +50,7 @@ module CiteProc
 
       def suffix
         return nil if @affixes[1].nil?
-        @affixes[1].match(/^([\.;:!?\s])/) && @tokens.last.content.end_with?($1) ? @affixes[1][1..-1] : @affixes[1]
+        @affixes[1].match(/^([\.;:!?\s])/) && @tokens.last.content.end_with?(/^([\.;:!?\s])/) ? @affixes[1][1..-1] : @affixes[1]
       end
             
       def set_prefix(prefix)
