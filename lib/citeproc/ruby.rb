@@ -1,0 +1,1 @@
+require 'citeproc/ruby/version'

@@ -1,7 +1,7 @@
 CiteProc-Ruby
 =============
-CiteProc-Ruby is a CSL 1.0.1 ([Citation Style Language](http://citationstyles.org/))
-cite processor written in pure Ruby.
+CiteProc-Ruby is a [Citation Style Language](http://citationstyles.org/) (CSL)
+1.0.1 cite processor written in pure Ruby.
 
 
 Development

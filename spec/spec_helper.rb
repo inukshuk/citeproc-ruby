@@ -1,18 +1,30 @@
-require 'rubygems'
-require 'citeproc'
-require 'json'
-require 'yaml'
-
-RSpec.configuration do |c|
+begin
+  require 'simplecov'
+  require 'debugger'
+rescue LoadError
+  # ignore
 end
 
-module CiteProc
-  module Test
-    module Fixtures
-      Names = YAML.load(File.read(File.expand_path("../fixtures/names.yaml", __FILE__)))
-      Dates = YAML.load(File.read(File.expand_path("../fixtures/dates.yaml", __FILE__)))
-      Nodes = YAML.load(File.read(File.expand_path("../fixtures/nodes.yaml", __FILE__)))
-      Processor = Hash[Dir.glob(File.expand_path("../../resource/test/processor/*.json", __FILE__)).map { |file| [file, JSON.parse(File.read(file))] }]
-    end    
+require 'nokogiri'
+
+require 'citeproc/ruby'
+
+
+module SilentWarnings
+  require 'stringio'
+  #
+  # Adapted form silent_warnings gist by @avdi
+  # https://gist.github.com/1170926
+  #
+  def silent_warnings
+    original_stderr = $stderr
+    $stderr = StringIO.new
+    yield
+  ensure
+    $stderr = original_stderr
   end
+end
+
+RSpec.configure do |config|
+  config.include(SilentWarnings)
 end

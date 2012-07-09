@@ -1,4 +1,3 @@
 --color
---require ./spec/spec_helper.rb
 --format progress
---format html --out ./doc/spec.html
+--require spec_helper.rb 

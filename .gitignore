@@ -1,3 +1,7 @@
 Gemfile.lock
 .DS_Store
 doc
+.yardoc
+.rbx
+*.rbc
+coverage

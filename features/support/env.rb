@@ -1,2 +1,8 @@
-$LOAD_PATH << File.expand_path('../../../lib', __FILE__)
-require 'citeproc'
+begin
+  require 'simplecov'
+  require 'debugger'
+rescue LoadError
+  # ignore
+end
+
+require 'citeproc/ruby'
