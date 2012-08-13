@@ -7,6 +7,13 @@ end
 
 require 'citeproc/ruby'
 
+module Fixtures
+	PATH = File.expand_path('../fixtures', __FILE__)
+	
+	Dir[File.join(PATH, '*.rb')].each do |fixture|
+		require fixture
+	end
+end
 
 module SilentWarnings
   require 'stringio'
@@ -25,4 +32,5 @@ end
 
 RSpec.configure do |config|
   config.include(SilentWarnings)
+  config.include(Fixtures)
 end

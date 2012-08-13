@@ -1,6 +1,8 @@
 require 'observer'
 
+require 'csl'
 require 'citeproc'
+
 require 'citeproc/ruby/version'
 
 require 'citeproc/ruby/renderer'

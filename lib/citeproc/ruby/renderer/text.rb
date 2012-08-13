@@ -3,8 +3,6 @@ module CiteProc
 
 		class Renderer
 
-			private
-
 			# @param item [CiteProc::CitationItem]
 			# @param node [CSL::Style::Text]
 			# @return [String]
@@ -13,7 +11,7 @@ module CiteProc
 				when node.has_variable?
 					# TODO abbreviate?
 					# TODO page range
-					item.data.variable node.variable, node.variable_options
+					item.data.variable(node.variable, node.variable_options).to_s
 
 				when node.has_macro?
 					render item, node.macro
