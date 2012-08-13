@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.license     = 'AGPL'
   s.date        = Time.now.strftime('%Y-%m-%d')
 
-  s.add_dependency 'citeproc', '1.0.0.pre3'
+  s.add_dependency 'citeproc', '1.0.0.pre5'
   s.add_dependency 'csl', '1.0.0.pre7'
 
   s.add_development_dependency 'cucumber', '~>1.1'

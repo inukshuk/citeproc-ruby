@@ -17,7 +17,7 @@ module CiteProc
 			# @param node [CSL::Style::Number]
 			# @return [String]
 			def render_number(item, node)
-				raise ArgumentError unless node.has_variable?
+				return '' unless node.has_variable?
 
 				variable = item.data[node.variable]
 				return variable.to_s unless variable && variable.numeric?
