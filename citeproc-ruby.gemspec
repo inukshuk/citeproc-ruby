@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.date        = Time.now.strftime('%Y-%m-%d')
 
   s.add_dependency 'citeproc', '1.0.0.pre5'
-  s.add_dependency 'csl', '1.0.0.pre7'
+  s.add_dependency 'csl', '1.0.0.pre8'
 
   s.add_development_dependency 'cucumber', '~>1.1'
   s.add_development_dependency 'rspec', '~>2.7'

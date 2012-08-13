@@ -54,6 +54,15 @@ module CiteProc
               renderer.render_number(item, node).should == 'xlii'
             end
           end
+          
+          describe 'when the node is set to ordinal' do
+            before(:each) { node[:form] = :ordinal }
+            
+            it 'returns the number ordinalized' do
+              renderer.render_number(item, node).should == '42nd'
+            end
+          end
+          
         end
 
         describe 'and an item with a list of numbers' do
@@ -68,6 +77,14 @@ module CiteProc
             
             it 'returns the romanized list' do
               renderer.render_number(item, node).should == 'xlii, xliii, xliv, xlv, xlvi, xlvii, xlviii'
+            end
+          end
+          
+          describe 'when the node is set to ordinal' do
+            before(:each) { node[:form] = :ordinal }
+            
+            it 'returns the ordinalized list' do
+              renderer.render_number(item, node).should == '42nd, 43rd, 44th, 45th, 46th, 47th, 48th'
             end
           end
         end

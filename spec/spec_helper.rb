@@ -33,4 +33,16 @@ end
 RSpec.configure do |config|
   config.include(SilentWarnings)
   config.include(Fixtures)
+  
+  config.before :all do
+    @style_root, @locale_root = CSL::Style.root, CSL::Locale.root
+
+    CSL::Style.root  = File.join(Fixtures::PATH, 'styles')
+    CSL::Locale.root = File.join(Fixtures::PATH, 'locales')
+  end
+
+  config.after :all do
+    CSL::Style.root, CSL::Locale.root = @style_root, @locale_root
+  end
+  
 end
