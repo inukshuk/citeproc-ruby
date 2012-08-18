@@ -9,12 +9,17 @@ module CiteProc
       def render_label(item, node)
         return '' unless node.has_variable?
 
-        if node.locator? || node.page?
-          value = item.send node.variable
+        case
+        when node.page?
+          value, name = item.read_attribute(:page), node.variable
+        when node.locator?
+          value, name = item.locator, item.label
         else
-          value = item.data[node.variable].to_s
+          value, node = item.data[node.variable], node.variable
         end
 
+        value = value.to_s
+        
         return '' if value.empty?
 
         options = node.attributes_for :form
@@ -28,12 +33,12 @@ module CiteProc
           options[:plural] = pluralize?(value)
         end
 
-        translate node.variable, options
+        translate name, options
       end
 
 
       def pluralize?(string)
-        string.to_s =~ /\S\s*[,&-]\s*\S|\df/
+        !!(string.to_s =~ /\S\s*[,&-]\s*\S|\df/)
       end
     end
 

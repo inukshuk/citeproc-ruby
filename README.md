@@ -6,7 +6,8 @@ CiteProc-Ruby is a [Citation Style Language](http://citationstyles.org/) (CSL)
 
 Development
 -----------
-The CiteProc-Ruby source code is [hosted on GitHub](https://github.com/inukshuk/citeproc-ruby).
+The CiteProc-Ruby source code is
+[hosted on GitHub](https://github.com/inukshuk/citeproc-ruby).
 You can check out a copy of the latest code using Git:
 
     $ git clone https://github.com/inukshuk/citeproc-ruby.git
@@ -23,7 +24,8 @@ Or, for extra credit, clone the CiteProc-Ruby repository, write a failing
 example, fix the bug and submit a pull request.
 
 For the source code of the original CiteProc-Ruby release (gem versions
-0.0.x), please see the [0.0.x branch](https://github.com/inukshuk/citeproc-ruby/tree/0.0.x).
+0.0.x), please see the
+[0.0.x branch](https://github.com/inukshuk/citeproc-ruby/tree/0.0.x).
 
 
 Copyright
