@@ -32,7 +32,7 @@ Copyright
 ---------
 Copyright 2012 President and Fellows of Harvard College.
 
-Copyright 2009-2012 Sylvester Keil. All rights reserved.
+Copyright 2009-2013 Sylvester Keil. All rights reserved.
 
 License
 -------
