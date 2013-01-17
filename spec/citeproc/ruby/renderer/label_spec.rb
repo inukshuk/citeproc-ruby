@@ -34,10 +34,23 @@ module CiteProc
           end
         end
 
-        describe "for an item with no page value" do
+        describe "for an item with a page value" do
           it 'returns the singular label for a number' do
             item.write_attribute :page, '23'
-            renderer.render_label(item, node).should == 'p.'
+            renderer.render_label(item, node).should == 'page'
+          end
+
+          it 'returns the plural label for a page-range' do
+            item.write_attribute :page, '23-24'
+            renderer.render_label(item, node).should == 'pages'
+          end
+
+          it 'returns the plural label for multiple pages' do
+            item.write_attribute :page, '23 & 24'
+            renderer.render_label(item, node).should == 'pages'
+
+            item.write_attribute :page, '23, 24, 25'
+            renderer.render_label(item, node).should == 'pages'
           end
         end
 

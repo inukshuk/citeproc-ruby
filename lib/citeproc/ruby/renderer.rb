@@ -21,7 +21,7 @@ module CiteProc
       end
 
       def translate(name, options = {})
-        locale.translate options.merge(:name => name.to_s)
+        locale.translate name, options
       end
 
       def ordinalize(number, options = {})
