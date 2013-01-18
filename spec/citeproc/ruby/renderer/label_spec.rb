@@ -104,7 +104,7 @@ module CiteProc
       # number-of-pages variable
 
       describe "when the node's variable is set to :'number-of-pages'" do
-        before(:each) { node[:variable] = :'number-of-pages' }
+        before(:each) { node[:variable] = 'number-of-pages' }
 
         describe "for an item with no 'number-of-pages' value" do
           it 'returns an empty string' do
@@ -114,18 +114,15 @@ module CiteProc
 
         describe "for an item with a 'number-of-pages' value" do
           it 'returns the singular label for number 1' do
-            item.write_attribute :'number-of-pages', '1'
-            renderer.render_label(item, node).should == 'page'
-
-            item.write_attribute :'number-of-pages', 1
+            item.data[:'number-of-pages'] = 1
             renderer.render_label(item, node).should == 'page'
           end
           
           it 'returns the plural label for numbers higher than 1' do
-            item.write_attribute :'number-of-pages', '2'
+            item.data[:'number-of-pages'] = '2'
             renderer.render_label(item, node).should == 'pages'
 
-            item.write_attribute :'number-of-pages', 42
+            item.data[:'number-of-pages'] = 42
             renderer.render_label(item, node).should == 'pages'
           end
 
@@ -133,18 +130,15 @@ module CiteProc
             before(:each) { node[:plural] = 'contextual' }
             
             it 'returns the singular label for number 1' do
-              item.write_attribute :'number-of-pages', '1'
-              renderer.render_label(item, node).should == 'page'
-
-              item.write_attribute :'number-of-pages', 1
+              item.data[:'number-of-pages'] = '1'
               renderer.render_label(item, node).should == 'page'
             end
 
             it 'returns the plural label for numbers higher than 1' do
-              item.write_attribute :'number-of-pages', '2'
+              item.data[:'number-of-pages'] = '2'
               renderer.render_label(item, node).should == 'pages'
 
-              item.write_attribute :'number-of-pages', 42
+              item.data[:'number-of-pages'] = 42
               renderer.render_label(item, node).should == 'pages'
             end
           end
@@ -153,18 +147,15 @@ module CiteProc
             before(:each) { node[:plural] = 'always' }
             
             it 'returns the singular label for number 1' do
-              item.write_attribute :'number-of-pages', '1'
-              renderer.render_label(item, node).should == 'pages'
-
-              item.write_attribute :'number-of-pages', 1
+              item.data[:'number-of-pages'] = 1
               renderer.render_label(item, node).should == 'pages'
             end
 
             it 'returns the plural label for numbers higher than 1' do
-              item.write_attribute :'number-of-pages', '2'
+              item.data[:'number-of-pages'] = '2'
               renderer.render_label(item, node).should == 'pages'
 
-              item.write_attribute :'number-of-pages', 42
+              item.data[:'number-of-pages'] = 42
               renderer.render_label(item, node).should == 'pages'
             end
           end
@@ -173,20 +164,38 @@ module CiteProc
             before(:each) { node[:plural] = 'never' }
             
             it 'returns the singular label for number 1' do
-              item.write_attribute :'number-of-pages', '1'
-              renderer.render_label(item, node).should == 'page'
-
-              item.write_attribute :'number-of-pages', 1
+              item.data[:'number-of-pages'] = 1
               renderer.render_label(item, node).should == 'page'
             end
 
             it 'returns the plural label for numbers higher than 1' do
-              item.write_attribute :'number-of-pages', '2'
+              item.data[:'number-of-pages'] = '2'
               renderer.render_label(item, node).should == 'page'
 
-              item.write_attribute :'number-of-pages', 42
+              item.data[:'number-of-pages'] = 42
               renderer.render_label(item, node).should == 'page'
             end
+          end
+        end
+      end
+      
+      # number-of-volumes variable
+      
+      describe "when the node's variable is set to :'number-of-volumes'" do
+        before(:each) { node[:variable] = 'number-of-volumes' }
+
+        describe "for an item with a 'number-of-volumes' value" do
+          it 'returns the singular label for number 1' do
+            item.data[:'number-of-volumes'] = 1
+            renderer.render_label(item, node).should == 'volume'
+          end
+          
+          it 'returns the plural label for numbers higher than 1' do
+            item.data[:'number-of-volumes'] = '2'
+            renderer.render_label(item, node).should == 'volumes'
+
+            item.data[:'number-of-volumes'] = 42
+            renderer.render_label(item, node).should == 'volumes'
           end
         end
       end

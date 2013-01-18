@@ -11,11 +11,11 @@ module CiteProc
 
         case
         when node.page?
-          value, name = item.read_attribute(:page), node.variable
+          value, name = item.read_attribute(:page), :page
         when node.locator?
           value, name = item.locator, item.label
         else
-          value, node = item.data[node.variable], node.variable
+          value, name = item.data[node.variable], node.term
         end
 
         value = value.to_s
@@ -24,22 +24,24 @@ module CiteProc
 
         options = node.attributes_for :form
 
-        case
-        when node.always_pluralize?
-          options[:plural] = true
-        when node.never_pluralize?
-          options[:plural] = true
+        if node.names_label?
+          # TODO pluralize if multiple names
         else
-          options[:plural] = pluralize?(value)
+          case
+          when node.always_pluralize?
+            options[:plural] = true
+          when node.never_pluralize?
+            options[:plural] = false
+          when node.number_of_pages?, node.number_of_volumes?
+            options[:plural] = value.to_i > 1
+          else
+            options[:plural] = (/\S\s*[,&-]\s*\S|\df/ === value)
+          end
         end
 
         translate name, options
       end
 
-
-      def pluralize?(string)
-        !!(string.to_s =~ /\S\s*[,&-]\s*\S|\df/)
-      end
     end
 
   end
