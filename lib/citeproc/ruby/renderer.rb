@@ -27,6 +27,10 @@ module CiteProc
       def ordinalize(number, options = {})
         locale.ordinalize number, options
       end
+
+			def romanize(number)
+				CiteProc::Number.romanize(number)
+			end
     end
 
   end
