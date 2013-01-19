@@ -18,26 +18,22 @@ module CiteProc
           value, name = item.data[node.variable], node.term
         end
 
-        value = value.to_s
-        
-        return '' if value.empty?
+        return '' if value.nil? || value.empty?
 
         options = node.attributes_for :form
 
-        if node.names_label?
-          # TODO pluralize if multiple names
-        else
-          case
-          when node.always_pluralize?
-            options[:plural] = true
-          when node.never_pluralize?
-            options[:plural] = false
-          when node.number_of_pages?, node.number_of_volumes?
-            options[:plural] = value.to_i > 1
-          else
-            options[:plural] = (/\S\s*[,&-]\s*\S|\df/ === value)
-          end
-        end
+        options[:plural] = case
+	        when node.always_pluralize?
+	          true
+	        when node.never_pluralize?
+	          false
+	        when node.number_of_pages?, node.number_of_volumes?
+	          value.to_i > 1
+					when value.respond_to?(:plural?)
+	          value.plural?
+	        else
+						CiteProc::Number.pluralize?(value.to_s)
+	        end
 
         translate name, options
       end
