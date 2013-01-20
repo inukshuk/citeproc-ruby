@@ -19,12 +19,12 @@ module CiteProc
           options = node.attributes_for :form
           # TODO lookup term of variable to check gender
 
-          numbers.map do |num|
+          numbers.map! do |num|
             num =~ /^\d+$/ ? ordinalize(num, options) : num
           end
 
         when node.roman?
-          numbers.map do |num|
+          numbers.map! do |num|
             num =~ /^\d+$/ ? romanize(num) : num
           end
 
