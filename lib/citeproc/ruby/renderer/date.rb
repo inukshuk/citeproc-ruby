@@ -30,7 +30,7 @@ module CiteProc
 
         parts.map { |part|
           render_date_part date, part
-        }.join(delimiter)
+        }.reject(&:empty?).join(delimiter)
       end
 
       # @param date [CiteProc::Date]

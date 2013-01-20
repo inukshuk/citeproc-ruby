@@ -53,7 +53,7 @@ module CiteProc
 
                 it 'returns "2012/27/01" when the month form set to "numeric-leading-zeros" and the node has a delimiter "/"' do
                   node.parts.last[:form] = 'numeric-leading-zeros'
-                  node[:delimiter] = '/'                  
+                  node[:delimiter] = '/'
                   renderer.render_date(item, node).should == '2012/27/01'
                 end
               end

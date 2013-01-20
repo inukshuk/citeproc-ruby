@@ -2,9 +2,9 @@ module CiteProc
   module Ruby
 
     class Renderer
-      
+
       attr_reader :locale
-      
+
       def initialize
         @locale = CSL::Locale.load
       end
@@ -21,7 +21,7 @@ module CiteProc
       end
 
       def translate(name, options = {})
-        locale.translate name, options
+        locale.translate(name, options).to_s
       end
 
       def ordinalize(number, options = {})
@@ -30,7 +30,7 @@ module CiteProc
 
 			def romanize(number)
 				CiteProc::Number.romanize(number)
-			end			
+			end
     end
 
   end

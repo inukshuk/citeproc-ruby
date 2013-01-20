@@ -11,7 +11,7 @@ module CiteProc
       def render_layout(item, node)
         node.each_child.map { |child|
           render item, child
-        }.join(node.delimiter)
+        }.reject(&:empty?).join(node.delimiter)
       end
       
     end
