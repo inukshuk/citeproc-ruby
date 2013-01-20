@@ -12,37 +12,27 @@ module CiteProc
         variable = item.data[node.variable]
         return variable.to_s unless variable && variable.numeric?
 
-        numbers = extract_numbers_from variable
+        numbers = variable.tokenize
 
         case
         when node.ordinal? || node.long_ordinal?
           options = node.attributes_for :form
           # TODO lookup term of variable to check gender
 
-          numbers.map { |num|
+          numbers.map do |num|
             num =~ /^\d+$/ ? ordinalize(num, options) : num
-          }.join('')
+          end
 
         when node.roman?
-          numbers.map { |num|
+          numbers.map do |num|
             num =~ /^\d+$/ ? romanize(num) : num
-          }.join('')
+          end
 
         else
-          numbers.join('')
+					# nothing
         end
-      end
 
-
-      # @return [Array<String>]
-      def extract_numbers_from(variable)
-        numbers = variable.to_s.dup
-
-        numbers.gsub!(/\s*,\s*/, ', ')
-        numbers.gsub!(/\s*-\s*/, '-')
-        numbers.gsub!(/\s*&\s*/, ' & ')
-
-        numbers.split(/(\s*[,&-]\s*)/)
+				numbers.join('')
       end
 
     end
