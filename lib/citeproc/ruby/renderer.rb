@@ -30,7 +30,7 @@ module CiteProc
 
 			def romanize(number)
 				CiteProc::Number.romanize(number)
-			end
+			end			
     end
 
   end

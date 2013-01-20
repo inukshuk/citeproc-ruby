@@ -72,6 +72,26 @@ module CiteProc
         end
       end
 
+      describe 'given a text node with a variable' do
+        let(:node) { CSL::Style::Text.new(:term => 'anonymous') }
+        
+        it "returns the term's long form by default" do
+          renderer.render_text(item, node).should == 'anonymous'
+        end
+        
+        describe 'when the form attribute is set to :short' do
+          before(:each) { node[:form] = 'short' }
+          
+          it "returns the term's short form by default" do
+            renderer.render_text(item, node).should == 'anon.'
+          end
+          
+          it 'falls back to the long version if there is no short version' do
+            node[:term] = 'et-al'
+            renderer.render_text(item, node).should == 'et al.'
+          end
+        end
+      end
       
     end
 

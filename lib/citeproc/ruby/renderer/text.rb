@@ -17,7 +17,7 @@ module CiteProc
           render item, node.macro
 
         when node.has_term?
-          translate node.term_options
+          translate node[:term], node.attributes_for(:plural, :form)
 
         else
           node.value.to_s
