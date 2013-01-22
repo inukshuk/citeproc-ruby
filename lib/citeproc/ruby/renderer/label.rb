@@ -5,9 +5,11 @@ module CiteProc
 
       # @param item [CiteProc::CitationItem]
       # @param node [CSL::Style::Label]
+      # @param variable [String]
+      #
       # @return [String]
-      def render_label(item, node)
-        return '' unless node.has_variable?
+      def render_label(item, node, variable = node.variable)
+        return '' if variable.nil? || variable.empty?
 
         case
         when node.page?
@@ -15,7 +17,7 @@ module CiteProc
         when node.locator?
           value, name = item.locator, item.label
         else
-          value, name = item.data[node.variable], node.term
+          value, name = item.data[variable], node.term
         end
 
         return '' if value.nil? || value.empty?

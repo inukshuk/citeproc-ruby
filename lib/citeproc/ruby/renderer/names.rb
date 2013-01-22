@@ -13,28 +13,36 @@ module CiteProc
           [role.to_sym, item.data[role]]
         end
 
-        resolve_editor_translator_exception names
+        names.reject! { |n| n[1].nil? || n[1].empty? }
 
+        if names.empty?
+          return '' unless node.has_substitute?
 
-      end
+          # TODO substitution
 
-      # @param name [CiteProc::Name]
-      # @param node [CSL::Style::Name]
-      # @return [String]
-      def render_name(name, node)
+        else
+
+          resolve_editor_translator_exception! names
+
+          names.map { |role, ns|
+
+            # TODO
+
+          }.join(node.delimiter)
+        end
       end
 
       private
 
-      def resolve_editor_translator_exception(names)
-        editor, translator = names[:editor], names[:translator]
+      def resolve_editor_translator_exception!(names)
 
-        if translator && translator == editor
-          names.delete :editor
-          names.delete :translator
+        translator = names.detect { |role, _| role == :translator }
+        return names if translator.nil?
 
-          names[:editortranslator] = editor
-        end
+        editor = names.detect { |role, _| role == :editor }
+        return names if editor.nil?
+
+        # TODO
 
         names
       end
