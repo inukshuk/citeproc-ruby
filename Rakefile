@@ -35,4 +35,18 @@ Cucumber::Rake::Task.new(:cucumber) do |t|
   t.profile = 'default'
 end
 
+task :release do |t|
+  system "gem build citeproc-ruby.gemspec"
+  system "git tag #{CiteProc::Ruby::VERSION}"
+  system "git push --tags"
+  system "gem push citeproc-ruby-#{CSL::VERSION}.gem"
+end
+
 task :default => [:spec, :cucumber]
+
+begin
+  require 'yard'
+  YARD::Rake::YardocTask.new
+rescue LoadError => e
+  # ignore
+end
