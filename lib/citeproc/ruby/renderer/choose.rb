@@ -34,7 +34,8 @@ module CiteProc
       # @param item [CiteProc::CitationItem]
       # @param node [CSL::Style::Choose::Block]
       #
-      # @return [Boolean] whether or not
+      # @return [Boolean] whether or not the node's conditions
+      #   are true for the passed-in item
       def evaluates?(item, node)
 
         # subtle: else-nodes have no conditions. since the default
@@ -90,7 +91,7 @@ module CiteProc
       # negating the result if the value is prefixed with 'not:'
       def evaluates_condition?(matcher, values, &condition)
         values.send(matcher) do |value|
-          value, negate = string.split(/^not:/, 2).reverse
+          value, negate = value.split(/^not:/, 2).reverse
           result = condition.call(value)
 
           negate ? !result : result

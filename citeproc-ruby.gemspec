@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.date        = Time.now.strftime('%Y-%m-%d')
 
   s.add_dependency 'citeproc', '1.0.0.pre12'
-  s.add_dependency 'csl', '1.0.0.pre22'
+  s.add_dependency 'csl', '1.0.0.pre23'
 
   s.files        = `git ls-files`.split("\n")
   s.test_files   = `git ls-files -- {test,spec,features}/*`.split("\n")
