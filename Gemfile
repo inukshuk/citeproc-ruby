@@ -1,8 +1,16 @@
-source :rubygems
+source 'https://rubygems.org'
 gemspec
 
+group :development, :test do
+  gem 'rake', '~>10.0'
+  gem 'rspec', '~>2.13'
+  gem 'cucumber', '~>1.2'
+end
+
 group :debug do
-  gem 'debugger', '~>1.1.3', :platform => :mri_19
+  gem 'ruby-debug', :platforms => [:mri_18, :jruby]
+  gem 'debugger', :platforms => [:mri_19]
+  gem 'debugger2', :platforms => [:mri_20]
 end
 
 group :optional do
@@ -19,6 +27,6 @@ group :extra do
   gem 'guard-cucumber', '~>1.2'
   gem 'rb-fsevent', '~>0.9.1'
 
-	gem 'yard', '~>0.8', :platforms => [:mri_19]
-	gem 'redcarpet', '~>2.1', :platforms => [:mri_19]
+	gem 'yard', '~>0.8', :platforms => [:mri_19, :mri_20]
+	gem 'redcarpet', '~>2.1', :platforms => [:mri_19, :mri_20]
 end

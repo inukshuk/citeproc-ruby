@@ -43,35 +43,57 @@ module CiteProc
 
         # return true if node.nodename == 'else'
 
-        node.conditions.send(node.matcher) do |type, value|
+        node.conditions.send(node.matcher) do |type, matcher, values|
           case type
           when :disambiguate
             false # not implemented yet
 
           when :'is-numeric'
-            v = item.data[value]
-            v.respond_to?(:numeric?) && v.numeric?
+            evaluates_condition? matcher, values do |value|
+              v = item.data[value]
+              v.respond_to?(:numeric?) && v.numeric?
+            end
 
           when :'is-uncertain-date'
-            v = item.data[value]
-            v.respond_to?(:uncertain?) && v.uncertain?
+            evaluates_condition? matcher, values do |value|
+              v = item.data[value]
+              v.respond_to?(:uncertain?) && v.uncertain?
+            end
+
 
           when :locator
-            value.to_s == item.locator.to_s
+            evaluates_condition? matcher, values do |value|
+              value.to_s == item.locator.to_s
+            end
 
           when :position
             false # not implemented yet
 
           when :type
-            value.to_s == item.data[:type].to_s
+            evaluates_condition? matcher, values do |value|
+              value.to_s == item.data[:type].to_s
+            end
 
           when :variable
-            item.data.attribute?(value)
+            evaluates_condition? matcher, values do |value|
+              item.data.attribute?(value)
+            end
 
           else
             warn "unknown condition type: #{type}"
             false
           end
+        end
+      end
+
+      # Evaluates the passed-in block for each value in values,
+      # negating the result if the value is prefixed with 'not:'
+      def evaluates_condition?(matcher, values, &condition)
+        values.send(matcher) do |value|
+          value, negate = string.split(/^not:/, 2).reverse
+          result = condition.call(value)
+
+          negate ? !result : result
         end
       end
     end
