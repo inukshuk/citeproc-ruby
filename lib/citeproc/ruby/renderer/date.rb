@@ -29,7 +29,7 @@ module CiteProc
         end
 
         parts.map { |part|
-          render_date_part date, part
+          render date, part
         }.reject(&:empty?).join(delimiter)
       end
 

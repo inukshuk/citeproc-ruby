@@ -2,11 +2,14 @@ module CiteProc
   module Ruby
 
     class Renderer
+      extend Forwardable
 
       attr_reader :locale
 
+      def_delegator :@format, :apply, :format
+
       def initialize
-        @locale = CSL::Locale.load
+        @locale, @format = CSL::Locale.load, Format.load
       end
 
 
@@ -14,10 +17,10 @@ module CiteProc
       # @param node [CSL::Node]
       # @return [String]
       def render(data, node)
-        specialize = "render_#{node.nodename}"
+        specialize = "render_#{node.nodename.tr('-', '_')}"
         raise ArgumentError unless respond_to?(specialize)
 
-        send specialize, data, node
+        format send(specialize, data, node), node
       end
 
       def translate(name, options = {})
@@ -25,7 +28,7 @@ module CiteProc
       end
 
       def ordinalize(number, options = {})
-        locale.ordinalize number, options
+        locale.ordinalize(number, options)
       end
 
 			def romanize(number)

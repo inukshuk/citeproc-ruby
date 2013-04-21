@@ -5,6 +5,7 @@ require 'citeproc'
 
 require 'citeproc/ruby/version'
 
+require 'citeproc/ruby/format'
 require 'citeproc/ruby/renderer'
 require 'citeproc/ruby/renderer/text'
 require 'citeproc/ruby/renderer/number'
