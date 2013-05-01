@@ -26,10 +26,53 @@ module CiteProc
 
           names.map { |role, ns|
 
-            # TODO
+            ns = render_name ns, node.name || CSL::Style::Name.new
+
+            if node.has_label?
+              # TODO
+            end
 
           }.join(node.delimiter)
         end
+      end
+
+      # @param item [CiteProc::Names]
+      # @param node [CSL::Style::Name]
+      # @return [String]
+      def render_name(names, node)
+
+        delimiter = node.delimiter
+
+        connector = node.connector
+        connector = translate(connector) if connector == 'text'
+
+        rendition = case
+          when node.trucate?(names)
+            truncated = node.truncate(names)
+
+            if node.delimiter_precedes_last?(truncated)
+              conncector = [delimiter, connector].compact.join('')
+            end
+            
+            if node.ellipsis? && names.length - truncated.length > 1
+              
+            else
+              
+            end
+
+          when names.length < 2
+            
+          else
+            if node.delimiter_precedes_last?(names)
+              conncector = [delimiter, connector].compact.join('')
+            end
+            
+          end
+        
+        format rendition, node
+      end
+
+      def render_individual_name(name, node)
       end
 
       private
