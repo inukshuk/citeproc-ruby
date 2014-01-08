@@ -32,4 +32,8 @@ group :extra do
 	gem 'redcarpet', '~>3.0', :platforms => [:mri]
 end
 
-gem 'rubysl', :platforms => :rbx
+platform :rbx do
+  gem 'rubysl'
+  gem 'racc'
+  gem 'json'
+end
