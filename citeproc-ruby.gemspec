@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
 
   s.authors     = ['Sylvester Keil']
   s.email       = ['http://sylvester.keil.or.at']
-  
+
   s.homepage    = 'https://github.com/inukshuk/citeproc-ruby'
   s.summary     = 'A Citation Style Language (CSL) cite processor'
   s.description =
@@ -22,6 +22,8 @@ Gem::Specification.new do |s|
 
   s.license     = 'AGPL'
   s.date        = Time.now.strftime('%Y-%m-%d')
+
+  s.required_ruby_version = '>= 1.9.3'
 
   s.add_dependency 'citeproc', '1.0.0.pre12'
   s.add_dependency 'csl', '1.0.0.pre23'
