@@ -18,7 +18,7 @@ module CiteProc
         # it 'returns an empty string for an empty item' do
         #   renderer.render_names(item, node).should == ''
         # end
-        # 
+        #
         # it 'returns an empty string for an item with variables' do
         #   item.data.edition = 'foo'
         #   renderer.render_names(item, node).should == ''
@@ -26,6 +26,6 @@ module CiteProc
       end
 
     end
-    
+
   end
 end

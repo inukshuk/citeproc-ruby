@@ -53,22 +53,22 @@ module CiteProc
             if node.delimiter_precedes_last?(truncated)
               conncector = [delimiter, connector].compact.join('')
             end
-            
+
             if node.ellipsis? && names.length - truncated.length > 1
-              
+
             else
-              
+
             end
 
           when names.length < 2
-            
+
           else
             if node.delimiter_precedes_last?(names)
               conncector = [delimiter, connector].compact.join('')
             end
-            
+
           end
-        
+
         format rendition, node
       end
 
