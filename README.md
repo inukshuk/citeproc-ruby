@@ -11,7 +11,7 @@ The CiteProc-Ruby source code is
 You can check out a copy of the latest code using Git:
 
     $ git clone https://github.com/inukshuk/citeproc-ruby.git
-    
+
 To get started, install the development dependencies and run all tests:
 
     $ cd citeproc-ruby
@@ -32,7 +32,7 @@ Copyright
 ---------
 Copyright 2012 President and Fellows of Harvard College.
 
-Copyright 2009-2013 Sylvester Keil. All rights reserved.
+Copyright 2009-2014 Sylvester Keil. All rights reserved.
 
 License
 -------
