@@ -5,3 +5,6 @@ doc
 .rbx
 *.rbc
 coverage
+.bundle
+.ruby-version
+*.swp
