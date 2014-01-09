@@ -60,6 +60,67 @@ module CiteProc
           renderer.render_name(philosophers, node).should == 'Plato, Socrates, and Aristotle'
         end
       end
+
+      describe 'given a node with delimier-precedes-last' do
+        it 'inserts final delimiter only for three or more names when set to "contextual"' do
+          node.delimiter_contextually_precedes_last!
+          renderer.render_name(philosophers, node).should == 'Plato, Socrates, Aristotle'
+
+          node[:and] = 'text'
+          renderer.render_name(philosophers, node).should == 'Plato, Socrates, and Aristotle'
+
+          renderer.render_name(philosophers.take(2), node).should == 'Plato and Socrates'
+
+          node[:and] = nil
+          renderer.render_name(philosophers.take(2), node).should == 'Plato, Socrates'
+        end
+
+        it 'inserts final delimiter when set to "always"' do
+          node.delimiter_always_precedes_last!
+
+          renderer.render_name(philosophers, node).should == 'Plato, Socrates, Aristotle'
+
+          node[:and] = 'text'
+          renderer.render_name(philosophers, node).should == 'Plato, Socrates, and Aristotle'
+
+          renderer.render_name(philosophers.take(2), node).should == 'Plato, and Socrates'
+
+          node[:and] = nil
+          renderer.render_name(philosophers.take(2), node).should == 'Plato, Socrates'
+        end
+
+        it 'never inserts final delimiter when set to "never" (unless there is no "and")' do
+          node.delimiter_never_precedes_last!
+
+          renderer.render_name(philosophers, node).should == 'Plato, Socrates, Aristotle'
+          renderer.render_name(philosophers.take(2), node).should == 'Plato, Socrates'
+
+          node[:and] = 'text'
+          renderer.render_name(philosophers, node).should == 'Plato, Socrates and Aristotle'
+          renderer.render_name(philosophers.take(2), node).should == 'Plato and Socrates'
+        end
+
+        it 'supports only-after-inverted-name rule' do
+          names = CiteProc::Names.new('Doe, J. and Smith, S. and Williams, T.')
+          node.delimiter_precedes_last_after_inverted_name!
+
+          # always delimit when there is no and!
+          renderer.render_name(names, node).should == 'J. Doe, S. Smith, T. Williams'
+          renderer.render_name(names.take(2), node).should == 'J. Doe, S. Smith'
+
+          node[:and] = 'text'
+          renderer.render_name(names, node).should == 'J. Doe, S. Smith and T. Williams'
+          renderer.render_name(names.take(2), node).should == 'J. Doe and S. Smith'
+
+          node[:'name-as-sort-order'] = 'first'
+          renderer.render_name(names, node).should == 'Doe, J., S. Smith and T. Williams'
+          renderer.render_name(names.take(2), node).should == 'Doe, J., and S. Smith'
+
+          node[:'name-as-sort-order'] = 'all'
+          renderer.render_name(names, node).should == 'Doe, J., Smith, S., and Williams, T.'
+          renderer.render_name(names.take(2), node).should == 'Doe, J., and Smith, S.'
+        end
+      end
     end
   end
 end

@@ -53,7 +53,7 @@ module CiteProc
         connector = translate('and') if connector == 'text'
 
         # Add spaces around connector
-        connector = " #{connector} "
+        connector = " #{connector} " unless connector.nil?
 
         rendition = case
           when node.truncate?(names)
@@ -81,14 +81,18 @@ module CiteProc
 
                 render_individual_name(truncated[-1], node, truncated.length)
 
-              ].join(connector)
+              ].join(connector || delimiter)
 
             end
 
           when names.length < 3
+            if node.delimiter_precedes_last?(names)
+              connector = [delimiter, connector].compact.join('').squeeze(' ')
+            end
+
             names.map.with_index { |name, idx|
               render_individual_name name, node, idx + 1
-            }.join(connector)
+            }.join(connector || delimiter)
 
           else
             if node.delimiter_precedes_last?(names)
@@ -102,7 +106,7 @@ module CiteProc
 
               render_individual_name(names[-1], node, names.length)
 
-            ].join(connector)
+            ].join(connector || delimiter)
           end
 
         format rendition, node
@@ -126,6 +130,7 @@ module CiteProc
           end
 
           name.options.merge! node.name_options
+          name.sort_order! node.name_as_sort_order_at?(position)
         end
 
         format name.to_s, node
