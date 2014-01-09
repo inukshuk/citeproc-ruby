@@ -47,6 +47,8 @@ module CiteProc
       # @return [String]
       def render_name(names, node)
 
+        # TODO handle subsequent citation rules
+
         delimiter = node.delimiter
 
         connector = node.connector
@@ -74,14 +76,21 @@ module CiteProc
               ].join(node.ellipsis)
 
             else
+              others = node.et_al ?
+                format(translate(node.et_al.term), node.et_al) :
+                translate('et-al')
+
+              connector = node.delimiter_precedes_et_al?(truncated) ?
+                delimiter : ' '
+
               [
-                truncated[0...-1].map.with_index { |name, idx|
+                truncated.map.with_index { |name, idx|
                   render_individual_name name, node, idx + 1
                 }.join(delimiter),
 
-                render_individual_name(truncated[-1], node, truncated.length)
+                others
 
-              ].join(connector || delimiter)
+              ].join(connector)
 
             end
 

@@ -121,6 +121,92 @@ module CiteProc
           renderer.render_name(names.take(2), node).should == 'Doe, J., and Smith, S.'
         end
       end
+
+      describe 'truncation of name lists' do
+        let(:names) { CiteProc::Names.new('Doe, J. and Smith, S. and Williams, T.') }
+
+        describe 'with default delimiter settings' do
+          it 'truncates the list if it matches or exceeds et-al-min' do
+            node[:'et-al-min'] = 3
+            node[:'et-al-use-first'] = 2
+
+            renderer.render_name(names, node).should == 'J. Doe, S. Smith, et al.'
+
+            node[:'et-al-use-first'] = 1
+            renderer.render_name(names, node).should == 'J. Doe et al.'
+          end
+
+          it 'does not truncate the list if it is less than et-al-min' do
+            node[:'et-al-min'] = 4
+            node[:'et-al-use-first'] = 2
+
+            renderer.render_name(names, node).should == 'J. Doe, S. Smith, T. Williams'
+          end
+        end
+
+        describe 'with delimiter-precedes-et-al set' do
+          it 'inserts delimiter only for two or more names when set to "contextual" or nil' do
+            node.truncate_when! 3
+            node.truncate_at! 2
+
+            # default behaviour should match contextual!
+            renderer.render_name(philosophers, node).should == 'Plato, Socrates, et al.'
+
+            node.truncate_at! 1
+            renderer.render_name(philosophers, node).should == 'Plato et al.'
+
+            # set contextual explicitly
+            node.delimiter_contextually_precedes_et_al!
+            renderer.render_name(philosophers, node).should == 'Plato et al.'
+
+            node.truncate_at! 2
+            renderer.render_name(philosophers, node).should == 'Plato, Socrates, et al.'
+          end
+
+          it 'inserts delimiter when set to "always"' do
+            node.truncate_when! 3
+            node.truncate_at! 2
+
+            node.delimiter_always_precedes_et_al!
+            renderer.render_name(philosophers, node).should == 'Plato, Socrates, et al.'
+
+            node.truncate_at! 1
+            renderer.render_name(philosophers, node).should == 'Plato, et al.'
+          end
+
+          it 'never inserts delimiter when set to "never"' do
+            node.truncate_when! 3
+            node.truncate_at! 2
+
+            node.delimiter_never_precedes_et_al!
+            renderer.render_name(philosophers, node).should == 'Plato, Socrates et al.'
+
+            node.truncate_at! 1
+            renderer.render_name(philosophers, node).should == 'Plato et al.'
+          end
+
+          it 'supports only-after-inverted-name rule' do
+            node.truncate_when! 3
+            node.truncate_at! 2
+
+            node.delimiter_precedes_et_al_after_inverted_name!
+
+            renderer.render_name(names, node).should == 'J. Doe, S. Smith et al.'
+
+            node[:'name-as-sort-order'] = 'first'
+            renderer.render_name(names, node).should == 'Doe, J., S. Smith et al.'
+
+            node.truncate_at! 1
+            renderer.render_name(names, node).should == 'Doe, J., et al.'
+
+            node[:'name-as-sort-order'] = 'all'
+            renderer.render_name(names, node).should == 'Doe, J., et al.'
+
+            node.truncate_at! 2
+            renderer.render_name(names, node).should == 'Doe, J., Smith, S., et al.'
+          end
+        end
+      end
     end
   end
 end
