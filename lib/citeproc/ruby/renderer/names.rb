@@ -23,20 +23,26 @@ module CiteProc
         else
 
           resolve_editor_translator_exception! names
+          name = node.name || CSL::Style::Name.new
 
-          names.map { |role, ns|
-
-            ns = render_name ns, node.name || CSL::Style::Name.new
-
+          rendition = names.map { |role, ns|
             if node.has_label?
-              # TODO
+              render_name(ns, name) << render_label(item, node.label, role)
+            else
+              render_name ns, name
             end
 
           }.join(node.delimiter)
+
+          format rendition, node
         end
       end
 
-      # @param item [CiteProc::Names]
+      # Formats one or more names according to the
+      # configuration of the passed-in node.
+      # Returns the formatted name(s) as a string.
+      #
+      # @param names [CiteProc::Names]
       # @param node [CSL::Style::Name]
       # @return [String]
       def render_name(names, node)
@@ -44,35 +50,85 @@ module CiteProc
         delimiter = node.delimiter
 
         connector = node.connector
-        connector = translate(connector) if connector == 'text'
+        connector = translate('and') if connector == 'text'
+
+        # Add spaces around connector
+        connector = " #{connector} "
 
         rendition = case
-          when node.trucate?(names)
+          when node.truncate?(names)
             truncated = node.truncate(names)
 
             if node.delimiter_precedes_last?(truncated)
-              conncector = [delimiter, connector].compact.join('')
+              connector = [delimiter, connector].compact.join('').squeeze(' ')
             end
 
             if node.ellipsis? && names.length - truncated.length > 1
+              [
+                truncated.map.with_index { |name, idx|
+                  render_individual_name name, node, idx + 1
+                }.join(delimiter),
+
+                render_individual_name(names[-1], node, truncated.length + 1)
+
+              ].join(node.ellipsis)
 
             else
+              [
+                truncated[0...-1].map.with_index { |name, idx|
+                  render_individual_name name, node, idx + 1
+                }.join(delimiter),
+
+                render_individual_name(truncated[-1], node, truncated.length)
+
+              ].join(connector)
 
             end
 
-          when names.length < 2
+          when names.length < 3
+            names.map.with_index { |name, idx|
+              render_individual_name name, node, idx + 1
+            }.join(connector)
 
           else
             if node.delimiter_precedes_last?(names)
-              conncector = [delimiter, connector].compact.join('')
+              connector = [delimiter, connector].compact.join('').squeeze(' ')
             end
 
+            [
+              names[0...-1].map.with_index { |name, idx|
+                render_individual_name name, node, idx + 1
+              }.join(delimiter),
+
+              render_individual_name(names[-1], node, names.length)
+
+            ].join(connector)
           end
 
         format rendition, node
       end
 
-      def render_individual_name(name, node)
+      # @param names [CiteProc::Name]
+      # @param node [CSL::Style::Name]
+      # @param position [Fixnum]
+      # @return [String]
+      def render_individual_name(name, node, position = 1)
+        if name.personal?
+          name = name.dup
+
+          node.name_part.each do |part|
+            case part.name
+            when 'family'
+              name.family = format(name.family, part)
+            when 'given'
+              name.given = format(name.given, part)
+            end
+          end
+
+          name.options.merge! node.name_options
+        end
+
+        format name.to_s, node
       end
 
       private
