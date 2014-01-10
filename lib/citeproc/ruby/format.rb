@@ -18,17 +18,13 @@ module CiteProc
           name = name.to_s.downcase
 
           klass = available.detect do |format|
-            format.name.downcase == name
+            format.name.split('::')[-1].downcase == name
           end
 
-          raise(Error, "unknown format: #{name}") if klass.nil?
+          raise(Error, "unknown format: #{name}") unless klass
 
           klass.new
         end
-      end
-
-      def name
-        self.class.name
       end
 
       def keys
@@ -38,6 +34,8 @@ module CiteProc
       def apply(input, node)
         return '' if input.nil?
         return input if input.empty? || node.nil?
+
+        # create a dummy node if node is an options hash?
 
         @input, @output, @node = input, input.dup, node
 
@@ -89,14 +87,14 @@ module CiteProc
           output.replace CiteProc.upcase output
 
         when 'capitalize-first'
-          output.sub! /^(\p{Ll})/, CiteProc.upcase($1)
+          output.sub!(/^([^\p{L}]*)(\p{Ll})/) { "#{$1}#{CiteProc.upcase($2)}" }
 
         when 'capitalize-all'
-          output.gsub! /\b(\p{Ll})/, CiteProc.upcase($1)
+          output.gsub!(/\b(\p{Ll})/) { CiteProc.upcase($1) }
 
         when 'sentence'
-          output.gsub! /\b\p{Lu}(\p{Lu}+)\b/, CiteProc.downcase($1)
-          output.gsub! /\b(\p{Ll})\p{Ll}*\b/, CiteProc.upcase($1)
+          output.sub!(/^([^\p{L}]*)(\p{Ll})/) { "#{$1}#{CiteProc.upcase($2)}" }
+          output.gsub!(/\b(\p{Lu})(\p{Lu}+)\b/) { "#{$1}#{CiteProc.downcase($2)}" }
 
         when 'title'
           # TODO needs locale stop words
