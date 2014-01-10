@@ -3,6 +3,8 @@ module CiteProc
 
     class Format
 
+      @available = []
+
       class << self
         attr_reader :available
 

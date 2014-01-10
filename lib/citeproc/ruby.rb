@@ -6,6 +6,8 @@ require 'citeproc'
 require 'citeproc/ruby/version'
 
 require 'citeproc/ruby/format'
+require 'citeproc/ruby/formats/default'
+require 'citeproc/ruby/formats/html'
 require 'citeproc/ruby/renderer'
 require 'citeproc/ruby/renderer/text'
 require 'citeproc/ruby/renderer/number'
