@@ -79,6 +79,22 @@ module CiteProc
           format.apply('én Foo bar', node).should == 'Én Foo bar'
         end
       end
+
+      describe 'strip-periods' do
+        before { node[:'strip-periods'] = true }
+
+        it 'strips all periods from the output' do
+          format.apply('hello there...! how.are.you?', node).should == 'hello there! howareyou?'
+          format.apply('foo bar!', node).should == 'foo bar!'
+        end
+
+        it 'does not strip periods from affixes' do
+          node[:prefix] = '...('
+          node[:suffix] = ').'
+
+          format.apply('foo.bar.', node).should == '...(foobar).'
+        end
+      end
     end
 
   end

@@ -41,35 +41,32 @@ module CiteProc
 
         setup!
 
-        unless options.empty?
-
-          # NB: Layout nodes apply formatting to
-          # affixes; all other nodes do not!
-          if node.is_a? CSL::Style::Layout
-            apply_prefix if options.key?(:prefix)
-            apply_suffix if options.key?(:suffix)
-          end
-
-          keys.each do |format|
-            if options.key?(format)
-              method = "apply_#{format}".tr('-', '_')
-              send method if respond_to?(method)
-            end
-          end
-
-          output.gsub! /\./, '' if node.strip_periods?
-
-          # TODO quotes needs locale
-
-          finalize_content!
-
-          unless node.is_a? CSL::Style::Layout
-            apply_prefix if options.key?(:prefix)
-            apply_suffix if options.key?(:suffix)
-          end
-
-          apply_display if options.key?(:display)
+        # NB: Layout nodes apply formatting to
+        # affixes; all other nodes do not!
+        if node.is_a? CSL::Style::Layout
+          apply_prefix if options.key?(:prefix)
+          apply_suffix if options.key?(:suffix)
         end
+
+        keys.each do |format|
+          if options.key?(format)
+            method = "apply_#{format}".tr('-', '_')
+            send method if respond_to?(method)
+          end
+        end unless options.empty?
+
+        output.gsub! /\.+/, '' if node.strip_periods?
+
+        # TODO quotes needs locale
+
+        finalize_content!
+
+        unless node.is_a? CSL::Style::Layout
+          apply_prefix if options.key?(:prefix)
+          apply_suffix if options.key?(:suffix)
+        end
+
+        apply_display if options.key?(:display)
 
         finalize!
 
