@@ -95,6 +95,16 @@ module CiteProc
           format.apply('foo.bar.', node).should == '...(foobar).'
         end
       end
+
+      describe 'affixes' do
+        it 'are added after text formats have been applied' do
+          node[:prefix] = 'foo'
+          node[:suffix] = 'ooo'
+          node[:'text-case'] = 'uppercase'
+
+          format.apply('ooo', node).should == 'fooOOOooo'
+        end
+      end
     end
 
   end
