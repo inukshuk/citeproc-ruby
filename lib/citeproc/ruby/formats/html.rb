@@ -19,7 +19,11 @@ module CiteProc
         attr_reader :config
 
         def initialize(config = nil)
-          @config = Html.defaults.merge(config)
+          if config.nil?
+            @config = Html.defaults.dup
+          else
+            @config = Html.defaults.merge(config)
+          end
         end
 
         def css_only?
