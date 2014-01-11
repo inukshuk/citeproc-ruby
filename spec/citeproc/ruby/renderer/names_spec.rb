@@ -206,6 +206,27 @@ module CiteProc
             renderer.render_name(names, node).should == 'Doe, J., Smith, S., et al.'
           end
         end
+
+        describe 'name-part formatting' do
+          let(:part) { CSL::Style::NamePart.new(:'text-case' => 'uppercase') }
+          before { node.parts << part }
+
+          it 'supports family name formatting' do
+            part[:name] = 'family'
+            renderer.render_name(poe, node).should == 'Edgar Allen POE'
+          end
+
+          it 'supports given name formatting' do
+            part[:name] = 'given'
+            renderer.render_name(poe, node).should == 'EDGAR ALLEN Poe'
+          end
+
+          it 'does not alter the passed-in name object' do
+            part[:name] = 'family'
+            renderer.render_name(poe, node).should == 'Edgar Allen POE'
+            poe.to_s.should == 'Edgar Allen Poe'
+          end
+        end
       end
     end
   end

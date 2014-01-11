@@ -129,8 +129,11 @@ module CiteProc
         if name.personal?
           name = name.dup
 
+          # TODO move parts of the formatting logic here
+          # because name parts may include particles etc.
+
           node.name_part.each do |part|
-            case part.name
+            case part[:name]
             when 'family'
               name.family = format(name.family, part)
             when 'given'
