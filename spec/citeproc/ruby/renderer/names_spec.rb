@@ -206,29 +206,35 @@ module CiteProc
             renderer.render_name(names, node).should == 'Doe, J., Smith, S., et al.'
           end
         end
+      end
 
-        describe 'name-part formatting' do
-          let(:part) { CSL::Style::NamePart.new(:'text-case' => 'uppercase') }
-          before { node.parts << part }
+      describe 'name-part formatting' do
+        let(:part) { CSL::Style::NamePart.new(:'text-case' => 'uppercase') }
+        before { node.parts << part }
 
-          it 'supports family name formatting' do
-            part[:name] = 'family'
-            renderer.render_name(poe, node).should == 'Edgar Allen POE'
-          end
+        it 'supports family name formatting' do
+          part[:name] = 'family'
+          renderer.render_name(poe, node).should == 'Edgar Allen POE'
+        end
 
-          pending 'family part ma include particles' do
-          end
+        pending 'family part includes particles' do
+        end
 
-          it 'supports given name formatting' do
-            part[:name] = 'given'
-            renderer.render_name(poe, node).should == 'EDGAR ALLEN Poe'
-          end
+        pending 'family part affixes includes name suffix for non-inverted names' do
+        end
 
-          it 'does not alter the passed-in name object' do
-            part[:name] = 'family'
-            renderer.render_name(poe, node).should == 'Edgar Allen POE'
-            poe.to_s.should == 'Edgar Allen Poe'
-          end
+        it 'supports given name formatting' do
+          part[:name] = 'given'
+          renderer.render_name(poe, node).should == 'EDGAR ALLEN Poe'
+        end
+
+        pending 'given part includes particles' do
+        end
+
+        it 'does not alter the passed-in name object' do
+          part[:name] = 'family'
+          renderer.render_name(poe, node).should == 'Edgar Allen POE'
+          poe.to_s.should == 'Edgar Allen Poe'
         end
       end
     end
