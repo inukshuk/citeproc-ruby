@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module CiteProc
   module Ruby
 
@@ -5,8 +7,24 @@ module CiteProc
 
       @available = []
 
+      @stopwords = {
+        :en => [
+          'about', 'above', 'across', 'afore', 'after', 'against', 'along',
+          'alongside', 'amid', 'amidst', 'among', 'amongst', 'anenst', 'apropos',
+          'apud', 'around', 'as', 'aside', 'astride', 'at', 'athwart', 'atop',
+          'barring', 'before', 'behind', 'below', 'beneath', 'beside', 'besides',
+          'between', 'beyond', 'but', 'by', 'circa', 'despite', 'd', 'down', 'during',
+          'except', 'for', 'forenenst', 'from', 'given', 'in', 'inside', 'into',
+          'lest', 'like', 'modulo' 'near', 'next', 'notwithstanding', 'of', 'off',
+          'on', 'onto', 'out', 'over', 'per', 'plus', 'pro', 'qua', 'sans', 'since',
+          'than', 'through', 'thru', 'throughout', 'thruout', 'till', 'to', 'toward',
+          'towards', 'under', 'underneath', 'until', 'unto', 'up', 'upon', 'versus',
+          'vs', 'v', 'via', 'vis-à-vis', 'with', 'within', 'without'
+        ]
+      }
+
       class << self
-        attr_reader :available
+        attr_reader :available, :stopwords
 
         def inherited(base)
           available << base
@@ -24,6 +42,11 @@ module CiteProc
           raise(Error, "unknown format: #{name}") unless klass
 
           klass.new
+        end
+
+        def stopword?(word, locale = :en)
+          return unless stopwords.key?(locale)
+          stopwords[locale].include?(word.downcase)
         end
       end
 
@@ -94,7 +117,19 @@ module CiteProc
           output.gsub!(/\b(\p{Lu})(\p{Lu}+)\b/) { "#{$1}#{CiteProc.downcase($2)}" }
 
         when 'title'
-          # TODO needs locale stop words
+          # TODO add support for stop words consisting of multiple words
+          # TODO localize
+          output.gsub!(/\b(\p{Lu})(\p{Lu}+)\b/) { "#{$1}#{CiteProc.downcase($2)}" }
+
+          # TODO exceptions: first, last word; followed by colon
+          output.gsub!(/\b(\p{Ll})(\p{L}+)\b/) do |word|
+            if Format.stopword?(word)
+              word
+            else
+              "#{CiteProc.upcase($1)}#{$2}"
+            end
+          end
+
         end
       end
 

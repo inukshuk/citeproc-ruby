@@ -78,6 +78,13 @@ module CiteProc
           format.apply('foo Bar BAR', node).should == 'Foo Bar Bar'
           format.apply('én Foo bar', node).should == 'Én Foo bar'
         end
+
+        it 'supports title case' do
+          node[:'text-case'] = 'title'
+
+          format.apply('The adventures of Huckleberry Finn', node).should == 'The Adventures of Huckleberry Finn'
+          #format.apply('of mice and men', node).should == 'Of Mice And Men'
+        end
       end
 
       describe 'strip-periods' do
