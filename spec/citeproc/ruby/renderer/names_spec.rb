@@ -216,6 +216,9 @@ module CiteProc
             renderer.render_name(poe, node).should == 'Edgar Allen POE'
           end
 
+          pending 'family part ma include particles' do
+          end
+
           it 'supports given name formatting' do
             part[:name] = 'given'
             renderer.render_name(poe, node).should == 'EDGAR ALLEN Poe'
