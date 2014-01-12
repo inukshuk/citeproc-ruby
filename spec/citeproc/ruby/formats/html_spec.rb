@@ -14,6 +14,28 @@ module CiteProc
         end
       end
 
+      describe 'entity escaping' do
+        it 'escapes entities in the original text' do
+          node[:'text-case'] = 'lowercase'
+          format.apply('Foo & BAR', node).should == 'foo &amp; bar'
+        end
+
+        it 'escapes entities in affixes' do
+          node[:prefix] = '<'
+          node[:suffix] = '>'
+          format.apply('foo', node).should == '&lt;foo&gt;'
+        end
+
+        it 'escapes entities in quotes' do
+          locale = CSL::Locale.new
+          locale.store 'open-quote', '<'
+          locale.store 'close-quote', '>'
+
+          node[:quotes] = true
+          format.apply('foo', node, locale).should == '&lt;foo&gt;'
+        end
+      end
+
       describe 'font-style' do
         it 'supports italic in both modes' do
           node[:'font-style'] = 'italic'

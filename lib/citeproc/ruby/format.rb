@@ -82,9 +82,7 @@ module CiteProc
 
         output.gsub! /\.+/, '' if node.strip_periods?
 
-        if node.quotes? && !locale.nil?
-          output.replace locale.quote(output)
-        end
+        apply_quotes if node.quotes? && !locale.nil?
 
         finalize_content!
 
@@ -100,6 +98,10 @@ module CiteProc
         output
       ensure
         cleanup!
+      end
+
+      def apply_quotes
+        output.replace locale.quote(output)
       end
 
       def apply_text_case

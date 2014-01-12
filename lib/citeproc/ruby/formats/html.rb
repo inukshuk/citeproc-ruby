@@ -64,6 +64,18 @@ module CiteProc
           )
         end
 
+        def apply_prefix
+          output.prepend(CSL.encode_xml_text(options[:prefix]))
+        end
+
+        def apply_suffix
+          output.concat(CSL.encode_xml_text(options[:suffix]))
+        end
+
+        def apply_quotes
+          output.replace locale.quote(output, true)
+        end
+
         protected
 
         def css
@@ -73,6 +85,10 @@ module CiteProc
         def finalize_content!
           super
           output.replace content_tag(config[:container], output, css) if @css
+        end
+
+        def setup!
+          output.replace CSL.encode_xml_text(output)
         end
 
         def cleanup!
