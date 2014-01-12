@@ -51,6 +51,26 @@ module CiteProc
         end
       end
 
+      describe 'given multiple names for a single variable' do
+        before do
+          item.data.editor = philosophers
+          node[:variable] = 'editor'
+        end
+
+        it 'formats them as a list' do
+          renderer.render_names(item, node).should == 'Plato, Socrates, Aristotle'
+        end
+
+        it 'supports nested name node options' do
+          node << CSL::Style::Name.new(:and => 'symbol')
+          renderer.render_names(item, node).should == 'Plato, Socrates, & Aristotle'
+        end
+
+        it 'supports nested label node' do
+          node << CSL::Style::Label.new(:prefix => ' (', :suffix => ')')
+          renderer.render_names(item, node).should == 'Plato, Socrates, Aristotle (editors)'
+        end
+      end
     end
 
     describe "Renderer#render_name" do
