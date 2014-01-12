@@ -125,6 +125,19 @@ module CiteProc
       describe 'truncation of name lists' do
         let(:names) { CiteProc::Names.new('Doe, J. and Smith, S. and Williams, T.') }
 
+        it 'supports et-al formatting via an et-al node' do
+          node[:'et-al-min'] = 3
+          node[:'et-al-use-first'] = 2
+
+          others = CSL::Style::EtAl.new(:prefix => '!!')
+          node.stub(:et_al).and_return(others)
+
+          renderer.render_name(names, node).should == 'J. Doe, S. Smith, !!et al.'
+
+          others[:term] = 'and others'
+          renderer.render_name(names, node).should == 'J. Doe, S. Smith, !!and others'
+        end
+
         describe 'with default delimiter settings' do
           it 'truncates the list if it matches or exceeds et-al-min' do
             node[:'et-al-min'] = 3

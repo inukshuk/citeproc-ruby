@@ -77,7 +77,7 @@ module CiteProc
 
             else
               others = node.et_al ?
-                format(translate(node.et_al.term), node.et_al) :
+                format(translate(node.et_al[:term]), node.et_al) :
                 translate('et-al')
 
               connector = node.delimiter_precedes_et_al?(truncated) ?

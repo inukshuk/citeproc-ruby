@@ -50,17 +50,19 @@ module CiteProc
         end
       end
 
+      attr_reader :locale
+
       def keys
         @keys ||= (CSL::Schema.attr(:formatting) - [:prefix, :suffix, :display])
       end
 
-      def apply(input, node)
+      def apply(input, node, locale = nil)
         return '' if input.nil?
         return input if input.empty? || node.nil?
 
         # create a dummy node if node is an options hash?
 
-        @input, @output, @node = input, input.dup, node
+        @input, @output, @node, @locale = input, input.dup, node, locale
 
         setup!
 
@@ -80,7 +82,9 @@ module CiteProc
 
         output.gsub! /\.+/, '' if node.strip_periods?
 
-        # TODO quotes needs locale
+        if node.quotes? && !locale.nil?
+          output.replace locale.quote(output)
+        end
 
         finalize_content!
 

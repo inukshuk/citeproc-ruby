@@ -2,11 +2,7 @@ module CiteProc
   module Ruby
 
     class Renderer
-      extend Forwardable
-
       attr_reader :locale
-
-      def_delegator :@format, :apply, :format
 
       def initialize
         @locale, @format = CSL::Locale.load, Format.load
@@ -21,6 +17,15 @@ module CiteProc
         raise ArgumentError unless respond_to?(specialize)
 
         format send(specialize, data, node), node
+      end
+
+      def format(string, node)
+        return string unless @format
+        @format.apply string, node, locale
+      end
+
+      def format=(format)
+        @format = Format.load(format)
       end
 
       def translate(name, options = {})
