@@ -27,7 +27,8 @@ module CiteProc
 
           rendition = names.map { |role, ns|
             if node.has_label?
-              render_name(ns, name) << render_label(item, node.label, role)
+              label = render_label(item, node.label[0], role)
+              render_name(ns, name) << format(label, node.label[0])
             else
               render_name ns, name
             end

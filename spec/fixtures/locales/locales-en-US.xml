@@ -210,8 +210,8 @@
 
     <!-- LONG ROLE FORMS -->
     <term name="author">
-      <single/>
-      <multiple/>
+      <single>author</single>
+      <multiple>authors</multiple>
     </term>
     <term name="editor">
       <single>editor</single>

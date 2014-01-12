@@ -16,14 +16,38 @@ module CiteProc
         i
       }
 
+      let(:poe) { CiteProc::Names.new('Poe, Edgar Allen') }
+      let(:philosophers) { CiteProc::Names.new('Plato and Socrates and Aristotle') }
+
       describe 'given an empty node' do
         it 'returns an empty string for an empty item' do
-          renderer.render_names(item, node).should == ''
+          renderer.render(item, node).should == ''
         end
 
         it 'returns an empty string for an item with variables' do
           item.data.edition = 'foo'
           renderer.render_names(item, node).should == ''
+        end
+      end
+
+      describe 'given a single name for the variable' do
+        before do
+          item.data.author = poe
+          node[:variable] = 'author'
+        end
+
+        it 'formats it in long form' do
+          renderer.render_names(item, node).should == 'Edgar Allen Poe'
+        end
+
+        it 'supports nested name node options' do
+          node << CSL::Style::Name.new(:form => 'short')
+          renderer.render_names(item, node).should == 'Poe'
+        end
+
+        it 'supports nested label node' do
+          node << CSL::Style::Label.new(:prefix => ' [', :suffix => ']')
+          renderer.render_names(item, node).should == 'Edgar Allen Poe [author]'
         end
       end
 
@@ -136,6 +160,18 @@ module CiteProc
 
           others[:term] = 'and others'
           renderer.render_name(names, node).should == 'J. Doe, S. Smith, !!and others'
+        end
+
+        it 'supports et-al-use-last' do
+          node[:'et-al-min'] = 3
+          node[:'et-al-use-first'] = 2
+          node[:'et-al-use-last'] = true
+
+          # truncated list must be at least two names short!
+          renderer.render_name(names, node).should == 'J. Doe, S. Smith, et al.'
+
+          node[:'et-al-use-first'] = 1
+          renderer.render_name(names, node).should == 'J. Doe, … T. Williams'
         end
 
         describe 'with default delimiter settings' do

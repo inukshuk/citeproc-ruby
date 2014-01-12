@@ -27,7 +27,7 @@ module CiteProc
 
 
       # page
-      
+
       describe "when the node's variable is set to :page" do
         before(:each) { node[:variable] = :page }
 
@@ -100,7 +100,7 @@ module CiteProc
         end
       end
 
-      
+
       # number-of-pages variable
 
       describe "when the node's variable is set to :'number-of-pages'" do
@@ -117,7 +117,7 @@ module CiteProc
             item.data[:'number-of-pages'] = 1
             renderer.render_label(item, node).should == 'page'
           end
-          
+
           it 'returns the plural label for numbers higher than 1' do
             item.data[:'number-of-pages'] = '2'
             renderer.render_label(item, node).should == 'pages'
@@ -128,7 +128,7 @@ module CiteProc
 
           describe 'when pluralization is set to "contextual"' do
             before(:each) { node[:plural] = 'contextual' }
-            
+
             it 'returns the singular label for number 1' do
               item.data[:'number-of-pages'] = '1'
               renderer.render_label(item, node).should == 'page'
@@ -142,10 +142,10 @@ module CiteProc
               renderer.render_label(item, node).should == 'pages'
             end
           end
-          
+
           describe 'when pluralization is set to "always"' do
             before(:each) { node[:plural] = 'always' }
-            
+
             it 'returns the singular label for number 1' do
               item.data[:'number-of-pages'] = 1
               renderer.render_label(item, node).should == 'pages'
@@ -162,7 +162,7 @@ module CiteProc
 
           describe 'when pluralization is set to "never"' do
             before(:each) { node[:plural] = 'never' }
-            
+
             it 'returns the singular label for number 1' do
               item.data[:'number-of-pages'] = 1
               renderer.render_label(item, node).should == 'page'
@@ -178,9 +178,9 @@ module CiteProc
           end
         end
       end
-      
+
       # number-of-volumes variable
-      
+
       describe "when the node's variable is set to :'number-of-volumes'" do
         before(:each) { node[:variable] = 'number-of-volumes' }
 
@@ -189,7 +189,7 @@ module CiteProc
             item.data[:'number-of-volumes'] = 1
             renderer.render_label(item, node).should == 'volume'
           end
-          
+
           it 'returns the plural label for numbers higher than 1' do
             item.data[:'number-of-volumes'] = '2'
             renderer.render_label(item, node).should == 'volumes'
@@ -199,7 +199,7 @@ module CiteProc
           end
         end
       end
-      
+
     end # render_label
   end
 end
