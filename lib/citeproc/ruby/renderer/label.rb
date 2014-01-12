@@ -17,7 +17,16 @@ module CiteProc
         when node.locator?
           value, name = item.locator, item.label
         when node.names_label?
-          value, name = item.data[variable], variable.to_s
+
+          # We handle the editortranslator special case
+          # by fetching editors since we can assume
+          # that both are present and identical!
+          if variable == :editortranslator
+            value, name = item.data[:editor], variable.to_s
+          else
+            value, name = item.data[variable], variable.to_s
+          end
+
         else
           value, name = item.data[variable], node.term
         end

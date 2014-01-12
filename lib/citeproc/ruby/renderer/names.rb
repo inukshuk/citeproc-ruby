@@ -153,13 +153,19 @@ module CiteProc
 
       def resolve_editor_translator_exception!(names)
 
-        translator = names.detect { |role, _| role == :translator }
-        return names if translator.nil?
+        i = names.index { |role, _| role == :translator }
+        return names if i.nil?
 
-        editor = names.detect { |role, _| role == :editor }
-        return names if editor.nil?
+        j = names.index { |role, _| role == :editor }
+        return names if j.nil?
 
-        # TODO
+        return names unless names[i][1] == names[j][1]
+
+        # rename the first instance and drop the second one
+        i, j = j, i if j < i
+
+        names[i][0] = :editortranslator
+        names.slice!(j)
 
         names
       end
