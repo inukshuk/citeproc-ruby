@@ -14,11 +14,46 @@ module CiteProc
       describe 'Renderer#render_choose' do
         let(:node) { CSL::Style::Choose.new }
 
+        it 'returns an empty string by default' do
+          renderer.render(item, node).should == ''
+        end
+
+        describe 'when there is a single nested block' do
+          let(:block) do
+            CSL::Style::Choose::Block.new do |b|
+              b << CSL::Style::Text.new( :term => 'retrieved')
+            end
+          end
+
+          before(:each) { node << block }
+
+          it 'returns the content of the nested node when the condition evaluates' do
+            block[:variable] = 'issue'
+            item.data[:issue] = 1
+            renderer.render(item, node).should == 'retrieved'
+          end
+
+          it 'returns an empty string when the condition does not hold' do
+            block[:variable] = 'issue'
+            renderer.render(item, node).should == ''
+          end
+        end
       end
 
       describe 'Renderer#render_block' do
         let(:node) { CSL::Style::Choose::Block.new }
 
+        it 'returns an empty string by default' do
+          renderer.render(item, node).should == ''
+        end
+
+        describe 'when there is a text node in the block' do
+          before(:each) { node << CSL::Style::Text.new( :term => 'retrieved') }
+
+          it 'returns the content of the nested node when there is no condition' do
+            renderer.render(item, node).should == 'retrieved'
+          end
+        end
       end
 
       describe 'Renderer#evaluates?' do
