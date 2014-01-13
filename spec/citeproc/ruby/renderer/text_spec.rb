@@ -93,6 +93,27 @@ module CiteProc
         end
       end
 
+      describe 'given a text node with a macro reference' do
+        let(:node) { CSL::Style::Text.new(:macro => 'foo') }
+
+        let(:macro) do
+          CSL::Style::Macro.new(:name => 'foo') do |m|
+            m << CSL::Style::Text.new(:value => 'foobar')
+          end
+        end
+
+        it 'renders the macro' do
+          node.stub(:macro).and_return(macro)
+          renderer.render(item, node).should == 'foobar'
+        end
+
+        it 'applies formats to the result' do
+          node.stub(:macro).and_return(macro)
+          node[:prefix] = '('
+          node[:suffix] = ')'
+          renderer.render(item, node).should == '(foobar)'
+        end
+      end
     end
 
   end
