@@ -14,7 +14,7 @@ module CiteProc
       # @return [String]
       def render(data, node)
         specialize = "render_#{node.nodename.tr('-', '_')}"
-        raise ArgumentError unless respond_to?(specialize)
+        raise ArgumentError unless respond_to?(specialize, true)
 
         format send(specialize, data, node), node
       end
