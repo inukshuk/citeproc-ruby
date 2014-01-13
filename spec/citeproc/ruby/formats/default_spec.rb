@@ -25,6 +25,15 @@ module CiteProc
         input.should == 'foo'
       end
 
+      it 'supports localized quotes' do
+        locale = double(:locale)
+        locale.stub(:quote).and_return('bar')
+
+        node[:quotes] = true
+
+        format.apply('foo', node, locale).should == 'bar'
+      end
+
       describe 'text-case formats' do
         it 'supports lowercase' do
           node[:'text-case'] = 'lowercase'

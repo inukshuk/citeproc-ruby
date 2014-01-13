@@ -36,6 +36,26 @@ module CiteProc
         end
       end
 
+      describe 'affixes' do
+        it 'are added after text formats have been applied' do
+          node[:prefix] = 'foo'
+          node[:suffix] = 'ooo'
+          node[:'font-style'] = 'italic'
+
+          format.apply('ooo', node).should == 'foo<i>ooo</i>ooo'
+        end
+
+        it 'are added before text formats have been applied for layout nodes' do
+          layout = CSL::Style::Layout.new
+
+          layout[:prefix] = 'foo'
+          layout[:suffix] = 'ooo'
+          layout[:'font-style'] = 'italic'
+
+          format.apply('ooo', layout).should == '<i>foooooooo</i>'
+        end
+      end
+
       describe 'font-style' do
         it 'supports italic in both modes' do
           node[:'font-style'] = 'italic'
