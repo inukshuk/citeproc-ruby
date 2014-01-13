@@ -31,7 +31,7 @@ module CiteProc
           value, name = item.data[variable], node.term
         end
 
-        return '' if value.nil? || value.empty?
+        return '' if value.nil? || value.respond_to?(:empty?) && value.empty?
 
         options = node.attributes_for :form
 

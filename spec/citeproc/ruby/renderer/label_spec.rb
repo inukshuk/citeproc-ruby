@@ -200,6 +200,26 @@ module CiteProc
         end
       end
 
+      # locators
+
+      describe "when the node's variable is set to another locator" do
+        before(:each) { node[:variable] = 'locator' }
+
+        describe "for an item with a locator and label" do
+          it "returns the singular label for a single number" do
+            item.locator = 2
+            item.label = 'book'
+            renderer.render_label(item, node).should == 'book'
+          end
+
+          it "returns the plural label for multiple numbers" do
+            item.locator = '23 & 4'
+            item.label = 'book'
+            renderer.render_label(item, node).should == 'books'
+          end
+        end
+      end
+
     end # render_label
   end
 end
