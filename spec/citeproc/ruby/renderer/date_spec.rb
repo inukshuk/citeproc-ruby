@@ -13,6 +13,15 @@ module CiteProc
       }
 
       describe 'localized rendering' do
+        let(:node) { CSL::Style::Date.new(:variable => 'issued', :form => 'numeric') }
+
+        describe 'given an item issued on January 27th, 2012' do
+          before(:each) { item.data[:issued] = '2012-01-27' }
+
+          it "uses the locale's date parts to render the date" do
+            renderer.render(item, node).should == '01/27/2012'
+          end
+        end
       end
 
       describe 'static rendering' do
@@ -72,6 +81,7 @@ module CiteProc
 
       let(:january) { CiteProc::Date.new([2012, 1]) }
       let(:december) { CiteProc::Date.new([2012, 12]) }
+      let(:independence) { CiteProc::Date.new([1776, 7, 4]) }
 
       it 'returns an empty string by default' do
         renderer.render_date_part(CiteProc::Date.today, node).should == ''
@@ -82,6 +92,17 @@ module CiteProc
 
         it 'renders the day as number by default' do
           renderer.render_date_part(today, node).should == today.day.to_s
+        end
+
+        it 'renders the day as an ordinal number when the form is set to "ordinal"' do
+          node[:form] = 'ordinal'
+          renderer.render_date_part(independence, node).should == '4th'
+
+          renderer.locale.limit_day_ordinals!
+          renderer.render_date_part(independence, node).should == '4'
+
+          independence.day = 1
+          renderer.render_date_part(independence, node).should == '1st'
         end
       end
 
@@ -112,6 +133,11 @@ module CiteProc
           node[:form] = 'numeric-leading-zeros'
           renderer.render_date_part(january, node).should == '01'
           renderer.render_date_part(december, node).should == '12'
+        end
+
+        it 'renders the name of the season when a season is set' do
+          january.season = 4
+          renderer.render_date_part(january, node).should == 'Winter'
         end
       end
 

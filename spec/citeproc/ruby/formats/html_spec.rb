@@ -3,6 +3,12 @@ require 'spec_helper'
 module CiteProc
   module Ruby
 
+    describe 'Formats::Html' do
+      it 'can be created with an options hash' do
+        Formats::Html.new(:css_only => true).should be_css_only
+      end
+    end
+
     describe 'Formats::Html#apply' do
       let(:format) { Format.load 'html' }
       let(:node) { CSL::Style::Text.new }

@@ -41,8 +41,11 @@ module CiteProc
         when node.day?
           case node.form
           when 'ordinal'
-            # TODO ordinalize only 1 locale option
-            ordinalize date.day
+            if date.day > 1 && locale.limit_day_ordinals? 
+              date.day.to_s
+            else
+              ordinalize date.day
+            end
           when 'numeric-leading-zeros'
             '%02d' % date.day
           else
