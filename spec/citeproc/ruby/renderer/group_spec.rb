@@ -14,7 +14,10 @@ module CiteProc
       let(:node) { CSL::Style::Group.new }
 
       it 'returns an empty string by default' do
-        renderer.render_group(item, node).should == ''
+        renderer.render(item, node).should == ''
+
+        node[:prefix] = '!'
+        renderer.render(item, node).should == ''
       end
 
       describe 'when there is a text node in the group' do
@@ -22,6 +25,11 @@ module CiteProc
 
         it 'returns the content of the nested node' do
           renderer.render_group(item, node).should == 'retrieved'
+        end
+
+        it 'applies formatting options to the nested node' do
+          node[:'text-case'] = 'uppercase'
+          renderer.render(item, node).should == 'RETRIEVED'
         end
 
         describe 'when there is a second text node in the group' do
@@ -36,6 +44,12 @@ module CiteProc
 
             it 'applies the delimiter to the output' do
               renderer.render_group(item, node).should == 'retrieved from'
+            end
+
+            it 'applies formatting options to the nested nodes only' do
+              node[:'text-case'] = 'uppercase'
+              node[:delimiter] = ' foo '
+              renderer.render(item, node).should == 'RETRIEVED foo FROM'
             end
 
             describe 'when a nested node produces no output' do
