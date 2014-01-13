@@ -3,6 +3,8 @@ module CiteProc
 
     class Renderer
 
+      private
+
       # @param item [CiteProc::CitationItem]
       # @param node [CSL::Style::Layout]
       # @return [String]
