@@ -25,7 +25,7 @@ module CiteProc
           resolve_editor_translator_exception! names
           name = node.name || CSL::Style::Name.new
 
-          rendition = names.map { |role, ns|
+          names.map { |role, ns|
             if node.has_label?
               label = render_label(item, node.label[0], role)
               render_name(ns, name) << format(label, node.label[0])
@@ -34,8 +34,6 @@ module CiteProc
             end
 
           }.join(node.delimiter)
-
-          format rendition, node
         end
       end
 

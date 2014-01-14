@@ -40,3 +40,18 @@ Feature: Rendering CSL nodes
       | (2014).          |
       | (1999a).         |
 
+  @wip
+  Scenario: Names Rendering
+    Given the following style node:
+      """
+      <names variable="translator" delimiter=", " prefix="(" suffix=")">
+        <name and="symbol" delimiter=", "/>
+        <label form="short" prefix=", " text-case="capitalize-first" suffix=""/>
+      </names>
+      """
+    When I render the following citation items as "text":
+      | translator                       |
+      | Romy Schneider and Peter Sellers |
+    Then the results should be:
+      | (Romy Schneider & Peter Sellers, Trans.) |
+

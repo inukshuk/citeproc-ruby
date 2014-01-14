@@ -39,14 +39,16 @@ module CiteProc
       def render_date_part(date, node)
         case
         when node.day?
-          case node.form
-          when 'ordinal'
+          case
+          when date.day.nil?
+            ''
+          when node.form == 'ordinal'
             if date.day > 1 && locale.limit_day_ordinals? 
               date.day.to_s
             else
               ordinalize date.day
             end
-          when 'numeric-leading-zeros'
+          when node.form == 'numeric-leading-zeros'
             '%02d' % date.day
           else
             date.day.to_s
@@ -56,6 +58,8 @@ module CiteProc
           case
           when date.season?
             translate(('season-%02d' % date.season), node.attributes_for(:form))
+          when date.month.nil?
+            ''
           when node.numeric?
             date.month.to_s
           when node.numeric_leading_zeros?
