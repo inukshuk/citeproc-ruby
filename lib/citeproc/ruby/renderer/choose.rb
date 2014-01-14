@@ -47,7 +47,7 @@ module CiteProc
         node.conditions.send(node.matcher) do |type, matcher, values|
           case type
           when :disambiguate
-            false # not implemented yet
+            false # TODO not implemented yet
 
           when :'is-numeric'
             evaluates_condition? matcher, values do |value|
@@ -63,16 +63,20 @@ module CiteProc
 
 
           when :locator
+            locator = item.locator.to_s.tr(' ', '-')
+
             evaluates_condition? matcher, values do |value|
-              value.to_s == item.locator.to_s
+              value.to_s == locator
             end
 
           when :position
-            false # not implemented yet
+            false # TODO not implemented yet
 
           when :type
+            type = item.data[:type].to_s
+
             evaluates_condition? matcher, values do |value|
-              value.to_s == item.data[:type].to_s
+              value.to_s == type
             end
 
           when :variable
@@ -81,8 +85,7 @@ module CiteProc
             end
 
           else
-            warn "unknown condition type: #{type}"
-            false
+            fail "unknown condition type: #{type}"
           end
         end
       end
