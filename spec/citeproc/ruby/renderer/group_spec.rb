@@ -49,7 +49,9 @@ module CiteProc
             it 'applies formatting options to the nested nodes only' do
               node[:'text-case'] = 'uppercase'
               node[:delimiter] = ' foo '
-              renderer.render(item, node).should == 'RETRIEVED foo FROM'
+              node[:prefix] = '('
+              node[:suffix] = ')'
+              renderer.render(item, node).should == '(RETRIEVED foo FROM)'
             end
 
             describe 'when a nested node produces no output' do

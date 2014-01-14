@@ -140,11 +140,11 @@ module CiteProc
       end
 
       def apply_prefix
-        output.prepend(options[:prefix])
+        output.prepend(options[:prefix]).squeeze!(' ')
       end
 
       def apply_suffix
-        output.concat(options[:suffix])
+        output.concat(options[:suffix]).squeeze!(' ')
       end
 
       protected

@@ -11,12 +11,16 @@ module CiteProc
         
         observer = ItemObserver.new(item.data)
         observer.start
-        
-        rendition = node.each_child.map { |child|
-          render item, child
-        }.reject(&:empty?).join(node.delimiter)
-        
-        observer.stop
+
+        begin
+          rendition = node.each_child.map { |child|
+            render item, child
+          }.reject(&:empty?).join(node.delimiter)
+          
+        ensure
+          observer.stop
+        end
+
         return '' if observer.skip?
         
         rendition

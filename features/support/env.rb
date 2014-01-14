@@ -19,3 +19,13 @@ rescue LoadError
 end
 
 require 'citeproc/ruby'
+
+module Fixtures
+	PATH = File.expand_path('../../../spec/fixtures', __FILE__)
+
+	Dir[File.join(PATH, '*.rb')].each do |fixture|
+		require fixture
+	end
+end
+
+World(Fixtures)

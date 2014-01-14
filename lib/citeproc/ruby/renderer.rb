@@ -4,8 +4,13 @@ module CiteProc
     class Renderer
       attr_reader :locale
 
-      def initialize
-        @locale, @format = CSL::Locale.load, Format.load
+      def initialize(options = nil)
+        if options.nil?
+          @locale, @format = CSL::Locale.load, Format.load
+        else
+          locale, format = options.values_at(:locale, :format)
+          @locale, @format = CSL::Locale.load(locale), Format.load(format)
+        end
       end
 
 
@@ -21,11 +26,15 @@ module CiteProc
 
       def format(string, node)
         return string unless @format
-        @format.apply string, node, locale
+        @format.apply(string, node, locale)
       end
 
       def format=(format)
         @format = Format.load(format)
+      end
+
+      def locale=(locale)
+        @locale = CSL::Locale.load(locale)
       end
 
       def translate(name, options = {})
