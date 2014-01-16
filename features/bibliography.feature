@@ -10,8 +10,8 @@ Feature: Rendering bibliography nodes
       | book    | Thomas Pynchon   | The crying of lot 49  | November 7, 2006 | Harper Perennial      |                     |        |       |
       | article | Derrida, Jacques | The purveyor of truth | 1975             | Yale University Press | Yale French Studies | 31-113 | 52    |
     Then the results should be:
-      | Pynchon, Thomas. (2006). The crying of lot 49. Harper Perennial. |
-      | Derrida, Jacques. (1975). The purveyor of truth. |
+      | Pynchon, T. (2006). The crying of lot 49. Harper Perennial. |
+      | Derrida, J. (1975). The purveyor of truth. |
 
     When I render the following citation item as "text":
       | type            | book             |
@@ -20,4 +20,4 @@ Feature: Rendering bibliography nodes
       | issued          | April 23, 1989   |
       | publisher       | Vintage          |
       | publisher-place | London           |
-    Then the result should be: Nabokov, Vladimir. (1989). Pale fire. London: Vintage.
+    Then the result should be: Nabokov, V. (1989). Pale fire. London: Vintage.

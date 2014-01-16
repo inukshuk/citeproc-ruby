@@ -1,33 +1,35 @@
 module CiteProc
   module Ruby
-    
+
     class Renderer
-      
+
       # @param item [CiteProc::CitationItem]
       # @param node [CSL::Style::Group]
       # @return [String]
       def render_group(item, node)
         return '' unless node.has_children?
-        
+
         observer = ItemObserver.new(item.data)
         observer.start
 
         begin
           rendition = node.each_child.map { |child|
             render item, child
-          }.reject(&:empty?).join(node.delimiter)
-          
+          }.reject(&:empty?)
+
+          rendition = @format.squeeze_join(rendition, node.delimiter)
+
         ensure
           observer.stop
         end
 
         return '' if observer.skip?
-        
+
         rendition
       end
 
 
-      class ItemObserver  
+      class ItemObserver
         attr_accessor :history, :item
 
         def initialize(item, history = {})
@@ -38,22 +40,22 @@ module CiteProc
           item.add_observer(self)
           self
         end
-        
+
         def stop
           item.delete_observer(self)
           self
         end
-        
+
         def update(method, key, value)
           history[key] = value if method == :read
         end
-        
+
         def skip?
           !history.empty? && history.values.all?(&:nil?)
         end
       end
-      
+
     end
-    
+
   end
 end

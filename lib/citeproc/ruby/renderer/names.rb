@@ -142,9 +142,11 @@ module CiteProc
 
           name.options.merge! node.name_options
           name.sort_order! node.name_as_sort_order_at?(position)
+
+          name.initialize_without_hyphen! if node.initialize_without_hyphen?
         end
 
-        format name.to_s, node
+        format name.format, node
       end
 
       private

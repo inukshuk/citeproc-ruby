@@ -52,7 +52,30 @@ module CiteProc
         end
 
         def squeezable?(string)
-          @squeezable === string
+          squeezable === string
+        end
+
+        def squeezable
+          @squeezable ||= Format.squeezable
+        end
+
+        def squeeze_join(a, b)
+          case a
+          when Array
+            a.inject { |m, n|
+              squeeze_join(squeeze_join(m, b), n)
+            }
+
+          when String
+            b = b.to_s.each_char.drop_while.with_index { |c, i|
+              squeezable?(c) && a.end_with?(b[0, i + 1])
+            }.join('')
+
+            a + b
+
+          else
+            raise ArgumentError
+          end
         end
       end
 
@@ -60,6 +83,14 @@ module CiteProc
 
       def keys
         @keys ||= (CSL::Schema.attr(:formatting) - [:prefix, :suffix, :display])
+      end
+
+      def squeezable?(string)
+        self.class.squeezable?(string)
+      end
+
+      def squeeze_join(a, b)
+        self.class.squeeze_join(a, b)
       end
 
       def apply(input, node, locale = nil)
@@ -149,7 +180,7 @@ module CiteProc
         prefix = options[:prefix].to_s
 
         prefix = prefix.reverse.each_char.drop_while.with_index { |c, i|
-          Format.squeezable?(c) && output.start_with?(prefix[-(i + 1) .. -1])
+          Format.squeezable?(c) && input.start_with?(prefix[-(i + 1) .. -1])
         }.join('').reverse
 
         output.prepend(prefix)
@@ -159,7 +190,7 @@ module CiteProc
         suffix = options[:suffix].to_s
 
         suffix = suffix.each_char.drop_while.with_index { |c, i|
-          Format.squeezable?(c) && output.end_with?(suffix[0, i + 1])
+          squeezable?(c) && input.end_with?(suffix[0, i + 1])
         }.join('')
 
         output.concat(suffix)
