@@ -120,6 +120,22 @@ module CiteProc
 
           format.apply('ooo', node).should == 'fooOOOooo'
         end
+
+        it 'drop squeezable characters at start/end' do
+          node[:suffix] = ' '
+
+          format.apply('foo', node).should == 'foo '
+          format.apply('foo ', node).should == 'foo '
+
+          node[:suffix] = '. '
+          format.apply('foo', node).should == 'foo. '
+          format.apply('foo.', node).should == 'foo. '
+
+          node[:prefix] = '.'
+          format.apply('foo', node).should == '.foo. '
+          format.apply('.foo', node).should == '.foo. '
+          format.apply(',foo', node).should == '.,foo. '
+        end
       end
     end
 

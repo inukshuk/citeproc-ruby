@@ -7,6 +7,8 @@ module CiteProc
 
       @available = []
 
+      @squeezable = /^[\s\.,]+$/
+
       @stopwords = {
         :en => [
           'about', 'above', 'across', 'afore', 'after', 'against', 'along',
@@ -47,6 +49,10 @@ module CiteProc
         def stopword?(word, locale = :en)
           return unless stopwords.key?(locale)
           stopwords[locale].include?(word.downcase)
+        end
+
+        def squeezable?(string)
+          @squeezable === string
         end
       end
 
@@ -140,11 +146,23 @@ module CiteProc
       end
 
       def apply_prefix
-        output.prepend(options[:prefix]).squeeze!(' ')
+        prefix = options[:prefix].to_s
+
+        prefix = prefix.reverse.each_char.drop_while.with_index { |c, i|
+          Format.squeezable?(c) && output.start_with?(prefix[-(i + 1) .. -1])
+        }.join('').reverse
+
+        output.prepend(prefix)
       end
 
       def apply_suffix
-        output.concat(options[:suffix]).squeeze!(' ')
+        suffix = options[:suffix].to_s
+
+        suffix = suffix.each_char.drop_while.with_index { |c, i|
+          Format.squeezable?(c) && output.end_with?(suffix[0, i + 1])
+        }.join('')
+
+        output.concat(suffix)
       end
 
       protected
