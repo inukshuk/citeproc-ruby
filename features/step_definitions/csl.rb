@@ -9,7 +9,7 @@ end
 
 When(/^I render the following citation items as "(.*?)":$/) do |format, items|
   r = CiteProc::Ruby::Renderer.new(:format => format)
- 
+
   @results = items.hashes.map.with_index do |data, idx|
     i = CiteProc::CitationItem.new(:id => "ID-#{idx}")
 

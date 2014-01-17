@@ -17,7 +17,7 @@ module CiteProc
             render item, child
           }.reject(&:empty?)
 
-          rendition = @format.squeeze_join(rendition, node.delimiter)
+          rendition = join(rendition, node.delimiter)
 
         ensure
           observer.stop

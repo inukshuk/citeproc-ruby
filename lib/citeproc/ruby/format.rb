@@ -59,22 +59,33 @@ module CiteProc
           @squeezable ||= Format.squeezable
         end
 
-        def squeeze_join(a, b)
-          case a
-          when Array
-            a.inject { |m, n|
-              squeeze_join(squeeze_join(m, b), n)
-            }
+        def drop_squeezables(string, suffix)
+          raise ArgumenError unless string.is_a?(::String)
+          raise ArgumenError unless suffix.is_a?(::String)
 
-          when String
-            b = b.to_s.each_char.drop_while.with_index { |c, i|
-              squeezable?(c) && a.end_with?(b[0, i + 1])
-            }.join('')
+          suffix.each_char.drop_while.with_index { |c, i|
+            squeezable?(c) && string.end_with?(suffix[0, i + 1])
+          }.join('')
+        end
 
-            a + b
+        def reverse_drop_squeezables(string, prefix)
+          raise ArgumenError unless string.is_a?(::String)
+          raise ArgumenError unless prefix.is_a?(::String)
 
-          else
-            raise ArgumentError
+          prefix.reverse.each_char.drop_while.with_index { |c, i|
+            squeezable?(c) && string.start_with?(prefix[-(i + 1) .. -1])
+          }.join('').reverse
+        end
+
+        def concat(string, suffix)
+          "#{string}#{drop_squeezables(string, suffix)}"
+        end
+
+        def join(list, delimiter)
+          raise ArgumentError unless list.is_a?(Enumerable)
+
+          list.inject do |m, n|
+            concat(concat(m, delimiter), n)
           end
         end
       end
@@ -89,8 +100,20 @@ module CiteProc
         self.class.squeezable?(string)
       end
 
-      def squeeze_join(a, b)
-        self.class.squeeze_join(a, b)
+      def concat(string, suffix)
+        self.class.concat(string, suffix)
+      end
+
+      def drop_squeezables(string, suffix)
+        self.class.drop_squeezables(string, suffix)
+      end
+
+      def reverse_drop_squeezables(string, prefix)
+        self.class.reverse_drop_squeezables(string, prefix)
+      end
+
+      def join(list, delimiter)
+        self.class.join(list, delimiter)
       end
 
       def apply(input, node, locale = nil)
@@ -177,23 +200,17 @@ module CiteProc
       end
 
       def apply_prefix
-        prefix = options[:prefix].to_s
+        prefix = options[:prefix]
+        return unless prefix
 
-        prefix = prefix.reverse.each_char.drop_while.with_index { |c, i|
-          Format.squeezable?(c) && input.start_with?(prefix[-(i + 1) .. -1])
-        }.join('').reverse
-
-        output.prepend(prefix)
+        output.prepend(reverse_drop_squeezables(input, prefix))
       end
 
       def apply_suffix
-        suffix = options[:suffix].to_s
+        suffix = options[:suffix]
+        return unless suffix
 
-        suffix = suffix.each_char.drop_while.with_index { |c, i|
-          squeezable?(c) && input.end_with?(suffix[0, i + 1])
-        }.join('')
-
-        output.concat(suffix)
+        output.concat(drop_squeezables(input, suffix))
       end
 
       protected

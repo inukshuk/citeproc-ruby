@@ -18,6 +18,8 @@ module CiteProc
       # @param node [CSL::Node]
       # @return [String]
       def render(data, node)
+        raise ArgumentError unless node.respond_to?(:nodename)
+
         specialize = "render_#{node.nodename.tr('-', '_')}"
         raise ArgumentError unless respond_to?(specialize, true)
 
@@ -31,6 +33,16 @@ module CiteProc
 
       def format=(format)
         @format = Format.load(format)
+      end
+
+      def join(list, delimiter)
+        return list.join(delimiter) unless @format
+        @format.join(list, delimiter)
+      end
+
+      def concat(string, suffix)
+        return "#{string}#{suffix}" unless @format
+        @format.concat(string, suffix)
       end
 
       def locale=(locale)
