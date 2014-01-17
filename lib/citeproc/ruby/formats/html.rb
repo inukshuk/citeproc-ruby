@@ -90,12 +90,12 @@ module CiteProc
         def setup!
           # TODO find a better solution for this (strip tags?)
           # For now make sure not to double encode entities
-          # by matching spaces after.
+          # by matching spaces before or after.
 
           output.gsub! /[&<>]\s/, {
             '& ' => '&amp; ',
             '< ' => '&lt; ',
-            '> ' => '&gt; '
+            ' >' => ' &gt;'
           }
         end
 
