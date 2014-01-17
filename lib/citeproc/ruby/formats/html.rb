@@ -92,11 +92,8 @@ module CiteProc
           # For now make sure not to double encode entities
           # by matching spaces before or after.
 
-          output.gsub! /[&<>]\s/, {
-            '& ' => '&amp; ',
-            '< ' => '&lt; ',
-            ' >' => ' &gt;'
-          }
+          output.gsub! /[&<]\s/, '& ' => '&amp; ', '< ' => '&lt; '
+          output.gsub! /\s>/, ' &gt;'
         end
 
         def cleanup!
