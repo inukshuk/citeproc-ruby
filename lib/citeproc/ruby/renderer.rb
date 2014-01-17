@@ -18,10 +18,13 @@ module CiteProc
       # @param node [CSL::Node]
       # @return [String]
       def render(data, node)
-        raise ArgumentError unless node.respond_to?(:nodename)
+        raise ArgumentError, "no CSL node: #{node.inspect}" unless
+          node.respond_to?(:nodename)
 
         specialize = "render_#{node.nodename.tr('-', '_')}"
-        raise ArgumentError unless respond_to?(specialize, true)
+
+        raise ArgumentError, "#{specialize} not implemented" unless
+          respond_to?(specialize, true)
 
         format send(specialize, data, node), node
       end

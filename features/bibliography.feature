@@ -14,6 +14,7 @@ Feature: Rendering bibliography nodes
       | Derrida, J. (1975). The purveyor of truth. Yale French Studies, (52), 31-113. |
 
   Scenario: Rendering APA style bibliographies as HTML
+    Given the "apa" style's bibliography node
     When I render the following citation item as "html":
       | type            | book             |
       | author          | Vladimir Nabokov |
@@ -21,4 +22,4 @@ Feature: Rendering bibliography nodes
       | issued          | April 23, 1989   |
       | publisher       | Vintage          |
       | publisher-place | London           |
-    Then the result should be: Nabokov, V. (1989). <i>Pale fire.</i> London: Vintage.
+    Then the result should be: Nabokov, V. (1989). <i>Pale fire</i>. London: Vintage.

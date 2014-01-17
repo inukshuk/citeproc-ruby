@@ -88,7 +88,15 @@ module CiteProc
         end
 
         def setup!
-          output.replace CSL.encode_xml_text(output)
+          # TODO find a better solution for this (strip tags?)
+          # For now make sure not to double encode entities
+          # by matching spaces after.
+
+          output.gsub! /[&<>]\s/, {
+            '& ' => '&amp; ',
+            '< ' => '&lt; ',
+            '> ' => '&gt; '
+          }
         end
 
         def cleanup!
