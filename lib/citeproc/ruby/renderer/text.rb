@@ -9,9 +9,21 @@ module CiteProc
       def render_text(item, node)
         case
         when node.has_variable?
-          # TODO abbreviate?
-          # TODO page range
-          item.data.variable(node.variable, node.variable_options).to_s
+
+          text = item.data.variable(node.variable, node.variable_options).to_s
+          
+          # TODO abbreviate? if node.form = 'short'
+
+          case
+          when node.variable == 'page' && node.format_page_ranges?
+            text = format_page_range(text, node.root.page_range_format)
+
+          when node.variable == 'page-first' && text.empty?
+            text = item.data[:'page-first'].to_s[/\d+/].to_s
+
+          end
+
+          text
 
         when node.has_macro?
           render item, node.macro

@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 module CiteProc
   module Ruby
 
@@ -29,6 +31,8 @@ module CiteProc
         format send(specialize, data, node), node
       end
 
+      # Applies the current format on the string using the
+      # node's formatting options.
       def format(string, node)
         return string unless @format
         @format.apply(string, node, locale)
@@ -43,6 +47,14 @@ module CiteProc
         @format.join(list, delimiter)
       end
 
+      # Concatenates two strings, making sure that squeezable
+      # characters are not duplicated between string and suffix.
+      #
+      # @param [String] string
+      # @param [String] suffix
+      #
+      # @return [String] new string consisting of string
+      #   and suffix
       def concat(string, suffix)
         return "#{string}#{suffix}" unless @format
         @format.concat(string, suffix)
@@ -56,13 +68,57 @@ module CiteProc
         locale.translate(name, options).to_s
       end
 
+      # @return [String] number as an ordinal
       def ordinalize(number, options = {})
         locale.ordinalize(number, options)
       end
 
+      # @return [String] the roman numeral of number
 			def romanize(number)
 				CiteProc::Number.romanize(number)
 			end
+
+
+      # Formats pages accoring to format. Valid formats are:
+      #
+      # * "chicago": page ranges are abbreviated according to
+      #   the Chicago Manual of Style rules.
+      # * "expanded": Abbreviated page ranges are expanded to
+      #   their non-abbreviated form: 42-45, 321-328, 2787-2816.
+      # * "minimal": All digits repeated in the second number
+      #   are left out: 42-45, 321-8, 2787-816.
+      #
+      # @param [String] pages to be formatted
+      # @param [String] format to use for formatting
+      def format_page_range(pages, format)
+        dash = translate('page-range-delimiter') || '–' # en-dash
+
+        pages.gsub PAGE_RANGE_PATTERN do
+          affixes, f, t = [$1, $3, $4, $6], $2, $5
+
+          if affixes.compact.empty?
+            case format
+            when 'chicago'
+
+            when 'expanded'
+
+            when 'minimal'
+
+            when 'minimal-two'
+
+            else
+              raise ArgumentError "unknown page range format: #{format}"
+            end
+          end
+
+          affixes.zip([f, dash, t]).flatten.compact.join('')
+        end
+      end
+
+      PAGE_RANGE_PATTERN =
+        #   ------------  -2-  ------------               ------------  -5-  ------------
+        /\b([[:alpha:]]*)(\d+)([[:alpha:]]*)\s*[‒–—―]+\s*([[:alpha:]]*)(\d+)([[:alpha:]]*)\b/
+
     end
 
   end
