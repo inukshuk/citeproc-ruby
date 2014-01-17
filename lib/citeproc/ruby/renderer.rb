@@ -65,7 +65,7 @@ module CiteProc
       end
 
       def translate(name, options = {})
-        locale.translate(name, options).to_s
+        locale.translate(name, options)
       end
 
       # @return [String] number as an ordinal
@@ -96,18 +96,34 @@ module CiteProc
         pages.gsub PAGE_RANGE_PATTERN do
           affixes, f, t = [$1, $3, $4, $6], $2, $5
 
-          if affixes.compact.empty?
-            case format
-            when 'chicago'
+          if affixes.all?(&:empty?)
 
-            when 'expanded'
+            d = f.length - t.length
 
-            when 'minimal'
+            if d >= 0
+              t.prepend f[0, d] unless d.zero?
 
-            when 'minimal-two'
+              case format
+              when 'chicago'
 
-            else
-              raise ArgumentError "unknown page range format: #{format}"
+              when 'expanded'
+                # nothing to do
+
+              when 'minimal'
+                t = t.each_char.drop_while.with_index { |c, i| c == f[i] }.join('')
+
+              when 'minimal-two'
+                len = t.length
+
+                if len > 2
+                  t = t.each_char.drop_while.with_index { |c, i|
+                    c == f[i] && len - i > 2
+                  }.join('')
+                end
+
+              else
+                raise ArgumentError, "unknown page range format: #{format}"
+              end
             end
           end
 
@@ -116,8 +132,8 @@ module CiteProc
       end
 
       PAGE_RANGE_PATTERN =
-        #   ------------  -2-  ------------               ------------  -5-  ------------
-        /\b([[:alpha:]]*)(\d+)([[:alpha:]]*)\s*[‒–—―]+\s*([[:alpha:]]*)(\d+)([[:alpha:]]*)\b/
+        #   ------------  -2-  ------------             ------------  -5-  ------------
+        /\b([[:alpha:]]*)(\d+)([[:alpha:]]*)\s*[–-]+\s*([[:alpha:]]*)(\d+)([[:alpha:]]*)\b/
 
     end
 
