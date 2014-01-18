@@ -91,9 +91,13 @@ module CiteProc
       # @param [String] pages to be formatted
       # @param [String] format to use for formatting
       def format_page_range(pages, format)
+        format_page_range!(pages.dup, format)
+      end
+
+      def format_page_range!(pages, format)
         dash = translate('page-range-delimiter') || '–' # en-dash
 
-        pages.gsub PAGE_RANGE_PATTERN do
+        pages.gsub! PAGE_RANGE_PATTERN do
           affixes, f, t = [$1, $3, $4, $6], $2, $5
 
           if affixes.all?(&:empty?)
@@ -106,7 +110,7 @@ module CiteProc
 
               if format == 'chicago'
                 changes = dim - f.chars.zip(t.chars).
-                  take_while { |a,b| a == b }.length
+                  take_while { |a,b| a == b }.length if dim == 4
 
                 format = case
                   when dim < 3
@@ -141,6 +145,8 @@ module CiteProc
 
           affixes.zip([f, dash, t]).flatten.compact.join('')
         end
+
+        pages
       end
 
       PAGE_RANGE_PATTERN =

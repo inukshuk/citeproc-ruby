@@ -14,6 +14,11 @@ module CiteProc
         case
         when node.page?
           value, name = item.read_attribute(:page), :page
+
+          if node.format_page_ranges?
+            format_page_range!(value, node.root.page_range_format)
+          end
+
         when node.locator?
           value, name = item.locator, item.label
         when node.names_label?

@@ -11,12 +11,12 @@ module CiteProc
         when node.has_variable?
 
           text = item.data.variable(node.variable, node.variable_options).to_s
-          
+
           # TODO abbreviate? if node.form = 'short'
 
           case
           when node.variable == 'page' && node.format_page_ranges?
-            text = format_page_range(text, node.root.page_range_format)
+            format_page_range!(text, node.root.page_range_format)
 
           when node.variable == 'page-first' && text.empty?
             text = item.data[:'page-first'].to_s[/\d+/].to_s
