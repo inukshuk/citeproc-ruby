@@ -98,29 +98,41 @@ module CiteProc
 
           if affixes.all?(&:empty?)
 
-            d = f.length - t.length
+            dim = f.length
+            delta = dim - t.length
 
-            if d >= 0
-              t.prepend f[0, d] unless d.zero?
+            if delta >= 0
+              t.prepend f[0, delta] unless delta.zero?
+
+              if format == 'chicago'
+                changes = dim - f.chars.zip(t.chars).
+                  take_while { |a,b| a == b }.length
+
+                format = case
+                  when dim < 3
+                    'expanded'
+                  when dim == 4 && changes > 2
+                    'expanded'
+                  when f[-2, 2] == '00'
+                    'expanded'
+                  when f[-2] == '0'
+                    'minimal'
+                  else
+                    'minimal-two'
+                  end
+              end
 
               case format
-              when 'chicago'
-
               when 'expanded'
                 # nothing to do
-
               when 'minimal'
                 t = t.each_char.drop_while.with_index { |c, i| c == f[i] }.join('')
-
               when 'minimal-two'
-                len = t.length
-
-                if len > 2
+                if dim > 2
                   t = t.each_char.drop_while.with_index { |c, i|
-                    c == f[i] && len - i > 2
+                    c == f[i] && dim - i > 2
                   }.join('')
                 end
-
               else
                 raise ArgumentError, "unknown page range format: #{format}"
               end

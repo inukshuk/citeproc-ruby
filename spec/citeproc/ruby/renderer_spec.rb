@@ -47,7 +47,13 @@ module CiteProc
           renderer.format_page_range('2787- 816', 'expanded').should == '2787–2816'
         end
 
-        it 'supports "chicago" format'
+        it 'supports "chicago" format' do
+          renderer.format_page_range('3-10; 71-72', 'chicago').should == '3–10; 71–72'
+          renderer.format_page_range('100-104; 600-613; 1100-23', 'chicago').should == '100–104; 600–613; 1100–1123'
+          renderer.format_page_range('107-08; 505-517; 1002-006', 'chicago').should == '107–8; 505–17; 1002–6'
+          renderer.format_page_range('321-325; 415-532; 11564-11568; 13792-803', 'chicago').should == '321–25; 415–532; 11564–68; 13792–803'
+          renderer.format_page_range('1496-504; 2787-2816', 'chicago').should == '1496–1504; 2787–2816'
+        end
 
         it 'formats multiple page ranges' do
           renderer.format_page_range('42-45 and 57; 81-3 & 123-4', 'minimal-two').should == '42–45 and 57; 81–83 & 123–24'
