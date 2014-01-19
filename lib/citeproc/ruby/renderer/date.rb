@@ -14,7 +14,7 @@ module CiteProc
         return '' if date.nil? || date.empty?
 
         # TODO date-ranges
-        
+
         if node.localized?
           localized_node = locale.date.detect { |d| d.form == node.form } or
             raise RenderingError, "no localized date for form #{node.form} found"
@@ -43,7 +43,7 @@ module CiteProc
           when date.day.nil?
             ''
           when node.form == 'ordinal'
-            if date.day > 1 && locale.limit_day_ordinals? 
+            if date.day > 1 && locale.limit_day_ordinals?
               date.day.to_s
             else
               ordinalize date.day

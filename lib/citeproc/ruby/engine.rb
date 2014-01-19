@@ -8,6 +8,14 @@ module CiteProc
       @version = CSL::Schema.version
       @priority = 1
 
+      attr_reader :renderer, :style
+
+      def initialize(*arguments)
+        super(*arguments)
+        @renderer = Renderer.new
+
+        update! unless processor.nil?
+      end
 
       def process
         raise NotImplementedByEngine
@@ -29,6 +37,23 @@ module CiteProc
         raise NotImplementedByEngine
       end
 
+      def render(item, mode = :bibliography)
+        case mode
+        when :bibliography
+          renderer.render item, style.bibliography.layout
+        when :citation
+          renderer.render item, style.citation.layout
+        else
+          raise ArgumentError, "cannot render unknown mode: #{mode.inspect}"
+        end
+      end
+
+      def update!
+        renderer.format = processor.options[:format]
+        renderer.locale = processor.options[:locale]
+
+        @style = CSL::Style.load processor.options[:style]
+      end
     end
   end
 end

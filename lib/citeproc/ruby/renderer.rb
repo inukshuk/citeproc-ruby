@@ -4,17 +4,17 @@ module CiteProc
   module Ruby
 
     class Renderer
-      attr_reader :locale
 
       def initialize(options = nil)
-        if options.nil?
-          @locale, @format = CSL::Locale.load, Format.load
-        else
+        unless options.nil?
           locale, format = options.values_at(:locale, :format)
           @locale, @format = CSL::Locale.load(locale), Format.load(format)
         end
       end
 
+      def locale
+        @locale ||= CSL::Locale.load
+      end
 
       # @param item [CiteProc::CitationItem]
       # @param node [CSL::Node]
@@ -34,8 +34,7 @@ module CiteProc
       # Applies the current format on the string using the
       # node's formatting options.
       def format(string, node)
-        return string unless @format
-        @format.apply(string, node, locale)
+        fmt.apply(string, node, locale)
       end
 
       def format=(format)
@@ -43,8 +42,7 @@ module CiteProc
       end
 
       def join(list, delimiter)
-        return list.join(delimiter) unless @format
-        @format.join(list, delimiter)
+        fmt.join(list, delimiter)
       end
 
       # Concatenates two strings, making sure that squeezable
@@ -56,8 +54,7 @@ module CiteProc
       # @return [String] new string consisting of string
       #   and suffix
       def concat(string, suffix)
-        return "#{string}#{suffix}" unless @format
-        @format.concat(string, suffix)
+        fmt.concat(string, suffix)
       end
 
       def locale=(locale)
@@ -153,6 +150,12 @@ module CiteProc
         #   ------------  -2-  ------------             ------------  -5-  ------------
         /\b([[:alpha:]]*)(\d+)([[:alpha:]]*)\s*[–-]+\s*([[:alpha:]]*)(\d+)([[:alpha:]]*)\b/
 
+
+      protected
+
+      def fmt
+       @format ||= Format.load
+      end
     end
 
   end
