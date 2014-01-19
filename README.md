@@ -7,6 +7,7 @@ cite processor, please refer to the documentation of the
 [citeproc](https://rubygems/gems/citeproc) gem instead.
 
 [![Build Status](https://secure.travis-ci.org/inukshuk/citeproc-ruby.png)](http://travis-ci.org/inukshuk/citeproc-ruby)
+[![Coverage Status](https://coveralls.io/repos/inukshuk/citeproc-ruby/badge.png?branch=master)](https://coveralls.io/r/inukshuk/citeproc-ruby?branch=master)
 
 Development
 -----------
