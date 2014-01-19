@@ -47,16 +47,22 @@ module CiteProc
         raise NotImplementedByEngine
       end
 
-      def render(item, mode = :bibliography)
-        case mode
-        when :bibliography
-          renderer.render item, style.bibliography.layout
-        when :citation
-          renderer.render item, style.citation.layout
-        else
-          raise ArgumentError, "cannot render unknown mode: #{mode.inspect}"
+      def render(mode, data)
+        node = case mode
+          when :bibliography
+            style.bibliography.layout
+          when :citation
+            style.citation.layout
+          else
+            raise ArgumentError, "cannot render unknown mode: #{mode.inspect}"
+          end
+
+        data.map do |item|
+          item.data = processor[item.id]
+          renderer.render item, node
         end
       end
+
 
       def update!
         renderer.format = processor.options[:format]

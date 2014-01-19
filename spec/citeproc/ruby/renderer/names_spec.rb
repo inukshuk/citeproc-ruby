@@ -16,7 +16,7 @@ module CiteProc
         i
       }
 
-      let(:poe) { CiteProc::Names.new('Poe, Edgar Allen') }
+      let(:poe) { people(:poe) }
       let(:philosophers) { CiteProc::Names.new('Plato and Socrates and Aristotle') }
 
       describe 'given an empty node' do
@@ -140,7 +140,7 @@ module CiteProc
 
       let(:node) { CSL::Style::Name.new }
 
-      let(:poe) { CiteProc::Names.new('Poe, Edgar Allen') }
+      let(:poe) { people(:poe) }
       let(:philosophers) { CiteProc::Names.new('Plato and Socrates and Aristotle') }
 
       describe 'given an empty node' do
