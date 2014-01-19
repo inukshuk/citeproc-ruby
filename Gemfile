@@ -33,6 +33,8 @@ group :extra do
 
 	gem 'yard', '~>0.8', :platforms => [:mri]
 	gem 'redcarpet', '~>3.0', :platforms => [:mri]
+
+  gem 'coveralls', :require => false
 end
 
 platform :rbx do

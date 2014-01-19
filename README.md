@@ -1,8 +1,12 @@
 CiteProc-Ruby
 =============
 CiteProc-Ruby is a [Citation Style Language](http://citationstyles.org/) (CSL)
-1.0.1 cite processor written in pure Ruby.
+1.0.1 cite processor written in pure Ruby. This Ruby gem contains the
+processor's rendering engine only; for more documentation on the whole
+cite processor, please refer to the documentation of the
+[citeproc](https://rubygems/gems/citeproc) gem instead.
 
+[![Build Status](https://secure.travis-ci.org/inukshuk/citeproc-ruby.png)](http://travis-ci.org/inukshuk/citeproc-ruby)
 
 Development
 -----------
@@ -23,16 +27,19 @@ If you've found a bug or have a question, please open an issue on the
 Or, for extra credit, clone the CiteProc-Ruby repository, write a failing
 example, fix the bug and submit a pull request.
 
-For the source code of the original CiteProc-Ruby release (gem versions
-0.0.x), please see the
-[0.0.x branch](https://github.com/inukshuk/citeproc-ruby/tree/0.0.x).
+Credits
+-------
+Thanks to Rintze M. Zelle, Sebastian Karcher, Frank G. Bennett, Jr.,
+and Bruce D'Arcus of CSL and citeproc-js fame for their support!
 
+Thanks to Google and the Berkman Center at Harvard University for supporting
+this project as part of [Google Summer of Code](https://developers.google.com/open-source/soc/).
 
 Copyright
 ---------
-Copyright 2012 President and Fellows of Harvard College.
-
 Copyright 2009-2014 Sylvester Keil. All rights reserved.
+
+Copyright 2012 President and Fellows of Harvard College.
 
 License
 -------

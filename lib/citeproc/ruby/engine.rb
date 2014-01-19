@@ -25,8 +25,18 @@ module CiteProc
         raise NotImplementedByEngine
       end
 
-      def bibliography
-        raise NotImplementedByEngine
+      def bibliography(selector)
+        CiteProc::Bibliography.new do |b|
+          items.each do |key, item|
+            if selector.matches?(item) && !selector.skip?(item)
+              begin
+                b << renderer.render(item, style.bibliography.layout)
+              rescue => e
+                b.errors << [key, e]
+              end
+            end
+          end
+        end
       end
 
       def update_items

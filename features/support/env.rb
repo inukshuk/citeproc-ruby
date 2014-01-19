@@ -1,5 +1,6 @@
 begin
   require 'simplecov'
+  require 'coveralls'
 rescue LoadError
   # ignore
 end
