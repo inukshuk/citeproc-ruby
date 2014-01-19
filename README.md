@@ -4,7 +4,7 @@ CiteProc-Ruby is a [Citation Style Language](http://citationstyles.org/) (CSL)
 1.0.1 cite processor written in pure Ruby. This Ruby gem contains the
 processor's rendering engine only; for more documentation on the whole
 cite processor, please refer to the documentation of the
-[citeproc](https://rubygems/gems/citeproc) gem instead.
+[citeproc](https://rubygems.org/gems/citeproc) gem instead.
 
 [![Build Status](https://secure.travis-ci.org/inukshuk/citeproc-ruby.png)](http://travis-ci.org/inukshuk/citeproc-ruby)
 [![Coverage Status](https://coveralls.io/repos/inukshuk/citeproc-ruby/badge.png?branch=master)](https://coveralls.io/r/inukshuk/citeproc-ruby?branch=master)
