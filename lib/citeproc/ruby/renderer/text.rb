@@ -10,7 +10,17 @@ module CiteProc
         case
         when node.has_variable?
 
-          text = item.data.variable(node.variable, node.variable_options).to_s
+          if node.variable == 'locator'
+
+            # Subtle: when there is no locator we also look
+            # in item.data; there should be no locator there
+            # either but the read access will be noticed by
+            # observers (if any).
+            text = item.locator || item.data[:locator]
+
+          else
+            text = item.data.variable(node.variable, node.variable_options).to_s
+          end
 
           # TODO abbreviate? if node.form = 'short'
 

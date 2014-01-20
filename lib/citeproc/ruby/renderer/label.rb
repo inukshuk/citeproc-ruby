@@ -20,7 +20,13 @@ module CiteProc
           end
 
         when node.locator?
-          value, name = item.locator, item.label
+
+          # Subtle: when there is no locator we also look
+          # in item.data; there should be no locator there
+          # either but the read access will be noticed by
+          # observers (if any).
+          value, name = item.locator || item.data.locator, item.label || 'page'
+
         when node.names_label?
 
           # We handle the editortranslator special case
