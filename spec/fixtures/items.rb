@@ -28,11 +28,23 @@ module Fixtures
 	}
 
 	ITEMS = {
+    :knuth1968 => CiteProc::Item.new(
+      :id => 'knuth1968',
+      :type => 'book',
+      :title => 'The art of computer programming',
+      :author => 'Donald Knuth',
+      :publisher => 'Addison-Wesley',
+      :volume => 1,
+      :issued => 1968,
+      :'publisher-place' => 'Boston'
+    ),
+
 		:grammatology => CiteProc::Item.new(
 			:id => 'grammatology',
+      :type => 'book',
 			:title => 'Of Grammatology',
 			:author => people(:derrida),
-			:edition => 'corrected edition',
+			#:edition => 'corrected edition',
 			:issued => 1976,
 			:publisher => 'Johns Hopkins University Press',
 			:'publisher-place' => 'Baltimore'
