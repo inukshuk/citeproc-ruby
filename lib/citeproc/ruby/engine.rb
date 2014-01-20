@@ -50,9 +50,9 @@ module CiteProc
       def render(mode, data)
         node = case mode
           when :bibliography
-            style.bibliography.layout
+            style.bibliography
           when :citation
-            style.citation.layout
+            style.citation
           else
             raise ArgumentError, "cannot render unknown mode: #{mode.inspect}"
           end

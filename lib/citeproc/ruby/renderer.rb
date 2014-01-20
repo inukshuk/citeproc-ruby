@@ -31,6 +31,16 @@ module CiteProc
         format send(specialize, data, node), node
       end
 
+      def render_citation(data, node)
+        # TODO add data.prefix/suffix
+        # TODO suppress authors
+        render data, node.layout
+      end
+
+      def render_bibliography(data, node)
+        render data, node.layout
+      end
+
       # Applies the current format on the string using the
       # node's formatting options.
       def format(string, node)
