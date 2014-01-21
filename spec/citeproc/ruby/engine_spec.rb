@@ -42,7 +42,7 @@ module CiteProc
         end
 
         it 'renders the reference for the given id' do
-          cp.render(:bibliography, :id => 'grammatology').should == ['Derrida, J. (1976). Of Grammatology. Baltimore: Johns Hopkins University Press.']
+          cp.render(:bibliography, :id => 'grammatology').should == ['Derrida, J. (1976). Of Grammatology (corrected ed.). Baltimore: Johns Hopkins University Press.']
           cp.render(:citation, :id => 'grammatology', :locator => '3-4').should == ['(Derrida, 1976, pp. 3-4)']
           cp.render(:bibliography, :id => 'knuth1968').should == ['Knuth, D. (1968). The art of computer programming (Vol. 1). Boston: Addison-Wesley.']
 

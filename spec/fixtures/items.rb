@@ -44,7 +44,7 @@ module Fixtures
       :type => 'book',
 			:title => 'Of Grammatology',
 			:author => people(:derrida),
-			#:edition => 'corrected edition',
+			:edition => 'corrected ed',
 			:issued => 1976,
 			:publisher => 'Johns Hopkins University Press',
 			:'publisher-place' => 'Baltimore'
