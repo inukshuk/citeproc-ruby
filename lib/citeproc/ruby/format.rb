@@ -203,14 +203,14 @@ module CiteProc
         prefix = options[:prefix]
         return unless prefix
 
-        output.prepend(reverse_drop_squeezables(input, prefix))
+        output.prepend(reverse_drop_squeezables(output, prefix))
       end
 
       def apply_suffix
         suffix = options[:suffix]
         return unless suffix
 
-        output.concat(drop_squeezables(input, suffix))
+        output.concat(drop_squeezables(output, suffix))
       end
 
       protected
