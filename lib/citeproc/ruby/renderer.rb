@@ -32,12 +32,13 @@ module CiteProc
       end
 
       def render_citation(data, node)
-        # TODO add data.prefix/suffix
+        # TODO add data.prefix/suffix before (or after?) formatting
         # TODO suppress authors
         render data, node.layout
       end
 
       def render_bibliography(data, node)
+        # TODO load item-specific locale
         render data, node.layout
       end
 

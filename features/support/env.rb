@@ -1,6 +1,6 @@
 begin
   require 'simplecov'
-  require 'coveralls'
+  require 'coveralls' if ENV['CI']
 rescue LoadError
   # ignore
 end
