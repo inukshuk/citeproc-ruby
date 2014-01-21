@@ -8,6 +8,7 @@ cite processor, please refer to the documentation of the
 
 [![Build Status](https://secure.travis-ci.org/inukshuk/citeproc-ruby.png)](http://travis-ci.org/inukshuk/citeproc-ruby)
 [![Coverage Status](https://coveralls.io/repos/inukshuk/citeproc-ruby/badge.png?branch=master)](https://coveralls.io/r/inukshuk/citeproc-ruby?branch=master)
+[![Dependency Status](https://gemnasium.com/inukshuk/citeproc-ruby.png)](https://gemnasium.com/inukshuk/citeproc-ruby)
 
 Development
 -----------
