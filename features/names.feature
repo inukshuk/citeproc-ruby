@@ -32,8 +32,7 @@ Feature: CSL Name Rendering
     Then the results should be:
       | (R. Schneider & P. Sellers, Trans.) |
 
-  @wip
-  Scenario: ABdNT
+  Scenario: Initials when given part is uppercased
     Given the following style node:
       """
       <names variable="author" suffix=".">

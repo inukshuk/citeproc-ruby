@@ -200,17 +200,19 @@ module CiteProc
       end
 
       def apply_prefix
-        prefix = options[:prefix]
-        return unless prefix
-
         output.prepend(reverse_drop_squeezables(output, prefix))
       end
 
       def apply_suffix
-        suffix = options[:suffix]
-        return unless suffix
-
         output.concat(drop_squeezables(output, suffix))
+      end
+
+      def prefix
+        options[:prefix].to_s
+      end
+
+      def suffix
+        options[:suffix].to_s
       end
 
       protected

@@ -64,12 +64,12 @@ module CiteProc
           )
         end
 
-        def apply_prefix
-          output.prepend(CSL.encode_xml_text(options[:prefix]))
+        def prefix
+          CSL.encode_xml_text(options[:prefix])
         end
 
-        def apply_suffix
-          output.concat(CSL.encode_xml_text(options[:suffix]))
+        def suffix
+          CSL.encode_xml_text(options[:suffix])
         end
 
         def apply_quotes
