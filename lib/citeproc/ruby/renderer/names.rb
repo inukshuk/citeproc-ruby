@@ -131,19 +131,20 @@ module CiteProc
           # TODO move parts of the formatting logic here
           # because name parts may include particles etc.
 
-          node.name_part.each do |part|
-            case part[:name]
-            when 'family'
-              name.family = format(name.family, part)
-            when 'given'
-              name.given = format(name.given, part)
-            end
-          end
 
           name.options.merge! node.name_options
           name.sort_order! node.name_as_sort_order_at?(position)
 
           name.initialize_without_hyphen! if node.initialize_without_hyphen?
+
+          node.name_part.each do |part|
+            case part[:name]
+            when 'family'
+              name.family = format(name.family, part)
+            when 'given'
+              name.given = format(name.initials, part)
+            end
+          end
         end
 
         format name.format, node

@@ -18,7 +18,6 @@ Feature: CSL Name Rendering
       | (Romy Schneider & Peter Sellers, Trans.) |
 
 
-  @wip
   Scenario: Initials
     Given the following style node:
       """
@@ -33,4 +32,22 @@ Feature: CSL Name Rendering
     Then the results should be:
       | (R. Schneider & P. Sellers, Trans.) |
 
+  @wip
+  Scenario: ABdNT
+    Given the following style node:
+      """
+      <names variable="author" suffix=".">
+        <name name-as-sort-order="all" sort-separator=", " initialize-with=". " delimiter="; " delimiter-precedes-last="always">
+          <name-part name="family" text-case="uppercase"/>
+          <name-part name="given" text-case="uppercase"/>
+        </name>
+        <et-al prefix=" " font-style="italic"/>
+        <label form="short" prefix=" (" suffix=".)" text-case="uppercase"/>
+      </names>
+      """
+    When I render the following citation items as "html":
+      | author                            |
+      | Cole, Steven J. and Moore, Robert |
+    Then the results should be:
+      | COLE, S. J.; MOORE, R.            |
 
