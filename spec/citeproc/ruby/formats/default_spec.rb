@@ -27,11 +27,23 @@ module CiteProc
 
       it 'supports localized quotes' do
         locale = double(:locale)
+        locale.stub(:punctuation_in_quotes?).and_return(true)
         locale.stub(:quote).and_return('bar')
 
         node[:quotes] = true
 
         format.apply('foo', node, locale).should == 'bar'
+      end
+
+      it 'disregards localized closing quotes when squeezing affixes' do
+        locale = double(:locale)
+        locale.stub(:punctuation_in_quotes?).and_return(true)
+        locale.stub(:quote) { |t| '"' << t << '"' }
+
+        node[:quotes] = true
+        node[:suffix] = '.'
+
+        format.apply('foo', node, locale).should == '"foo."'
       end
 
       describe 'text-case formats' do

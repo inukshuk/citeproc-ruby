@@ -168,6 +168,13 @@ module CiteProc
       end
 
       def apply_quotes
+        if punctuation_in_quotes? && options.key?(:suffix)
+          # Extract starting punctuation from suffix and
+          # apply it before adding quotes around the string!
+          options[:suffix] = suffix.sub(/^([\.,])/, '')
+          output.concat ($1).to_s
+        end
+
         output.replace locale.quote(output)
       end
 
@@ -206,12 +213,16 @@ module CiteProc
         end
       end
 
+      def punctuation_in_quotes?
+        !locale.nil? && locale.punctuation_in_quotes?
+      end
+
       def apply_prefix
         output.prepend(reverse_drop_squeezables(output, prefix))
       end
 
       def apply_suffix
-        output.concat(drop_squeezables(output, suffix))
+        output.concat(drop_squeezables(strip(output), suffix))
       end
 
       def prefix
@@ -220,6 +231,10 @@ module CiteProc
 
       def suffix
         options[:suffix].to_s
+      end
+
+      def strip(string)
+        string
       end
 
       protected
