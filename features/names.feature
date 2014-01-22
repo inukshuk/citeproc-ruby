@@ -50,3 +50,18 @@ Feature: CSL Name Rendering
     Then the results should be:
       | COLE, S. J.; MOORE, R.            |
 
+
+  Scenario: Name as sort order
+    Given the following style node:
+      """
+      <names variable="author">
+        <name and="text" delimiter=", " delimiter-precedes-last="always" name-as-sort-order="first" sort-separator=", " />
+      </names>
+      """
+    When I render the following citation items as "html":
+      | author                  |
+      | John Doe                |
+      | John Doe and Jane Doe   |
+    Then the results should be:
+      | Doe, John               |
+      | Doe, John, and Jane Doe |

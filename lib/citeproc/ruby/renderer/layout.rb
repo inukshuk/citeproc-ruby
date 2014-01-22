@@ -9,9 +9,9 @@ module CiteProc
       # @param node [CSL::Style::Layout]
       # @return [String]
       def render_layout(item, node)
-        node.each_child.map { |child|
+        join node.each_child.map { |child|
           render item, child
-        }.reject(&:empty?).join(node.delimiter)
+        }.reject(&:empty?), node.delimiter
       end
 
     end
