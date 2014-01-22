@@ -167,6 +167,10 @@ module CiteProc
         cleanup!
       end
 
+      def escape_quotes?
+        false
+      end
+
       def apply_quotes
         if punctuation_in_quotes? && options.key?(:suffix)
           # Extract starting punctuation from suffix and
@@ -175,7 +179,7 @@ module CiteProc
           output.concat ($1).to_s
         end
 
-        output.replace locale.quote(output)
+        output.replace locale.quote(output, escape_quotes?)
       end
 
       def apply_text_case

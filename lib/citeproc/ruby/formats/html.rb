@@ -72,8 +72,8 @@ module CiteProc
           CSL.encode_xml_text(options[:suffix])
         end
 
-        def apply_quotes
-          output.replace locale.quote(output, true)
+        def escape_quotes?
+          true
         end
 
         protected
