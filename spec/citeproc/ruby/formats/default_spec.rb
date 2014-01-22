@@ -39,11 +39,13 @@ module CiteProc
         locale = double(:locale)
         locale.stub(:punctuation_in_quotes?).and_return(true)
         locale.stub(:quote) { |t| '"' << t << '"' }
+        locale.stub(:t).and_return("'")
 
         node[:quotes] = true
         node[:suffix] = '.'
 
         format.apply('foo', node, locale).should == '"foo."'
+        format.apply("'foo'", node, locale).should == "\"'foo.'\""
       end
 
       describe 'text-case formats' do

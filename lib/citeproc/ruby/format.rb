@@ -176,7 +176,17 @@ module CiteProc
           # Extract starting punctuation from suffix and
           # apply it before adding quotes around the string!
           options[:suffix] = suffix.sub(/^([\.,])/, '')
-          output.concat ($1).to_s
+          punctuation = ($1).to_s
+
+          unless punctuation.empty?
+            iq = locale.t('close-inner-quote')
+
+            if output.end_with?(iq)
+              output.insert(output.length - iq.length, punctuation)
+            else
+              output.concat punctuation
+            end
+          end
         end
 
         output.replace locale.quote(output, escape_quotes?)
