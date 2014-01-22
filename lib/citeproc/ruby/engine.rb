@@ -30,7 +30,7 @@ module CiteProc
           items.each do |key, item|
             if selector.matches?(item) && !selector.skip?(item)
               begin
-                b << renderer.render(item, style.bibliography.layout)
+                b << renderer.render(item.cite, style.bibliography)
               rescue => e
                 b.errors << [key, e]
               end
