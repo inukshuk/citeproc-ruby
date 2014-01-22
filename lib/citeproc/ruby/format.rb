@@ -68,7 +68,7 @@ module CiteProc
           }.join('')
 
           # Handle special cases like ?.
-          if suffix.start_with?('.', ';') && string.end_with?('.', ',', '!', '?', ':')
+          if suffix.start_with?('.', ';') && string.end_with?('.', ';', ',', '!', '?', ':')
             suffix = suffix[1..-1]
           end
 
