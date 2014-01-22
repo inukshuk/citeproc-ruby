@@ -7,7 +7,7 @@ module CiteProc
 
       @available = []
 
-      @squeezable = /^[\s\.,]+$/
+      @squeezable = /^[\s\.,;]+$/
 
       @stopwords = {
         :en => [
@@ -63,9 +63,16 @@ module CiteProc
           raise ArgumenError unless string.is_a?(::String)
           raise ArgumenError unless suffix.is_a?(::String)
 
-          suffix.each_char.drop_while.with_index { |c, i|
+          suffix = suffix.each_char.drop_while.with_index { |c, i|
             squeezable?(c) && string.end_with?(suffix[0, i + 1])
           }.join('')
+
+          # Handle special cases like ?.
+          if suffix.start_with?('.', ';') && string.end_with?('.', ',', '!', '?', ':')
+            suffix = suffix[1..-1]
+          end
+
+          suffix
         end
 
         def reverse_drop_squeezables(string, prefix)

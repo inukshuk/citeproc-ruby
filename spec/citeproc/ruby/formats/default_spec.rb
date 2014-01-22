@@ -130,6 +130,7 @@ module CiteProc
           node[:suffix] = '. '
           format.apply('foo', node).should == 'foo. '
           format.apply('foo.', node).should == 'foo. '
+          format.apply('foo?', node).should == 'foo? '
 
           node[:prefix] = '.'
           format.apply('foo', node).should == '.foo. '
