@@ -11,7 +11,7 @@ Feature: Rendering bibliography nodes
       | article-journal | Derrida, Jacques | The purveyor of truth | 1975             | Yale University Press | Yale French Studies | 31-113 | 52    |
     Then the results should be:
       | Pynchon, T. (2006). The crying of lot 49. Harper Perennial. |
-      | Derrida, J. (1975). The purveyor of truth. Yale French Studies, (52), 31-113. |
+      | Derrida, J. (1975). The purveyor of truth. Yale French Studies, (52), 31–113. |
 
   Scenario: Rendering APA style bibliographies as HTML
     Given the "apa" style's bibliography node

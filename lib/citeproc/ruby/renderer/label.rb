@@ -17,6 +17,8 @@ module CiteProc
 
           if node.format_page_ranges?
             format_page_range!(value, node.root.page_range_format)
+          else
+            format_page_range!(value, nil)
           end
 
         when node.locator?

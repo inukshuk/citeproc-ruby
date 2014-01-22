@@ -99,16 +99,23 @@ module CiteProc
       # @param [String] pages to be formatted
       # @param [String] format to use for formatting
       def format_page_range(pages, format)
+        return if pages.nil?
         format_page_range!(pages.dup, format)
       end
 
       def format_page_range!(pages, format)
+        return if pages.nil?
+
         dash = translate('page-range-delimiter') || '–' # en-dash
 
         pages.gsub! PAGE_RANGE_PATTERN do
           affixes, f, t = [$1, $3, $4, $6], $2, $5
 
-          if affixes.all?(&:empty?)
+          # When there are affixes or no format was
+          # specified we skip this part. As a result,
+          # only the delimiter will be replaced!
+
+          if affixes.all?(&:empty?) && !format.nil?
 
             dim = f.length
             delta = dim - t.length
