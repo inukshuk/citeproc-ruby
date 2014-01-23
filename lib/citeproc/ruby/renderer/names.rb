@@ -15,8 +15,16 @@ module CiteProc
 
         names.reject! { |n| n[1].nil? || n[1].empty? }
 
+        # Filter out suppressed names only now, because
+        # we are not interested in suppressed variables
+        # which are empty anyway!
+        suppressed = names.reject! { |n| item.suppressed? n }
+
         if names.empty?
-          return '' unless node.has_substitute?
+          # We also return when the list is empty because
+          # of a suppression, because we do not want to
+          # substitute suppressed items!
+          return '' unless suppressed.nil? && node.has_substitute?
 
           render_substitute(item, node.substitute)
 
