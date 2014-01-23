@@ -58,43 +58,6 @@ module CiteProc
         def squeezable
           @squeezable ||= Format.squeezable
         end
-
-        def drop_squeezables(string, suffix)
-          raise ArgumenError unless string.is_a?(::String)
-          raise ArgumenError unless suffix.is_a?(::String)
-
-          suffix = suffix.each_char.drop_while.with_index { |c, i|
-            squeezable?(c) && string.end_with?(suffix[0, i + 1])
-          }.join('')
-
-          # Handle special cases like ?.
-          if suffix.start_with?('.', ';') && string.end_with?('.', ';', ',', '!', '?', ':')
-            suffix = suffix[1..-1]
-          end
-
-          suffix
-        end
-
-        def reverse_drop_squeezables(string, prefix)
-          raise ArgumenError unless string.is_a?(::String)
-          raise ArgumenError unless prefix.is_a?(::String)
-
-          prefix.reverse.each_char.drop_while.with_index { |c, i|
-            squeezable?(c) && string.start_with?(prefix[-(i + 1) .. -1])
-          }.join('').reverse
-        end
-
-        def concat(string, suffix)
-          "#{string}#{drop_squeezables(string, suffix)}"
-        end
-
-        def join(list, delimiter)
-          raise ArgumentError unless list.is_a?(Enumerable)
-
-          list.inject do |m, n|
-            concat(concat(m, delimiter), n)
-          end
-        end
       end
 
       attr_reader :locale
@@ -107,20 +70,41 @@ module CiteProc
         self.class.squeezable?(string)
       end
 
+      def squeeze_suffix(string, suffix)
+        raise ArgumenError unless string.is_a?(::String)
+        raise ArgumenError unless suffix.is_a?(::String)
+
+        suffix = suffix.each_char.drop_while.with_index { |c, i|
+          squeezable?(c) && string.end_with?(suffix[0, i + 1])
+        }.join('')
+
+        # Handle special cases like ?.
+        if suffix.start_with?('.', ';') && string.end_with?('.', ';', ',', '!', '?', ':')
+          suffix = suffix[1..-1]
+        end
+
+        suffix
+      end
+
+      def squeeze_prefix(string, prefix)
+        raise ArgumenError unless string.is_a?(::String)
+        raise ArgumenError unless prefix.is_a?(::String)
+
+        prefix.reverse.each_char.drop_while.with_index { |c, i|
+          squeezable?(c) && string.start_with?(prefix[-(i + 1) .. -1])
+        }.join('').reverse
+      end
+
       def concat(string, suffix)
-        self.class.concat(string, suffix)
-      end
-
-      def drop_squeezables(string, suffix)
-        self.class.drop_squeezables(string, suffix)
-      end
-
-      def reverse_drop_squeezables(string, prefix)
-        self.class.reverse_drop_squeezables(string, prefix)
+        "#{string}#{squeeze_suffix(string, suffix)}"
       end
 
       def join(list, delimiter)
-        self.class.join(list, delimiter)
+        raise ArgumentError unless list.is_a?(Enumerable)
+
+        list.inject do |m, n|
+          concat(concat(m, delimiter), n)
+        end
       end
 
       def apply(input, node, locale = nil)
@@ -178,6 +162,12 @@ module CiteProc
           options[:suffix] = suffix.sub(/^([\.,])/, '')
           punctuation = ($1).to_s
 
+          # For the edge-case that the string ends with an
+          # inner-quote, we can push in the punctuation even
+          # further; however, this potentially messes with
+          # input values. CiteProc-JS does it so we do this
+          # for compatibility reasons.
+
           unless punctuation.empty?
             iq = locale.t('close-inner-quote')
 
@@ -232,11 +222,11 @@ module CiteProc
       end
 
       def apply_prefix
-        output.prepend(reverse_drop_squeezables(output, prefix))
+        output.prepend(squeeze_prefix(output, prefix))
       end
 
       def apply_suffix
-        output.concat(drop_squeezables(strip(output), suffix))
+        output.concat(squeeze_suffix(strip(output), suffix))
       end
 
       def prefix
