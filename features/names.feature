@@ -65,3 +65,24 @@ Feature: CSL Name Rendering
     Then the results should be:
       | Doe, John               |
       | Doe, John, and Jane Doe |
+
+  Scenario: Substitutions
+    Given the following style node:
+      """
+      <names variable="author">
+        <name and="text" delimiter=", " delimiter-precedes-last="always" name-as-sort-order="first" sort-separator=", " />
+        <substitute>
+          <names variable="editor"/>
+          <text value="UNKNOWN"/>
+        </substitute>
+      </names>
+      """
+    When I render the following citation items as "html":
+      | editor                  |
+      | John Doe                |
+      |                         |
+      | John Doe and Jane Doe   |
+    Then the results should be:
+      | Doe, John               |
+      | UNKNOWN                 |
+      | Doe, John, and Jane Doe |

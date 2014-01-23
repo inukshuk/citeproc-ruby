@@ -18,9 +18,16 @@ module CiteProc
         if names.empty?
           return '' unless node.has_substitute?
 
-          # TODO substitution
+          render_substitute(item, node.substitute)
 
         else
+
+          if node.substitute?
+            # Names rendered as substitutes must be
+            # suppressed during the remainder of the
+            # rendering process!
+            item.suppress! names.map(&:first)
+          end
 
           resolve_editor_translator_exception! names
           name = node.name || CSL::Style::Name.new
@@ -148,6 +155,20 @@ module CiteProc
         end
 
         format name.format, node
+      end
+
+      # @param item [CiteProc::CitationItem]
+      # @param node [CSL::Style::Substitute]
+      # @return [String]
+      def render_substitute(item, node)
+        return '' unless node.has_children?
+
+        node.each_child do |child|
+          substitute = render(item, child)
+          return substitute unless substitute.empty?
+        end
+
+        '' # no substitute was rendered
       end
 
       private
