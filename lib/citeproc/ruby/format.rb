@@ -238,7 +238,7 @@ module CiteProc
       end
 
       def apply_prefix
-        output.prepend(squeeze_prefix(output, prefix))
+        output.prepend(squeeze_prefix(strip(output), prefix))
       end
 
       def apply_suffix

@@ -101,6 +101,10 @@ module CiteProc
           super
         end
 
+        def strip(string)
+          string.sub(/(^<[^>]+>)|(<[^>]+>$)/, '')
+        end
+
         private
 
         def content_tag(name, content, options = nil)
