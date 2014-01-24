@@ -69,18 +69,18 @@ module CiteProc
             truncated = node.truncate(names)
 
             if node.delimiter_precedes_last?(truncated)
-              connector = [delimiter, connector].compact.join('').squeeze(' ')
+              connector = join [delimiter, connector].compact
             end
 
             if node.ellipsis? && names.length - truncated.length > 1
-              [
-                truncated.map.with_index { |name, idx|
+              join [
+                join(truncated.map.with_index { |name, idx|
                   render_individual_name name, node, idx + 1
-                }.join(delimiter),
+                }, delimiter),
 
                 render_individual_name(names[-1], node, truncated.length + 1)
 
-              ].join(node.ellipsis)
+              ], node.ellipsis
 
             else
               others = node.et_al ?
@@ -90,14 +90,14 @@ module CiteProc
               connector = node.delimiter_precedes_et_al?(truncated) ?
                 delimiter : ' '
 
-              [
-                truncated.map.with_index { |name, idx|
+              join [
+                join(truncated.map.with_index { |name, idx|
                   render_individual_name name, node, idx + 1
-                }.join(delimiter),
+                }, delimiter),
 
                 others
 
-              ].join(connector)
+              ], connector
 
             end
 
@@ -106,23 +106,23 @@ module CiteProc
               connector = [delimiter, connector].compact.join('').squeeze(' ')
             end
 
-            names.map.with_index { |name, idx|
+            join names.map.with_index { |name, idx|
               render_individual_name name, node, idx + 1
-            }.join(connector || delimiter)
+            }, connector || delimiter
 
           else
             if node.delimiter_precedes_last?(names)
               connector = [delimiter, connector].compact.join('').squeeze(' ')
             end
 
-            [
-              names[0...-1].map.with_index { |name, idx|
+            join [
+              join(names[0...-1].map.with_index { |name, idx|
                 render_individual_name name, node, idx + 1
-              }.join(delimiter),
+              }, delimiter),
 
               render_individual_name(names[-1], node, names.length)
 
-            ].join(connector || delimiter)
+            ], connector || delimiter
           end
 
         format rendition, node
