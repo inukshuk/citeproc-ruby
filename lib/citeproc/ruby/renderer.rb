@@ -199,7 +199,7 @@ module CiteProc
 
       protected
 
-      attr_accessor :mode
+      attr_reader :mode
 
       def fmt
        @format ||= Format.load

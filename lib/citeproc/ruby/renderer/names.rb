@@ -31,7 +31,21 @@ module CiteProc
         else
 
           resolve_editor_translator_exception! names
-          name = node.name || CSL::Style::Name.new
+
+          if node.has_name?
+            # Make a copy of the name node and inherit
+            # options from root and citation/bibliography
+            # depending on current rendering mode.
+            #
+            # Subtle: we need to pass in the mode, because
+            # the node can be part of macro!
+            name = node.name.deep_copy
+            name.reverse_merge! node.name.inherited_name_options(mode)
+            name.et_al = node.et_al if node.has_et_al?
+
+          else
+            name = CSL::Style::Name.new
+          end
 
           names.map { |role, ns|
             if node.has_label?
