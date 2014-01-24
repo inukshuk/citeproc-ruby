@@ -39,7 +39,7 @@ module CiteProc
         locale = double(:locale)
         locale.stub(:punctuation_in_quotes?).and_return(true)
         locale.stub(:quote) { |t| '"' << t << '"' }
-        locale.stub(:t).and_return("'")
+        locale.stub(:t) { |t| t == 'close-quote' ? '"' : "'" }
 
         node[:quotes] = true
         node[:suffix] = '.'

@@ -71,8 +71,11 @@ module CiteProc
       end
 
       def squeeze_suffix(string, suffix)
-        raise ArgumenError unless string.is_a?(::String)
-        raise ArgumenError unless suffix.is_a?(::String)
+        raise ArgumentError unless string.is_a?(::String)
+        raise ArgumentError unless suffix.is_a?(::String)
+
+        string, stripped = strip(string)
+        string, quotes = split_closing_quotes(string)
 
         suffix = suffix.each_char.drop_while.with_index { |c, i|
           squeezable?(c) && string.end_with?(suffix[0, i + 1])
@@ -93,21 +96,28 @@ module CiteProc
           suffix = suffix[1..-1]
         end
 
-        suffix
+        # Handle punctiation-in-quote
+        if !quotes.nil? && punctuation_in_quotes?
+          if suffix.sub!(/^([\.,])/, '')
+            punctuation = ($1).to_s
+          end
+        end
+
+        "#{string}#{punctuation}#{quotes}#{stripped}#{suffix}"
       end
 
       def squeeze_prefix(string, prefix)
-        raise ArgumenError unless string.is_a?(::String)
-        raise ArgumenError unless prefix.is_a?(::String)
+        raise ArgumentError unless string.is_a?(::String)
+        raise ArgumentError unless prefix.is_a?(::String)
 
-        prefix.reverse.each_char.drop_while.with_index { |c, i|
+        prefix = prefix.reverse.each_char.drop_while.with_index { |c, i|
           squeezable?(c) && string.start_with?(prefix[-(i + 1) .. -1])
         }.join('').reverse
+
+        "#{prefix}#{string}"
       end
 
-      def concat(string, suffix)
-        "#{string}#{squeeze_suffix(string, suffix)}"
-      end
+      alias concat squeeze_suffix
 
       def join(list, delimiter = nil)
         raise ArgumentError unless list.is_a?(Enumerable)
@@ -171,30 +181,19 @@ module CiteProc
         false
       end
 
+      def close_quote
+        locale && locale.t('close-quote') ||  '"'
+      end
+
+      def close_inner_quote
+        locale && locale.t('close-inner-quote') || "'"
+      end
+
+      def split_closing_quotes(string)
+        string.split(/([#{close_inner_quote}#{close_quote}]+)$/, 2)
+      end
+
       def apply_quotes
-        if punctuation_in_quotes? && options.key?(:suffix)
-          # Extract starting punctuation from suffix and
-          # apply it before adding quotes around the string!
-          options[:suffix] = suffix.sub(/^([\.,])/, '')
-          punctuation = ($1).to_s
-
-          # For the edge-case that the string ends with an
-          # inner-quote, we can push in the punctuation even
-          # further; however, this potentially messes with
-          # input values. CiteProc-JS does it so we do this
-          # for compatibility reasons.
-
-          unless punctuation.empty?
-            iq = locale.t('close-inner-quote')
-
-            if output.end_with?(iq)
-              output.insert(output.length - iq.length, punctuation)
-            else
-              output.concat punctuation
-            end
-          end
-        end
-
         output.replace locale.quote(output, escape_quotes?)
       end
 
@@ -238,11 +237,11 @@ module CiteProc
       end
 
       def apply_prefix
-        output.prepend(squeeze_prefix(strip(output), prefix))
+        output.replace(squeeze_prefix(output, prefix))
       end
 
       def apply_suffix
-        output.concat(squeeze_suffix(strip(output), suffix))
+        output.replace(squeeze_suffix(output, suffix))
       end
 
       def prefix

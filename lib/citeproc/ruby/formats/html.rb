@@ -77,6 +77,10 @@ module CiteProc
           true
         end
 
+        def strip(string)
+          string.split(/((?:^<[^>]+>)|(?:<[^>]+>))$/, 2)
+        end
+
         protected
 
         def css
@@ -100,10 +104,6 @@ module CiteProc
         def cleanup!
           @css = nil
           super
-        end
-
-        def strip(string)
-          string.sub(/(^<[^>]+>)|(<[^>]+>$)/, '')
         end
 
         private
