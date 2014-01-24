@@ -32,30 +32,36 @@ module CiteProc
 
           resolve_editor_translator_exception! names
 
-          if node.has_name?
+          # Pick the names node that will be used for
+          # formatting; if we are currently in substiution
+          # mode, the node that is being substituted for
+          # takes precedence.
+          names_node = substituted || node
+
+          if names_node.has_name?
             # Make a copy of the name node and inherit
             # options from root and citation/bibliography
             # depending on current rendering mode.
             #
             # Subtle: we need to pass in the mode, because
             # the node can be part of macro!
-            name = node.name.deep_copy
-            name.reverse_merge! node.name.inherited_name_options(mode)
-            name.et_al = node.et_al if node.has_et_al?
+            name = names_node.name.deep_copy
+            name.reverse_merge! names_node.name.inherited_name_options(mode)
+            name.et_al = names_node.et_al if names_node.has_et_al?
 
           else
             name = CSL::Style::Name.new
           end
 
-          names.map { |role, ns|
-            if node.has_label?
-              label = render_label(item, node.label[0], role)
-              render_name(ns, name) << format(label, node.label[0])
+          join names.map { |role, ns|
+            if names_node.has_label?
+              label = render_label(item, names_node.label[0], role)
+              render_name(ns, name) << format(label, names_node.label[0])
             else
               render_name ns, name
             end
 
-          }.join(node.delimiter)
+          }, names_node.delimiter
         end
       end
 
@@ -178,21 +184,26 @@ module CiteProc
       def render_substitute(item, node)
         return '' unless node.has_children?
 
+        if substitute?
+          original_substituted = substituted
+        end
+
+        substitute node.parent
         observer = ItemObserver.new(item.data)
 
         node.each_child do |child|
           observer.start
 
           begin
-            substitute = render(item, child)
+            string = render(item, child)
 
-            unless substitute.empty?
+            unless string.empty?
               # Variables rendered as substitutes
               # must be suppressed during the remainder
               # of the rendering process!
               item.suppress! *observer.accessed
 
-              return substitute # break out of each loop!
+              return string # break out of each loop!
             end
 
           ensure
@@ -203,7 +214,29 @@ module CiteProc
         end
 
         '' # no substitute was rendered
+      ensure
+        if original_substituted
+          substitute original_substituted
+        else
+          clear_substitute!
+        end
       end
+
+      def clear_substitute!
+        @substituted = nil
+      end
+
+      def substitute(node)
+        @substituted = node
+      end
+
+      def substitute?
+        !@substituted.nil?
+      end
+
+      protected
+
+      attr_reader :substituted
 
       private
 
