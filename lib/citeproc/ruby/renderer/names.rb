@@ -54,10 +54,9 @@ module CiteProc
           end
 
           join names.map { |role, ns|
-            # The label is not affected by substitution!
-            if node.has_label?
-              label = render_label(item, node.label[0], role)
-              render_name(ns, name) << format(label, node.label[0])
+            if names_node.has_label?
+              label = render_label(item, names_node.label[0], role)
+              render_name(ns, name) << format(label, names_node.label[0])
             else
               render_name ns, name
             end
