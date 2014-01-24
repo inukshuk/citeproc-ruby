@@ -26,11 +26,7 @@ module CiteProc
 
           case
           when node.variable == 'page'
-            if node.format_page_ranges?
-              format_page_range!(text, node.root.page_range_format)
-            else
-              format_page_range!(text, nil) # replaces page range delimiter
-            end
+            format_page_range!(text, node.page_range_format)
 
           when node.variable == 'page-first' && text.empty?
             text = item.data[:'page-first'].to_s[/\d+/].to_s

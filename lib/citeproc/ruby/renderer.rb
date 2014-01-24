@@ -32,14 +32,22 @@ module CiteProc
       end
 
       def render_citation(data, node)
+        citation_mode!
+
         # TODO add data.prefix/suffix before (or after?) formatting
         # TODO suppress authors
         render data, node.layout
+      ensure
+        clear_mode!
       end
 
       def render_bibliography(data, node)
+        bibliography_mode!
+
         # TODO load item-specific locale
         render data, node.layout
+      ensure
+        clear_mode!
       end
 
       # Applies the current format on the string using the
@@ -52,7 +60,7 @@ module CiteProc
         @format = Format.load(format)
       end
 
-      def join(list, delimiter)
+      def join(list, delimiter = nil)
         fmt.join(list, delimiter)
       end
 
@@ -70,6 +78,26 @@ module CiteProc
 
       def locale=(locale)
         @locale = CSL::Locale.load(locale)
+      end
+
+      def citation_mode!
+        @mode == :citation
+      end
+
+      def citation_mode?
+        @mode == :citation
+      end
+
+      def bibliography_mode!
+        @mode = :bibliography
+      end
+
+      def bibliography_mode?
+        @mode == :bibliography
+      end
+
+      def clear_mode!
+        @mode = nil
       end
 
       def translate(name, options = {})
@@ -170,6 +198,8 @@ module CiteProc
 
 
       protected
+
+      attr_accessor :mode
 
       def fmt
        @format ||= Format.load

@@ -99,11 +99,17 @@ module CiteProc
         "#{string}#{squeeze_suffix(string, suffix)}"
       end
 
-      def join(list, delimiter)
+      def join(list, delimiter = nil)
         raise ArgumentError unless list.is_a?(Enumerable)
 
-        list.inject do |m, n|
-          concat(concat(m, delimiter), n)
+        if delimiter.nil? || delimiter.empty?
+          list.inject do |m, n|
+            concat(m, n)
+          end
+        else
+          list.inject do |m, n|
+            concat(concat(m, delimiter), n)
+          end
         end
       end
 

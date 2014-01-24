@@ -30,13 +30,6 @@ module CiteProc
 
         else
 
-          if node.substitute?
-            # Names rendered as substitutes must be
-            # suppressed during the remainder of the
-            # rendering process!
-            item.suppress! names.map(&:first)
-          end
-
           resolve_editor_translator_exception! names
           name = node.name || CSL::Style::Name.new
 
@@ -171,9 +164,28 @@ module CiteProc
       def render_substitute(item, node)
         return '' unless node.has_children?
 
+        observer = ItemObserver.new(item.data)
+
         node.each_child do |child|
-          substitute = render(item, child)
-          return substitute unless substitute.empty?
+          observer.start
+
+          begin
+            substitute = render(item, child)
+
+            unless substitute.empty?
+              # Variables rendered as substitutes
+              # must be suppressed during the remainder
+              # of the rendering process!
+              item.suppress! *observer.accessed
+
+              return substitute # break out of each loop!
+            end
+
+          ensure
+            observer.stop
+            observer.clear!
+          end
+
         end
 
         '' # no substitute was rendered

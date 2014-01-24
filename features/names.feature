@@ -86,3 +86,30 @@ Feature: CSL Name Rendering
       | Doe, John               |
       | UNKNOWN                 |
       | Doe, John, and Jane Doe |
+
+  Scenario: Suppression after substitutions
+    Given the following style node:
+      """
+      <group delimiter=", ">
+        <names variable="author">
+          <name and="text" delimiter=", " delimiter-precedes-last="always" name-as-sort-order="first" sort-separator=", " />
+          <substitute>
+            <names variable="editor"/>
+            <text variable="title"/>
+          </substitute>
+        </names>
+        <names variable="editor">
+          <label prefix=" (" suffix=")"/>
+        </names>
+        <text variable="title" text-case="uppercase"/>
+      </group>
+      """
+    When I render the following citation items as "html":
+      | editor                  | author                  | title     |
+      | John Doe                | Jane Doe                | The Title |
+      | John Doe                |                         | The Title |
+      |                         |                         | The Title |
+    Then the results should be:
+      | Doe, Jane, John Doe (editor), THE TITLE           |
+      | Doe, John, THE TITLE                              |
+      | The Title                                         |

@@ -15,11 +15,7 @@ module CiteProc
         when node.page?
           value, name = item.read_attribute(:page), :page
 
-          if node.format_page_ranges?
-            format_page_range!(value, node.root.page_range_format)
-          else
-            format_page_range!(value, nil)
-          end
+          format_page_range!(value, node.page_range_format)
 
         when node.locator?
 

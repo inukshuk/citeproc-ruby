@@ -22,9 +22,9 @@ module CiteProc
       def render_block(item, node)
         return '' unless node.has_children?
 
-        node.each_child.map { |child|
+        join node.each_child.map { |child|
           render item, child
-        }.join('')
+        }
       end
 
 
