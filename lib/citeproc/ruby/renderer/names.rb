@@ -61,7 +61,7 @@ module CiteProc
               render_name ns, name
             end
 
-          }, names_node.delimiter
+          }, names_node.delimiter(mode)
         end
       end
 

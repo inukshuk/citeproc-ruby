@@ -53,15 +53,6 @@ module CiteProc
       # Applies the current format on the string using the
       # node's formatting options.
       def format(string, node)
-
-        if node.respond_to?(:inherited_names_options)
-          options = node.inherited_names_options(mode)
-
-          unless options.empty?
-            node = node.dup.reverse_merge!(options)
-          end
-        end
-
         fmt.apply(string, node, locale)
       end
 
