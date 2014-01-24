@@ -8,6 +8,7 @@ module CiteProc
           :css_only  => false,
           :italic    => 'i',      # em
           :bold      => 'b',      # strong
+          :smallcaps => 'sc',
           :container => 'span',   # inner container
           :display   => 'div'     # display container
         }
@@ -34,7 +35,7 @@ module CiteProc
           if options[:'font-style'] == 'italic' && !css_only?
             output.replace content_tag(config[:italic], output)
           else
-            css[:'font-style'] = options[:'font-style']
+            css['font-style'] = options[:'font-style']
           end
         end
 
@@ -46,16 +47,16 @@ module CiteProc
           if options[:'font-weight'] == 'bold' && !css_only?
             output.replace content_tag(config[:bold], output)
           else
-            css[:'font-weight'] = options[:'font-weight']
+            css['font-weight'] = options[:'font-weight']
           end
         end
 
         def apply_text_decoration
-          css[:'text-decoration'] = options[:'text-decoration']
+          css['text-decoration'] = options[:'text-decoration']
         end
 
         def apply_vertical_align
-          css[:'vertical-align'] = options[:'vertical-align']
+          css['vertical-align'] = options[:'vertical-align']
         end
 
         def apply_display
