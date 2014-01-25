@@ -110,8 +110,8 @@ module CiteProc
 
           # Return early if one side is nil. In this
           # case ascending/descending is irrelevant!
-          return -1 if va.nil? || va.empty?
-          return  1 if vb.nil? || va.empty?
+          return  1 if va.nil? || va.empty?
+          return -1 if vb.nil? || va.empty?
 
           result = case CiteProc::Variable.types[key.variable]
             when :names
