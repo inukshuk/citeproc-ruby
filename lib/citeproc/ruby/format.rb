@@ -75,6 +75,9 @@ module CiteProc
         raise ArgumentError unless string.is_a?(::String)
         raise ArgumentError unless suffix.is_a?(::String)
 
+        return string.dup if suffix.empty?
+        return suffix.dup if string.empty?
+
         string, stripped = strip(string)
         string, quotes = split_closing_quotes(string)
 

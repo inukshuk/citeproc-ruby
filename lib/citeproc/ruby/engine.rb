@@ -40,7 +40,7 @@ module CiteProc
             begin
               b << renderer.render(item.cite, node)
             rescue => e
-              b.errors << [item.id, e]
+              b.errors << [item.id.to_s, e]
             end
           end
         end
