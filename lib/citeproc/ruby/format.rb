@@ -34,6 +34,7 @@ module CiteProc
 
         def load(name = nil)
           return new unless name
+          return name if name.is_a?(Format)
 
           name = name.to_s.downcase
 

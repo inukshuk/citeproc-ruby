@@ -26,14 +26,21 @@ module CiteProc
       end
 
       def bibliography(selector)
-        CiteProc::Bibliography.new do |b|
-          items.each do |key, item|
-            if selector.matches?(item) && !selector.skip?(item)
-              begin
-                b << renderer.render(item.cite, style.bibliography)
-              rescue => e
-                b.errors << [key, e]
-              end
+        node = style.bibliography
+        return unless node
+
+        selection = processor.data.select do |item|
+          selector.matches?(item) && !selector.skip?(item)
+        end
+
+        sort!(selection, node.sort_keys) if node.sort?
+
+        CiteProc::Bibliography.new(node.bibliography_options) do |b|
+          selection.each do |item|
+            begin
+              b << renderer.render(item.cite, node)
+            rescue => e
+              b.errors << [item.id, e]
             end
           end
         end
@@ -69,6 +76,57 @@ module CiteProc
         renderer.locale = processor.options[:locale]
 
         @style = CSL::Style.load processor.options[:style]
+      end
+
+      def sort!(items, keys)
+        return itmes.sort! unless !keys.nil? && !keys.empty?
+
+        items.sort! do |a, b|
+          compare_items(a, b, keys)
+        end
+      end
+
+      # @returns [-1, 0, 1]
+      def compare_items_by_keys(a, b, keys)
+        comparison = 0
+
+        keys.each do |key|
+          comparison = compare_items_by_key(a, b, key)
+          comparison = - comparison unless key.ascending?
+
+          return comparison unless comparison.zero?
+        end
+
+        comparison
+      end
+
+      # @returns [-1, 0, 1]
+      def compare_items_by_key(a, b, key)
+        if key.macro?
+          renderer.render_sort(a, b, key.macro, key).reduce &:<=>
+
+        else
+          va, vb = a[key.variable], b[key.variable]
+
+          return  0 if va == vb
+          return -1 if va.nil? || va.empty?
+          return  1 if vb.nil? || va.empty?
+
+          case CiteProc::Variable.types[key.variable]
+          when :names
+            node = CSL::Style::Name.new(key.name_options)
+            node.all_names_as_sort_order!
+
+            renderer.render_sort(va, vb, node, key).reduce &:<=>
+
+          when :date
+            va <=> vb
+          when :number
+            va <=> vb
+          else
+            va <=> vb
+          end
+        end
       end
     end
   end

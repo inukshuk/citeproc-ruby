@@ -19,7 +19,7 @@ module CiteProc
       # @param item [CiteProc::CitationItem]
       # @param node [CSL::Node]
       # @return [String]
-      def render(data, node)
+      def render(item, node)
         raise ArgumentError, "no CSL node: #{node.inspect}" unless
           node.respond_to?(:nodename)
 
@@ -28,25 +28,47 @@ module CiteProc
         raise ArgumentError, "#{specialize} not implemented" unless
           respond_to?(specialize, true)
 
-        format send(specialize, data, node), node
+        format send(specialize, item, node), node
       end
 
-      def render_citation(data, node)
+      def render_citation(item, node)
         citation_mode!
 
-        # TODO add data.prefix/suffix before (or after?) formatting
-        # TODO suppress authors
-        render data, node.layout
+        # TODO add item.prefix/suffix before (or after?) formatting
+        # TODO author_only
+
+        item.suppress! 'author' if item.suppress_author?
+
+        render item, node.layout
       ensure
         clear_mode!
       end
 
-      def render_bibliography(data, node)
+      def render_bibliography(item, node)
         bibliography_mode!
 
         # TODO load item-specific locale
-        render data, node.layout
+        render item, node.layout
       ensure
+        clear_mode!
+      end
+
+      def render_sort(a, b, node, key)
+        sort_mode!(key)
+
+        original_format = @format
+        @format = Formats::Text.new
+
+        if a.is_a?(CiteProc::Names)
+          [render_name(a, node), render_name(b, node)]
+        else
+          [render(a.cite, node), render(b.cite, node)]
+        end
+
+      ensure
+        @format = original_format
+
+        clear_sort_key!
         clear_mode!
       end
 
@@ -96,8 +118,22 @@ module CiteProc
         @mode == :bibliography
       end
 
+      def sort_mode!(key = nil)
+        @mode, @sort_key = :sort, key
+      end
+
+      def sort_mode?
+        @mode == :sort
+      end
+
       def clear_mode!
         @mode = nil
+        self
+      end
+
+      def clear_sort_key!
+        @sort_key = nil
+        self
       end
 
       def translate(name, options = {})
@@ -199,7 +235,7 @@ module CiteProc
 
       protected
 
-      attr_reader :mode
+      attr_reader :mode, :sort_key
 
       def fmt
        @format ||= Format.load

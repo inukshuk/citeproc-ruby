@@ -75,6 +75,7 @@ module CiteProc
       describe 'given multiple variables' do
         before do
           node[:variable] = 'author editor'
+          node[:delimiter] = '; '
         end
 
         it 'renders all matching lists combinded using default delimiter' do
@@ -84,7 +85,7 @@ module CiteProc
           renderer.render_names(item, node).should == 'Edgar Allen Poe'
 
           item.data.editor = philosophers
-          renderer.render_names(item, node).should == 'Edgar Allen Poe, Plato, Socrates, Aristotle'
+          renderer.render_names(item, node).should == 'Edgar Allen Poe; Plato, Socrates, Aristotle'
         end
 
         it 'keeps the variable order' do
@@ -92,15 +93,7 @@ module CiteProc
           item.data.editor = philosophers
 
           node[:variable] = 'editor author'
-          renderer.render_names(item, node).should == 'Plato, Socrates, Aristotle, Edgar Allen Poe'
-        end
-
-        it 'supports custom delimiters' do
-          item.data.author = poe
-          item.data.editor = philosophers
-
-          node[:delimiter] = '; '
-          renderer.render_names(item, node).should == 'Edgar Allen Poe; Plato, Socrates, Aristotle'
+          renderer.render_names(item, node).should == 'Plato, Socrates, Aristotle; Edgar Allen Poe'
         end
 
         it 'supports labels' do
@@ -109,7 +102,7 @@ module CiteProc
 
           node << CSL::Style::Label.new(:prefix => ' (', :suffix => ')')
 
-          renderer.render_names(item, node).should == 'Edgar Allen Poe (author), Plato, Socrates, Aristotle (editors)'
+          renderer.render_names(item, node).should == 'Edgar Allen Poe (author); Plato, Socrates, Aristotle (editors)'
         end
 
         it 'resolves the editor translator special case' do
@@ -123,14 +116,14 @@ module CiteProc
           node.name = { :and => 'symbol', :form => 'short' }
           node.label = { :prefix => ' (', :suffix => ')' }
 
-          renderer.render_names(item, node).should == 'Poe (author), Quinn & Thompson (editors)'
+          renderer.render_names(item, node).should == 'Poe (author); Quinn & Thompson (editors)'
 
           item.data.translator = poe
-          renderer.render_names(item, node).should == 'Poe (translator), Poe (author), Quinn & Thompson (editors)'
+          renderer.render_names(item, node).should == 'Poe (translator); Poe (author); Quinn & Thompson (editors)'
 
           item.data.translator = 'Patrick F. Quinn and G. R. Thompson'
 
-          renderer.render(item, node).should == 'Quinn & Thompson (editors & translators), Poe (author)'
+          renderer.render(item, node).should == 'Quinn & Thompson (editors & translators); Poe (author)'
         end
       end
     end
