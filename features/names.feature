@@ -66,7 +66,7 @@ Feature: CSL Name Rendering
       | Doe, John               |
       | Doe, John, and Jane Doe |
 
-  @wip
+
   Scenario: Substitutions
     Given the following style node:
       """

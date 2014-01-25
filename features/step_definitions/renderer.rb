@@ -4,7 +4,7 @@ Given(/^the "(.*?)" style's (bibliography|citation) node$/) do |style, mode|
 end
 
 Given(/^the following style node:$/) do |string|
-  @node = CSL.parse(string, CSL::Style)
+  @node = CSL.parse!(string, CSL::Style)
 end
 
 When(/^I render the following citation items as "(.*?)":$/) do |format, items|

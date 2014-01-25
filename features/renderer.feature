@@ -40,3 +40,19 @@ Feature: Rendering CSL nodes
       | (2014).          |
       | (1999a).         |
 
+  @html @formatting
+  Scenario: Formatted Groups
+    Given the following style node:
+      """
+      <group>
+        <group suffix=" " font-weight="bold">
+          <!--group formatting is pushed down-->
+          <text variable="volume" suffix=","/>
+        </group>
+        <text variable="page" suffix="," font-weight="bold"/>
+      </group>
+      """
+    When I render the following citation item as "html":
+      | volume |   5 |
+      | page   |  23 |
+    Then the result should be: <b>5</b>, <b>23</b>,
