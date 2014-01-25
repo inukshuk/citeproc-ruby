@@ -53,6 +53,12 @@ module CiteProc
             name = CSL::Style::Name.new
           end
 
+          if sort_mode?
+            name.merge! sort_key.name_options
+          end
+
+          return count_names(names, name) if name.count?
+
           join names.map { |role, ns|
             if names_node.has_label?
               label = render_label(item, names_node.label[0], role)
@@ -62,6 +68,13 @@ module CiteProc
             end
 
           }, names_node.delimiter(mode)
+        end
+      end
+
+      def count_names(names, node)
+        names.reduce(0) do |count, (_, ns)|
+          count + node.truncate?(names) ?
+            node.truncate(names).length : names.length
         end
       end
 

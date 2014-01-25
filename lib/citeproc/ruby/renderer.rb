@@ -6,6 +6,8 @@ module CiteProc
     class Renderer
 
       def initialize(options = nil)
+        @history = RenderHistory.new(self, 5)
+
         unless options.nil?
           locale, format = options.values_at(:locale, :format)
           @locale, @format = CSL::Locale.load(locale), Format.load(format)
@@ -18,17 +20,26 @@ module CiteProc
 
       # @param item [CiteProc::CitationItem]
       # @param node [CSL::Node]
-      # @return [String]
-      def render(item, node)
+      # @param remember [Boolean] whether or not to remember
+      #   the results for this item
+      # @return [String] the rendered and formatted string
+      def render(item, node, remember = false)
         raise ArgumentError, "no CSL node: #{node.inspect}" unless
           node.respond_to?(:nodename)
 
-        specialize = "render_#{node.nodename.tr('-', '_')}"
+        begin
+          specialize = "render_#{node.nodename.tr('-', '_')}"
 
-        raise ArgumentError, "#{specialize} not implemented" unless
-          respond_to?(specialize, true)
+          raise ArgumentError, "#{specialize} not implemented" unless
+            respond_to?(specialize, true)
 
-        format send(specialize, item, node), node
+          result = format send(specialize, item, node), node
+
+        rescue => error
+          throw error
+        ensure
+          history.remember! node.nodename, item, result, error if remember
+        end
       end
 
       def render_citation(item, node)
@@ -235,11 +246,12 @@ module CiteProc
 
       protected
 
-      attr_reader :mode, :sort_key
+      attr_reader :mode, :sort_key, :history
 
       def fmt
        @format ||= Format.load
       end
+
     end
 
   end
