@@ -3,8 +3,8 @@ require 'spec_helper'
 module CiteProc
   module Ruby
 
-    describe Renderer::RenderHistory do
-      let(:history) { Renderer::RenderHistory.new nil, 3 }
+    describe Renderer::History do
+      let(:history) { Renderer::History.new nil, 3 }
 
       it 'has an empty citation history' do
         history.citation.should == []

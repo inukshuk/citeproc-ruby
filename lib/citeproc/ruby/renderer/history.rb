@@ -2,7 +2,7 @@ module CiteProc
   module Ruby
     class Renderer
 
-      RenderHistory = Struct.new(:citation, :bibliography) do
+      History = Struct.new(:citation, :bibliography, :names) do
 
         attr_reader :limit
 
@@ -11,12 +11,10 @@ module CiteProc
           super(*self.class.members.map { [] })
         end
 
-        def remember!(node, *arguments)
-          node = node.nodename if node.respond_to?(:nodename)
+        def remember!(name, *arguments)
+          return unless self.class.members.include?(name)
 
-          return unless self.class.members.include?(node)
-
-          history = self[node]
+          history = self[name]
 
           history.unshift arguments
           history.pop if history.length > limit
@@ -25,7 +23,7 @@ module CiteProc
         end
 
         def inspect
-          "#<RenderHistory #{ map { |k,v| [k, v.length].join('|') }.join(', ') }>"
+          "#<Renderer::History #{ map { |k,v| [k, v.length].join('|') }.join(', ') }>"
         end
       end
 

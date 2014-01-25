@@ -6,7 +6,7 @@ module CiteProc
     class Renderer
 
       def initialize(options = nil)
-        @history = RenderHistory.new(self, 5)
+        @history = History.new(self, 5)
 
         unless options.nil?
           locale, format = options.values_at(:locale, :format)
