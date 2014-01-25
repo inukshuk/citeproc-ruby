@@ -82,11 +82,11 @@ module CiteProc
         return itmes.sort! unless !keys.nil? && !keys.empty?
 
         items.sort! do |a, b|
-          compare_items(a, b, keys)
+          compare_items_by_keys(a, b, keys)
         end
       end
 
-      # @returns [-1, 0, 1]
+      # @returns [-1, 0, 1, nil]
       def compare_items_by_keys(a, b, keys)
         comparison = 0
 
@@ -100,7 +100,7 @@ module CiteProc
         comparison
       end
 
-      # @returns [-1, 0, 1]
+      # @returns [-1, 0, 1, nil]
       def compare_items_by_key(a, b, key)
         if key.macro?
           renderer.render_sort(a, b, key.macro, key).reduce &:<=>
