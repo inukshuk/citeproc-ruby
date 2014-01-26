@@ -61,6 +61,9 @@ module CiteProc
           [render_name(a, node), render_name(b, node)]
 
         else
+          # We need to clear any items that are suppressed
+          # because they were used as substitutes during
+          # rendering for sorting purposes!
           a_rendered = render a.cite, node
           a.suppressed.clear
 
@@ -71,11 +74,6 @@ module CiteProc
         end
 
       ensure
-        # We need to clear any items that are suppressed
-        # because they were used as substitutes during
-        # rendering for sorting purposes!
-        a.data.suppressed.clear
-
         @format = original_format
         state.clear!
       end
