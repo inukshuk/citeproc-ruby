@@ -64,6 +64,11 @@ module CiteProc
         end
 
       ensure
+        # We need to clear any items that are suppressed
+        # because they were used as substitutes during
+        # rendering for sorting purposes!
+        item.data.suppressed.clear
+
         @format = original_format
         state.clear!
       end
