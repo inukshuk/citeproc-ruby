@@ -6,7 +6,7 @@ rvm:
   - 2.0.0
   - 1.9.3
   - jruby-19mode
-  - jruby-head
+#  - jruby-head
   - rbx
   - rbx-2.2.3
 notifications:
