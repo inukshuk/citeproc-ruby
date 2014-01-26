@@ -59,15 +59,22 @@ module CiteProc
 
         if a.is_a?(CiteProc::Names)
           [render_name(a, node), render_name(b, node)]
+
         else
-          [render(a.cite, node), render(b.cite, node)]
+          a_rendered = render a.cite, node
+          a.suppressed.clear
+
+          b_rendered = render b.cite, node
+          b.suppressed.clear
+
+          [a_rendered, b_rendered]
         end
 
       ensure
         # We need to clear any items that are suppressed
         # because they were used as substitutes during
         # rendering for sorting purposes!
-        item.data.suppressed.clear
+        a.data.suppressed.clear
 
         @format = original_format
         state.clear!
