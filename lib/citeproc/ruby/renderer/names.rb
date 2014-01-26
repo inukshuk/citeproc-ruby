@@ -78,11 +78,11 @@ module CiteProc
             end
           end
 
-          return state.node.subsequent_author_substitute if
-            substitute_subsequent_authors_completely? && completely_substitute?(names)
-
           join names, names_node.delimiter(state.node)
         end
+
+      ensure
+        state.rendered_names!
       end
 
       def count_names(names, node)
@@ -107,14 +107,14 @@ module CiteProc
       def completely_substitute?(names)
         # Substitution applies only to the first names
         # node being rendered!
-        return false unless state.authors.nil?
+        return false if state.rendered_names?
 
         state.store_authors! names
         previous_names = state.previous_authors
 
         return false unless previous_names
 
-        names == previous_names
+        names == previous_names[0]
       end
 
       def individually_substitute!(names)
@@ -139,7 +139,7 @@ module CiteProc
         # Add spaces around connector
         connector = " #{connector} " unless connector.nil?
 
-        rendition = case
+        rendered_names = case
           when node.truncate?(names)
             truncated = node.truncate(names)
 
@@ -200,7 +200,14 @@ module CiteProc
             ], connector || delimiter
           end
 
-        format rendition, node
+
+        if substitute_subsequent_authors_completely? &&
+          substitute_completely(rendered_names)
+
+          rendered_names = state.node.subsequent_author_substitute
+        end
+
+        format rendered_names, node
       end
 
       # @param names [CiteProc::Name]

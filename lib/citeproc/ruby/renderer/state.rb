@@ -24,7 +24,7 @@ module CiteProc
         attr_reader :history, :node, :item, :authors, :substitute
 
         def initialize
-          @history = History.new(self, 3)
+          @history, @authors = History.new(self, 3), []
         end
 
         def store!(item, node)
@@ -34,14 +34,14 @@ module CiteProc
         end
 
         def store_authors!(authors)
-          @authors = authors
+          @authors << authors
         ensure
           changed
         end
 
         def clear!(result = nil)
           memories = conserve(result)
-          @item, @node, @substitute, @authors = nil, nil, nil, nil
+          @item, @node, @substitute, @authors, @names = nil, nil, nil, [], nil
         ensure
           changed
           notify_observers :clear!, memories.delete(:mode), memories
@@ -73,6 +73,14 @@ module CiteProc
           return unless past && !past.empty?
 
           past[:authors]
+        end
+
+        def rendered_names?
+          @names
+        end
+
+        def rendered_names!
+          @names = true
         end
 
         def conserve(result = nil)
