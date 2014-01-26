@@ -14,13 +14,13 @@ module CiteProc
           end
         end
 
-        def update(action, mode, memories)
+        def update(action, mode, memories = {})
           history = memory[mode]
 
           case action
           when :store!
             history << memories
-          when :clear!
+          when :clear!, :merge!
             history[-1].merge! memories
           end
 

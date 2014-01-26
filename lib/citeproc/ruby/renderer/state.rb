@@ -32,10 +32,10 @@ module CiteProc
         end
 
         def clear!(result = nil)
-          @item, @node = nil, nil
+          old_mode, @item, @node = mode, nil, nil
         ensure
           changed
-          notify_observers :clear!, mode, :result => result
+          notify_observers :clear!, old_mode, :result => result
         end
 
         def mode
