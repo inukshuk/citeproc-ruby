@@ -115,3 +115,35 @@ Feature: CSL Name Rendering
       | Doe, John, THE TITLE                              |
       | The Title                                         |
 
+  Scenario: Subsequent author substitutes complete-all with different roles
+    Given the following style node:
+      """
+      <bibliography subsequent-author-substitute="---">
+        <layout>
+          <group delimiter=" ">
+          <names variable="author" suffix=".">
+              <name name-as-sort-order="first"/>
+              <substitute>
+                <names variable="editor">
+                  <name name-as-sort-order="first"/>
+                  <label form="short" prefix=" " suffix="."/>
+                </names>
+              </substitute>
+            </names>
+            <text variable="title" suffix="."/>
+          </group>
+        </layout>
+      </bibliography>
+      """
+    When I render the following citation items as "text":
+      | editor                  | author                  | title   |
+      |                         | Jane Doe                | Title A |
+      |                         | Jane Doe                | Title B |
+      |                         | John Doe                | Title C |
+      | John Doe                |                         | Title D |
+    Then the results should be:
+      | Doe, Jane. Title A. |
+      | ---. Title B. |
+      | Doe, John. Title C. |
+      | --- ed. Title D.    |
+
