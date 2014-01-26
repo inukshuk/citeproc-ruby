@@ -121,7 +121,7 @@ Feature: CSL Name Rendering
       <bibliography subsequent-author-substitute="---">
         <layout>
           <group delimiter=" ">
-          <names variable="author" suffix=".">
+          <names variable="author" delimiter=", " suffix=".">
               <name name-as-sort-order="first"/>
               <substitute>
                 <names variable="editor">
@@ -141,9 +141,13 @@ Feature: CSL Name Rendering
       |                         | Jane Doe                | Title B |
       |                         | John Doe                | Title C |
       | John Doe                |                         | Title D |
+      |                         | Jane Doe and John Doe   | Title E |
+      |                         | Jane Doe and John Doe   | Title F |
     Then the results should be:
-      | Doe, Jane. Title A. |
-      | ---. Title B. |
-      | Doe, John. Title C. |
-      | --- ed. Title D.    |
+      | Doe, Jane. Title A.           |
+      | ---. Title B.                 |
+      | Doe, John. Title C.           |
+      | --- ed. Title D.              |
+      | Doe, Jane, John Doe. Title E. |
+      | ---. Title F.                 |
 
