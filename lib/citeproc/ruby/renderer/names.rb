@@ -26,7 +26,7 @@ module CiteProc
           # substitute suppressed items!
           return '' unless suppressed.nil? && node.has_substitute?
 
-          render_substitute(item, node.substitute)
+          render_substitute item, node.substitute
 
         else
 
@@ -35,8 +35,22 @@ module CiteProc
           # Pick the names node that will be used for
           # formatting; if we are currently in substiution
           # mode, the node that is being substituted for
-          # takes precedence.
-          names_node = substituted || node
+          # will take precedence if the current node is
+          # a descendant of it.
+          #
+          # This makes sure that nodes in macros do not
+          # use the original names node.
+          #
+          # When the current node has children the names
+          # will not be substituted either.
+          if substitution_mode? && !node.has_children? &&
+            node.ancestors.include?(state.substitute)
+
+            names_node = state.substitute
+
+          else
+            names_node = node
+          end
 
           if names_node.has_name?
             # Make a copy of the name node and inherit
@@ -197,11 +211,11 @@ module CiteProc
       def render_substitute(item, node)
         return '' unless node.has_children?
 
-        if substitute?
-          original_substituted = substituted
+        if substitution_mode?
+          saved_substitute = state.substitute
         end
 
-        substitute node.parent
+        state.substitute! node.parent
         observer = ItemObserver.new(item.data)
 
         node.each_child do |child|
@@ -228,28 +242,9 @@ module CiteProc
 
         '' # no substitute was rendered
       ensure
-        if original_substituted
-          substitute original_substituted
-        else
-          clear_substitute!
-        end
+        state.clear_substitute! saved_substitute
       end
 
-      def clear_substitute!
-        @substituted = nil
-      end
-
-      def substitute(node)
-        @substituted = node
-      end
-
-      def substitute?
-        !@substituted.nil?
-      end
-
-      protected
-
-      attr_reader :substituted
 
       private
 

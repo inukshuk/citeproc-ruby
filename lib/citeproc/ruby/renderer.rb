@@ -39,18 +39,18 @@ module CiteProc
 
         item.suppress! 'author' if item.suppress_author?
 
-        render item, node.layout
+        result = render item, node.layout
       ensure
-        state.clear!
+        state.clear! result
       end
 
       def render_bibliography(item, node)
         state.store! item, node
 
         # TODO load item-specific locale
-        render item, node.layout
+        result = render item, node.layout
       ensure
-        state.clear!
+        state.clear! result
       end
 
       def render_sort(a, b, node, key)

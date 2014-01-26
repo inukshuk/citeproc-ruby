@@ -14,11 +14,15 @@ module CiteProc
         state.mode == 'key'
       end
 
+      def substitution_mode?
+        !state.substitute.nil?
+      end
+
 
       class State
         include Observable
 
-        attr_reader :node, :item, :history
+        attr_reader :node, :item, :history, :substitute
 
         def initialize
           @history = History.new(self, 3)
@@ -32,7 +36,7 @@ module CiteProc
         end
 
         def clear!(result = nil)
-          old_mode, @item, @node = mode, nil, nil
+          old_mode, @item, @node, @substitute = mode, nil, nil, nil
         ensure
           changed
           notify_observers :clear!, old_mode, :result => result
@@ -40,6 +44,14 @@ module CiteProc
 
         def mode
           node && node.nodename
+        end
+
+        def substitute!(names)
+          @substitute = names
+        end
+
+        def clear_substitute!(backup = nil)
+          @substitute = backup
         end
       end
 
