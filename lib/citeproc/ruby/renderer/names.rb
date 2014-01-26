@@ -56,9 +56,6 @@ module CiteProc
             # Make a copy of the name node and inherit
             # options from root and citation/bibliography
             # depending on current rendering mode.
-            #
-            # Subtle: we need to pass in the current rendering
-            # node, because the node can be part of macro!
             name = names_node.name.deep_copy
             name.reverse_merge! names_node.name.inherited_name_options(state.node)
             name.et_al = names_node.et_al if names_node.has_et_al?
@@ -67,21 +64,25 @@ module CiteProc
             name = CSL::Style::Name.new
           end
 
-          if sort_mode?
-            name.merge! state.node.name_options
-          end
+          # Override options if we are rendering a sort key!
+          name.merge! state.node.name_options if sort_mode?
 
           return count_names(names, name) if name.count?
 
-          join names.map { |role, ns|
+          names.map! do |role, ns|
             if names_node.has_label?
               label = render_label(item, names_node.label[0], role)
               render_name(ns, name) << format(label, names_node.label[0])
             else
               render_name ns, name
             end
+          end
 
-          }, names_node.delimiter(state.node)
+          if substitute_subsequent_authors_completely?
+            completely_substitute! names
+          end
+
+          join names, names_node.delimiter(state.node)
         end
       end
 
@@ -90,6 +91,35 @@ module CiteProc
           count + node.truncate?(names) ?
             node.truncate(names).length : names.length
         end
+      end
+
+      def substitute_subsequent_authors?
+        bibliography_mode? && state.node.substitute_subsequent_authors?
+      end
+
+      def substitute_subsequent_authors_completely?
+        substitute_subsequent_authors? && state.node.substitute_subsequent_authors_completely?
+      end
+
+      def substitute_subsequent_authors_individually?
+        substitute_subsequent_authors? && state.node.substitute_subsequent_authors_individually?
+      end
+
+      def completely_substitute!(names)
+        # Substitution applies only to the first names
+        # node being rendered!
+        return unless state.authors.nil?
+
+        state.store_authors! names
+        previous_names = state.previous_authors
+
+        return unless previous_names
+
+        if names == previous_names
+          names.map! { state.node.subsequent_author_substitute }
+        end
+
+        names
       end
 
       # Formats one or more names according to the

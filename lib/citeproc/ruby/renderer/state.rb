@@ -18,11 +18,10 @@ module CiteProc
         !state.substitute.nil?
       end
 
-
       class State
         include Observable
 
-        attr_reader :node, :item, :history, :substitute
+        attr_reader :history, :node, :item, :authors, :substitute
 
         def initialize
           @history = History.new(self, 3)
@@ -32,14 +31,20 @@ module CiteProc
           @item, @node = item, node
         ensure
           changed
-          notify_observers :store!, mode, :item => item, :node => node
+        end
+
+        def store_authors!(authors)
+          @authors = authors
+        ensure
+          changed
         end
 
         def clear!(result = nil)
-          old_mode, @item, @node, @substitute = mode, nil, nil, nil
+          memories = conserve(result)
+          @item, @node, @substitute, @authors = nil, nil, nil, nil
         ensure
           changed
-          notify_observers :clear!, old_mode, :result => result
+          notify_observers :clear!, memories.delete(:mode), memories
         end
 
         def mode
@@ -52,6 +57,31 @@ module CiteProc
 
         def clear_substitute!(backup = nil)
           @substitute = backup
+        end
+
+        def subsequent?
+          return false unless item
+
+          past = history.recall(mode)
+          return false unless past && !past.empty?
+
+          item.id == past[:item].id
+        end
+
+        def previous_authors
+          past = history.recall(mode)
+          return unless past && !past.empty?
+
+          past[:authors]
+        end
+
+        def conserve(result = nil)
+          {
+            :mode => mode,
+            :item => item,
+            :authors => authors,
+            :result => result
+          }
         end
       end
 

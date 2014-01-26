@@ -22,13 +22,6 @@ module CiteProc
           }.should change { history.citation }.to([{ :x => 1 }])
         end
 
-        it 'merges the passed in items for :clear!' do
-          history.update :store!, 'citation', { :x => 1 }
-          history.update :clear!, 'citation', { :y => 2 }
-
-          history.citation.should == [{ :x => 1, :y => 2 }]
-        end
-
         it 'drops remembered items when they are too old' do
           lambda {
             history.update :store!, 'citation', { :x => 1 }

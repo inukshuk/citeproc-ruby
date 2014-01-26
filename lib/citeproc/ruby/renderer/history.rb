@@ -16,13 +16,7 @@ module CiteProc
 
         def update(action, mode, memories = {})
           history = memory[mode]
-
-          case action
-          when :store!
-            history << memories
-          when :clear!, :merge!
-            history[-1].merge! memories
-          end
+          history << memories
 
         ensure
           history.shift if history.length > maxsize
