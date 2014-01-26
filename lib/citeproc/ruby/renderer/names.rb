@@ -52,17 +52,20 @@ module CiteProc
             names_node = node
           end
 
+          # Make a copy of the name node and inherit
+          # options from root and citation/bibliography
+          # depending on current rendering mode.
           if names_node.has_name?
-            # Make a copy of the name node and inherit
-            # options from root and citation/bibliography
-            # depending on current rendering mode.
             name = names_node.name.deep_copy
-            name.reverse_merge! names_node.name.inherited_name_options(state.node)
-            name.et_al = names_node.et_al if names_node.has_et_al?
-
           else
             name = CSL::Style::Name.new
           end
+
+          # Inherit name options from style and the
+          # current rendering node. We pass both in,
+          # because this is now an unlinked node!
+          name.reverse_merge! name.inherited_name_options(state.node, node.root)
+          name.et_al = names_node.et_al if names_node.has_et_al?
 
           # Override options if we are rendering a sort key!
           name.merge! state.node.name_options if sort_mode?

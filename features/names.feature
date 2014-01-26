@@ -114,3 +114,4 @@ Feature: CSL Name Rendering
       | Doe, Jane, John Doe (editor), THE TITLE           |
       | Doe, John, THE TITLE                              |
       | The Title                                         |
+
