@@ -100,11 +100,13 @@ module CiteProc
       end
 
       def substitute_subsequent_authors_completely?
-        substitute_subsequent_authors? && state.node.substitute_subsequent_authors_completely?
+        substitute_subsequent_authors? &&
+          state.node.substitute_subsequent_authors_completely?
       end
 
       def substitute_subsequent_authors_individually?
-        substitute_subsequent_authors? && state.node.substitute_subsequent_authors_individually?
+        substitute_subsequent_authors? &&
+          state.node.substitute_subsequent_authors_individually?
       end
 
       def completely_substitute?(names)
