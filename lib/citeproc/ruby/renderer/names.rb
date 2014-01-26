@@ -43,10 +43,10 @@ module CiteProc
             # options from root and citation/bibliography
             # depending on current rendering mode.
             #
-            # Subtle: we need to pass in the mode, because
-            # the node can be part of macro!
+            # Subtle: we need to pass in the current rendering
+            # node, because the node can be part of macro!
             name = names_node.name.deep_copy
-            name.reverse_merge! names_node.name.inherited_name_options(mode)
+            name.reverse_merge! names_node.name.inherited_name_options(state.node)
             name.et_al = names_node.et_al if names_node.has_et_al?
 
           else
@@ -54,7 +54,7 @@ module CiteProc
           end
 
           if sort_mode?
-            name.merge! sort_key.name_options
+            name.merge! state.node.name_options
           end
 
           return count_names(names, name) if name.count?
@@ -67,7 +67,7 @@ module CiteProc
               render_name ns, name
             end
 
-          }, names_node.delimiter(mode)
+          }, names_node.delimiter(state.node)
         end
       end
 

@@ -4,30 +4,39 @@ module CiteProc
   module Ruby
 
     describe Renderer::History do
-      let(:history) { Renderer::History.new nil, 3 }
+      let(:state) { Renderer::State.new }
+      let(:history) { state.history }
 
       it 'has an empty citation history' do
-        history.citation.should == []
+        history.memory['citation'].should == []
       end
 
       it 'has an empty bibliography history' do
-        history.citation.should == []
+        history.memory['bibliogrpahy'].should == []
       end
 
-      describe '#remember!' do
-        it 'saves the passed in items' do
+      describe '#update' do
+        it 'saves the passed in items for :store!' do
           lambda {
-            history.remember! :citation, 1
-          }.should change { history.citation }.to([[1]])
+            history.update :store!, 'citation', { :x => 1 }
+          }.should change { history.citation }.to([{ :x => 1 }])
+        end
+
+        it 'merges the passed in items for :clear!' do
+          history.update :store!, 'citation', { :x => 1 }
+          history.update :clear!, 'citation', { :y => 2 }
+
+          history.citation.should == [{ :x => 1, :y => 2 }]
         end
 
         it 'drops remembered items when they are too old' do
           lambda {
-            history.remember! :citation, 1
-            history.remember! :citation, 2
-            history.remember! :citation, 3
-            history.remember! :citation, 4
-          }.should change { history.citation }.to([[4], [3], [2]])
+            history.update :store!, 'citation', { :x => 1 }
+            history.update :store!, 'citation', { :x => 1 }
+            history.update :store!, 'citation', { :x => 1 }
+            history.update :store!, 'citation', { :x => 1 }
+            history.update :store!, 'citation', { :x => 1 }
+          }.should change { history.citation.length }.to(3)
         end
       end
     end

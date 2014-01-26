@@ -2,28 +2,42 @@ module CiteProc
   module Ruby
     class Renderer
 
-      History = Struct.new(:citation, :bibliography, :names) do
+      class History
+        attr_reader :maxsize, :memory
 
-        attr_reader :limit
+        def initialize(state, maxsize = 10)
+          @state, @maxsize, = state, maxsize
+          @state.add_observer(self)
 
-        def initialize(renderer = nil, limit = 10)
-          @renderer, @limit = renderer, limit
-          super(*self.class.members.map { [] })
+          @memory = Hash.new do |hash, key|
+            hash[key] = []
+          end
         end
 
-        def remember!(name, *arguments)
-          return unless self.class.members.include?(name)
+        def update(action, mode, memories)
+          history = memory[mode]
 
-          history = self[name]
+          case action
+          when :store!
+            history << memories
+          when :clear!
+            history[-1].merge! memories
+          end
 
-          history.unshift arguments
-          history.pop if history.length > limit
-
-          self
+        ensure
+          history.shift if history.length > maxsize
         end
 
-        def inspect
-          "#<Renderer::History #{ map { |k,v| [k, v.length].join('|') }.join(', ') }>"
+        def recall(mode)
+          memory[mode][-1]
+        end
+
+        def citation
+          memory['citation']
+        end
+
+        def bibliography
+          memory['bibliography']
         end
       end
 

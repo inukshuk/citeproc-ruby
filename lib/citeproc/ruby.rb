@@ -12,7 +12,10 @@ require 'citeproc/ruby/formats/html'
 
 require 'citeproc/ruby/renderer'
 
+require 'citeproc/ruby/renderer/locale'
+require 'citeproc/ruby/renderer/format'
 require 'citeproc/ruby/renderer/observer'
+require 'citeproc/ruby/renderer/state'
 require 'citeproc/ruby/renderer/history'
 
 require 'citeproc/ruby/renderer/text'
