@@ -78,9 +78,8 @@ module CiteProc
             end
           end
 
-          if substitute_subsequent_authors_completely?
-            completely_substitute! names
-          end
+          return state.node.subsequent_author_substitute if
+            substitute_subsequent_authors_completely? && completely_substitute?(names)
 
           join names, names_node.delimiter(state.node)
         end
@@ -105,21 +104,20 @@ module CiteProc
         substitute_subsequent_authors? && state.node.substitute_subsequent_authors_individually?
       end
 
-      def completely_substitute!(names)
+      def completely_substitute?(names)
         # Substitution applies only to the first names
         # node being rendered!
-        return unless state.authors.nil?
+        return false unless state.authors.nil?
 
         state.store_authors! names
         previous_names = state.previous_authors
 
-        return unless previous_names
+        return false unless previous_names
 
-        if names == previous_names
-          names.map! { state.node.subsequent_author_substitute }
-        end
+        names == previous_names
+      end
 
-        names
+      def individually_substitute!(names)
       end
 
       # Formats one or more names according to the
