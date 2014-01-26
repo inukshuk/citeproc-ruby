@@ -202,7 +202,7 @@ module CiteProc
 
 
         if substitute_subsequent_authors_completely? &&
-          substitute_completely(rendered_names)
+          completely_substitute?(rendered_names)
 
           rendered_names = state.node.subsequent_author_substitute
         end
