@@ -18,6 +18,13 @@ module CiteProc
         !state.substitute.nil?
       end
 
+      def style
+        return unless state.node && !state.node.root? &&
+          state.node.root.is_a?(CSL::Style)
+
+        state.node.root
+      end
+
       class State
         include Observable
 

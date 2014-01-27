@@ -235,6 +235,10 @@ module CiteProc
 
           name.initialize_without_hyphen! if node.initialize_without_hyphen?
 
+          if style && style.demote_particle?
+            name.options[:'demote-non-dropping-particle'] = style.demote_particle
+          end
+
           # Strip away (hyphenated) particles in sort mode!
           if sort_mode? && name.demote_particle?
             name.family = name.family.to_s.sub(/^[[:lower:]]+[\s-]/, '')
