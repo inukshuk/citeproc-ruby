@@ -56,3 +56,19 @@ Feature: Rendering CSL nodes
       | volume |   5 |
       | page   |  23 |
     Then the result should be: <b>5</b>, <b>23</b>,
+
+  Scenario: Page labels
+    Given the following style node:
+      """
+      <label variable="page"/>
+      """
+    When I render the following citation items as "text":
+      | page   |
+      | 23     |
+      |        |
+      | 23, 34 |
+    Then the results should be:
+      | page   |
+      |        |
+      | pages  |
+
