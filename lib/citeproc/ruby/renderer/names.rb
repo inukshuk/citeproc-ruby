@@ -237,7 +237,7 @@ module CiteProc
 
           # Strip away (hyphenated) particles in sort mode!
           if sort_mode? && name.demote_particle?
-            name.given = name.given.to_s.sub(/^[[:lower:]]+[\s-]/)
+            name.given = name.given.to_s.sub(/^[[:lower:]]+[\s-]/, '')
           end
 
           node.name_part.each do |part|
