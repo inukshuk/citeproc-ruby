@@ -28,4 +28,5 @@ require 'citeproc/ruby/renderer/macro'
 require 'citeproc/ruby/renderer/group'
 require 'citeproc/ruby/renderer/choose'
 
+require 'citeproc/ruby/sort.rb'
 require 'citeproc/ruby/engine.rb'
