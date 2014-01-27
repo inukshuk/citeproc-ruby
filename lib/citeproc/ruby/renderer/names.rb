@@ -70,7 +70,7 @@ module CiteProc
           # Override options if we are rendering a sort key!
           if sort_mode?
             name.merge! state.node.name_options
-            node.all_names_as_sort_order!
+            name.all_names_as_sort_order!
           end
 
           return count_names(names, name) if name.count?
