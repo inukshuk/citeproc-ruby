@@ -244,7 +244,7 @@ module CiteProc
 
               # Name suffix must be enclosed by family-part
               # suffix in display order!
-              if name.suffix? && !name.sort_order? && part.attribute?(:suffix)
+              if name.has_suffix? && !name.sort_order? && part.attribute?(:suffix)
                 comma = name.comma_suffix? ? name.comma : ' '
                 suffix = part[:suffix]
 
