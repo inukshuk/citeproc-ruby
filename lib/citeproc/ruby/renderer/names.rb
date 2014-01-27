@@ -235,6 +235,11 @@ module CiteProc
 
           name.initialize_without_hyphen! if node.initialize_without_hyphen?
 
+          # Strip away (hyphenated) particles in sort mode!
+          if sort_mode? && name.demote_particle?
+            name.given = name.given.to_s.sub(/^[[:lower:]][\s-]/)
+          end
+
           node.name_part.each do |part|
             case part[:name]
             when 'family'
@@ -278,7 +283,7 @@ module CiteProc
               end
 
             end
-          end if name.personal?
+          end
 
         end
 
