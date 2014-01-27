@@ -235,11 +235,48 @@ module CiteProc
           node.name_part.each do |part|
             case part[:name]
             when 'family'
-              name.family = format(name.family, part)
+              if !name.particle? || name.demote_particle?
+                name.family = format(name.family, part)
+              else
+                name.family = format("#{name.particle} #{name.family}", part)
+                name.particle = nil
+              end
+
+              # Name suffix must be enclosed by family-part
+              # suffix in display order!
+              if name.suffix? && !name.sort_order? && part.attribute?(:suffix)
+                comma = name.comma_suffix? ? name.comma : ' '
+                suffix = part[:suffix]
+
+                name.family.chomp! suffix
+                name.family.concat "#{comma}#{name.suffix}#{suffix}"
+                name.suffix = nil
+              end
+
             when 'given'
-              name.given = format(name.initials, part)
+              if name.dropping_particle?
+                name.given = format("#{name.initials} #{name.dropping_particle}", part)
+                name.dropping_particle = nil
+              else
+                name.given = format(name.initials, part)
+              end
+
+              # Demoted particles must be enclosed by
+              # given-part affixes in sort order!
+              if name.particle? && name.demote_particle? &&
+                name.sort_order? && part.attribute?(:suffix)
+
+                suffix = part[:suffix]
+
+                name.given.chomp! suffix
+                name.given.concat " #{name.particle}#{suffix}"
+
+                name.particle = nil
+              end
+
             end
-          end
+          end if name.personal?
+
         end
 
         format name.format, node

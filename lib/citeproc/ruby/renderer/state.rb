@@ -59,15 +59,6 @@ module CiteProc
           @substitute = backup
         end
 
-        def subsequent?
-          return false unless item
-
-          past = history.recall(mode)
-          return false unless past && !past.empty?
-
-          item.id == past[:item].id
-        end
-
         def previous_authors
           past = history.recall(mode)
           return unless past && !past.empty?

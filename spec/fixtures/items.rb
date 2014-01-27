@@ -5,7 +5,7 @@ module Fixtures
 	module_function
 
 	def people(name)
-		DB.people[name.to_sym]
+		DB.people[name.to_sym].dup
 	end
 
 	def items(name)
@@ -22,14 +22,20 @@ module Fixtures
     @people = {
       :poe => CiteProc::Names.new(:family => 'Poe', :given => 'Edgar Allen'),
 
-      :plato => CiteProc::Name.new(:given => 'Plato'),
+      :plato => CiteProc::Names.new(:given => 'Plato'),
 
-      :japanese => CiteProc::Name.new(:family => '穂積', :given => '陳重'),
+      :japanese => CiteProc::Names.new(:family => '穂積', :given => '陳重'),
 
-      :humboldt => CiteProc::Name.new(:given => 'Alexander',
-        :particle => 'von', :family => 'Humboldt'),
+      :humboldt => CiteProc::Names.new(:given => 'Alexander',
+        :dropping_particle => 'von', :family => 'Humboldt'),
 
-      :derrida => CiteProc::Name.new(:given => 'Jacques', :family => 'Derrida')
+      :la_fontaine => CiteProc::Names.new(:family => 'Fontaine', :given => 'Jean',
+        :particle => 'La', :dropping_particle => 'de'),
+
+      :van_gogh => CiteProc::Names.new(:family => 'Gogh',
+        :given => 'Vincent', :particle => 'van'),
+
+      :derrida => CiteProc::Names.new(:given => 'Jacques', :family => 'Derrida')
     }
 
     @items = {

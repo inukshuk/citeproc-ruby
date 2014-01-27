@@ -341,10 +341,21 @@ module CiteProc
           renderer.render_name(poe, node).should == 'Edgar Allen POE'
         end
 
-        pending 'family part includes particles' do
+        it 'family part includes non-demoted particles' do
+          part[:name] = 'family'
+
+          renderer.render_name(people(:la_fontaine), node).should == 'Jean de LA FONTAINE'
+          renderer.render_name(people(:humboldt), node).should == 'Alexander von HUMBOLDT'
+          renderer.render_name(people(:van_gogh), node).should == 'Vincent VAN GOGH'
         end
 
-        pending 'family part affixes includes name suffix for non-inverted names' do
+        it 'family part affixes includes name suffix for non-inverted names' do
+          part.merge! :name => 'family', :prefix => '(', :suffix => ')'
+
+          la_fontaine = people(:la_fontaine)
+          la_fontaine[0].suffix = 'Jr.'
+
+          renderer.render_name(la_fontaine, node).should == 'Jean de (LA FONTAINE Jr.)'
         end
 
         it 'supports given name formatting' do
@@ -352,7 +363,26 @@ module CiteProc
           renderer.render_name(poe, node).should == 'EDGAR ALLEN Poe'
         end
 
-        pending 'given part includes particles' do
+        it 'given part includes particles' do
+          part[:name] = 'given'
+
+          renderer.render_name(people(:la_fontaine), node).should == 'JEAN DE La Fontaine'
+          renderer.render_name(people(:humboldt), node).should == 'ALEXANDER VON Humboldt'
+          renderer.render_name(people(:van_gogh), node).should == 'VINCENT van Gogh'
+        end
+
+        it 'given part affixes enclose demoted particles' do
+          part.merge! :name => 'given', :prefix => '(', :suffix => ')'
+
+          la_fontaine = people(:la_fontaine)
+
+          renderer.render_name(la_fontaine, node).should == '(JEAN DE) La Fontaine'
+
+          node.all_names_as_sort_order!
+          renderer.render_name(la_fontaine, node).should == 'La Fontaine, (JEAN DE)'
+
+          la_fontaine[0].always_demote_particle!
+          renderer.render_name(la_fontaine, node).should == 'Fontaine, (JEAN DE La)'
         end
 
         it 'does not alter the passed-in name object' do
