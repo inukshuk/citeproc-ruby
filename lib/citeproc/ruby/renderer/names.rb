@@ -68,7 +68,10 @@ module CiteProc
           name.et_al = names_node.et_al if names_node.has_et_al?
 
           # Override options if we are rendering a sort key!
-          name.merge! state.node.name_options if sort_mode?
+          if sort_mode?
+            name.merge! state.node.name_options
+            node.all_names_as_sort_order!
+          end
 
           return count_names(names, name) if name.count?
 
