@@ -67,7 +67,7 @@ module CiteProc
           end
 
         data.map do |item|
-          item.data = processor[item.id]
+          item.data = processor[item.id].dup
           renderer.render item, node
         end
       end
