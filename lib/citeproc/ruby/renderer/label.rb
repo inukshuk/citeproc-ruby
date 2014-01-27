@@ -13,7 +13,7 @@ module CiteProc
 
         case
         when node.page?
-          value, name = item.read_attribute(:page) || item.data[:page], :page
+          value, name = item.read_attribute(:page) || item.data[:page].to_s, :page
 
           format_page_range!(value, node.page_range_format)
 
