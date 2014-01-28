@@ -77,8 +77,15 @@ module CiteProc
 
           names.map! do |role, ns|
             if names_node.has_label?
-              label = render_label(item, names_node.label[0], role)
-              render_name(ns, name) << format(label, names_node.label[0])
+              label = render_label item, names_node.label, role
+              label = format label, names_node.label
+
+              if names_node.prefix_label?
+                concat label, render_name(ns, name)
+              else
+                concat render_name(ns, name), label
+              end
+
             else
               render_name ns, name
             end

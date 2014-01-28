@@ -151,3 +151,24 @@ Feature: CSL Name Rendering
       | Doe, Jane, John Doe. Title E. |
       | ---. Title F.                 |
 
+  Scenario: Name / Label Order
+    Given the following style node:
+      """
+      <group delimiter=". ">
+        <names variable="author" delimiter=". ">
+          <name and="symbol" delimiter=", "/>
+          <label prefix=" (" suffix=")"/>
+        </names>
+        <names variable="translator" delimiter=". ">
+          <label form="verb-short" text-case="capitalize-first" suffix=" "/>
+          <name and="symbol" delimiter=", "/>
+        </names>
+      </group>
+      """
+    When I render the following citation items as "text":
+      | translator              | author                  |
+      | John Doe                | Jane Doe                |
+      | John Doe and Jack Doe   | Jane Doe and Jill Doe   |
+    Then the results should be:
+      | Jane Doe (author). Trans. John Doe                        |
+      | Jane Doe & Jill Doe (authors). Trans. John Doe & Jack Doe |
