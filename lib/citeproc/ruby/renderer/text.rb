@@ -16,7 +16,7 @@ module CiteProc
             # in item.data; there should be no locator there
             # either but the read access will be noticed by
             # observers (if any).
-            text = item.locator || item.data[:locator]
+            text = item.locator || item.data[:locator].to_s
 
           else
             text = item.data.variable(node.variable, node.variable_options).to_s

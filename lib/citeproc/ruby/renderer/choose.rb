@@ -51,13 +51,13 @@ module CiteProc
 
           when :'is-numeric'
             evaluates_condition? matcher, values do |value|
-              v = item.data[value]
+              v = item.data.unobservable_read_attribute(value)
               v.respond_to?(:numeric?) && v.numeric?
             end
 
           when :'is-uncertain-date'
             evaluates_condition? matcher, values do |value|
-              v = item.data[value]
+              v = item.data.unobservable_read_attribute(value)
               v.respond_to?(:uncertain?) && v.uncertain?
             end
 
@@ -73,7 +73,7 @@ module CiteProc
             false # TODO not implemented yet
 
           when :type
-            type = item.data[:type].to_s
+            type = item.data.unobservable_read_attribute(:type).to_s
 
             evaluates_condition? matcher, values do |value|
               value.to_s == type
