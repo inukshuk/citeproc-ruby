@@ -26,7 +26,15 @@ module CiteProc
           # substitute suppressed items!
           return '' unless suppressed.nil? && node.has_substitute?
 
-          render_substitute item, node.substitute
+          rendered_names = render_substitute item, node.substitute
+
+          if substitute_subsequent_authors_completely? &&
+            completely_substitute?(rendered_names)
+
+            rendered_names = state.node.subsequent_author_substitute
+          end
+
+          rendered_names
 
         else
 
