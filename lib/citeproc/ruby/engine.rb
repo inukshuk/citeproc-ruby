@@ -42,7 +42,7 @@ module CiteProc
 
           selection.each do |item|
             begin
-              bib << renderer.render(item.cite(idx), node)
+              bib.push item.id, renderer.render(item.cite(idx), node)
             rescue => error
               bib.errors << [item.id.to_s, error]
             ensure
