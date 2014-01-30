@@ -8,9 +8,16 @@ module CiteProc
           :css_only  => false,
           :italic    => 'i',      # em
           :bold      => 'b',      # strong
-          :smallcaps => 'sc',
           :container => 'span',   # inner container
-          :display   => 'div'     # display container
+          :display   => 'div',    # display container
+
+          :bib_container       => 'ol',
+          :bib_container_class => 'csl-bibliography',
+          :bib_entry           => 'li',
+          :bib_entry_class     => 'csl-entry',
+          :bib_hanging_indent  => '0.5',
+          :bib_unit            => 'em',
+          :bib_indent          => '  '
         }
 
         class << self
@@ -25,6 +32,44 @@ module CiteProc
           else
             @config = Html.defaults.merge(config)
           end
+        end
+
+        def apply_to_bibliography(bibliography, locale = nil)
+          ol, li, indent, unit =
+            config.values_at(:bib_container, :bib_entry, :bib_indent, :bib_unit)
+
+          container_options = {}
+          container_options['class'] = config[:bib_container_class]
+
+          entry_options = {}
+          entry_options['class'] = config[:bib_entry_class]
+
+          entry_options['style'] = {}
+          container_options['style'] = {}
+
+          if bibliography.line_spacing != 1.0
+            container_options['style']['line-height'] = bibliography.line_spacing
+          end
+
+          if bibliography.hanging_indent?
+            hanging_indent = "#{config[:bib_hanging_indent]}#{bib_unit}"
+
+            container_options['style']['padding-left'] = hanging_indent
+            entry-options['style']['text-indent'] = "-#{hanging_indent}"
+          end
+
+          if bibliography.entry_spacing != 1.0
+            entry-options['style']['margin-bottom'] = "#{bibliography.entry_spacing}#{unit}"
+          end
+
+          bibliography.header = opening_tag(ol, container_options)
+          bibliography.footer = closing_tag(ol)
+
+          bibliography.prefix = [indent, opening_tag(li, entry_options)].join('')
+          bibliography.suffix = closing_tag(li)
+
+          bibliography.connector = indent ? "\n" : ''
+          bibliography
         end
 
         def css_only?
@@ -61,7 +106,7 @@ module CiteProc
 
         def apply_display
           output.replace(
-            content_tag(config[:display], output, :display => options[:display])
+            content_tag(config[:display], output, 'style' => { 'display' => options[:display] })
           )
         end
 
@@ -89,7 +134,7 @@ module CiteProc
 
         def finalize_content!
           super
-          output.replace content_tag(config[:container], output, css) if @css
+          output.replace content_tag(config[:container], output, 'style' => css) if @css
         end
 
         def setup!
@@ -109,14 +154,35 @@ module CiteProc
         private
 
         def content_tag(name, content, options = nil)
-          "<#{name}#{style(options)}>#{content}</#{name}>"
+          opening_tag(name, options) << content << closing_tag(name)
         end
 
-        def style(options)
+        def style_for(options)
           return unless options && !options.empty?
-          " style=#{options.map { |*kv| kv.join(': ') }.join('; ').inspect}"
+          options.map { |*kv| kv.join(': ') }.join('; ')
         end
 
+        def attribute_assignments(options)
+          return unless options
+
+          options = options.select { |k, v| !v.nil? }
+
+          return unless !options.empty?
+
+          ' ' << options.map { |k, v| [k, v.inspect].join('=') }.join(' ')
+        end
+
+        def opening_tag(name, options = nil)
+          if options && options.key?('style')
+            options['style'] = style_for(options['style'])
+          end
+
+          "<#{name}#{attribute_assignments(options)}>"
+        end
+
+        def closing_tag(name)
+          "</#{name}>"
+        end
       end
 
     end

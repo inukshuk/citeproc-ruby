@@ -37,12 +37,16 @@ module CiteProc
 
         sort!(selection, node.sort_keys) unless selection.empty? || !node.sort?
 
-        Bibliography.new(node.bibliography_options) do |b|
+        Bibliography.new(node.bibliography_options) do |bib|
+          idx = 1
+
           selection.each do |item|
             begin
-              b << renderer.render(item.cite, node)
-            rescue => e
-              b.errors << [item.id.to_s, e]
+              bib << renderer.render(item.cite(idx), node)
+            rescue => error
+              bib.errors << [item.id.to_s, error]
+            ensure
+              idx += 1 unless error
             end
           end
         end

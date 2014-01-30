@@ -137,11 +137,16 @@ module CiteProc
         end
       end
 
+      def apply_to_bibliography(bibliography, locale = nil)
+        bibliography.connector = "\n" * bibliography.entry_spacing
+      end
+
       def apply(input, node, locale = nil)
         return '' if input.nil?
         return input if input.empty? || node.nil?
 
-        # create a dummy node if node is an options hash?
+        return ArgumentError unless node.respond_to?(:formatting_options)
+
 
         @input, @output, @node, @locale = input, input.dup, node, locale
 

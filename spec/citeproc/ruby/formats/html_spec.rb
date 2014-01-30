@@ -131,6 +131,31 @@ module CiteProc
           format.apply('foo bar', node).should == '<div style="display: block">(<span style="text-decoration: underline">foo bar</span></div>'
         end
       end
+
+      describe 'bibliography formats' do
+        let(:bibliography) do
+          CiteProc::Bibliography.new do |b|
+            b.push 'id-1', 'foo'
+            b.push 'id-2', 'bar'
+          end
+        end
+
+        it 'can be applied' do
+          format.config[:bib_indent] = nil
+          format.apply_to_bibliography(bibliography)
+          bibliography.join.should == '<ol class="csl-bibliography"><li class="csl-entry">foo</li><li class="csl-entry">bar</li></ol>'
+        end
+
+        it 'can be customized' do
+          format.config[:bib_indent] = nil
+          format.config[:bib_entry_class] = nil
+          format.config[:bib_entry] = 'span'
+          format.config[:bib_container] = 'div'
+
+          format.apply_to_bibliography(bibliography)
+          bibliography.join.should == '<div class="csl-bibliography"><span>foo</span><span>bar</span></div>'
+        end
+      end
     end
 
   end
