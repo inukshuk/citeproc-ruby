@@ -13,15 +13,19 @@ $:.unshift(File.join(File.dirname(__FILE__), './lib'))
 require 'citeproc/ruby/version'
 
 
-desc 'Run an IRB session with CiteProc-Ruby loaded'
-task :console, [:script] do |t,args|
-  ARGV.clear
-
-  require 'irb'
+desc 'Run a Pry session with CiteProc-Ruby loaded'
+task :console do
+  require 'pry'
   require 'citeproc/ruby'
 
-  IRB.conf[:SCRIPT] = args.script
-  IRB.start
+  Pry.start
+end
+
+task :check_warnings do
+  $VERBOSE = true
+  require 'citeproc/ruby'
+
+  puts CiteProc::Ruby::VERSION
 end
 
 require 'rspec/core'
