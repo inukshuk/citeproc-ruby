@@ -26,7 +26,7 @@ module CiteProc
       # @returns [-1, 0, 1, nil]
       def compare_items_by_key(a, b, key)
         if key.macro?
-          result = renderer.render_sort(a, b, key.macro, key).reduce &:<=>
+          result = renderer.render_sort(a, b, key.macro, key).reduce(&:<=>)
 
         else
           va, vb = a[key.variable], b[key.variable]
@@ -43,7 +43,7 @@ module CiteProc
               node = CSL::Style::Name.new(key.name_options)
               node.all_names_as_sort_order!
 
-              renderer.render_sort(va, vb, node, key).reduce &:<=>
+              renderer.render_sort(va, vb, node, key).reduce(&:<=>)
 
             when :date
               va <=> vb

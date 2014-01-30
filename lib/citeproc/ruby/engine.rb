@@ -35,7 +35,7 @@ module CiteProc
           selector.matches?(item) && !selector.skip?(item)
         end
 
-        sort!(selection, node.sort_keys) if node.sort?
+        sort!(selection, node.sort_keys) unless selection.empty? || !node.sort?
 
         Bibliography.new(node.bibliography_options) do |b|
           selection.each do |item|

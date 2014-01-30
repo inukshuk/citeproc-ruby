@@ -161,7 +161,7 @@ module CiteProc
           end
         end unless options.empty?
 
-        output.gsub! /\.+/, '' if node.strip_periods?
+        output.gsub!(/\.+/, '') if node.strip_periods?
 
         apply_quotes if node.quotes? && !locale.nil?
 

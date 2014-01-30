@@ -108,8 +108,8 @@ module CiteProc
 
       def count_names(names, node)
         names.reduce(0) do |count, (_, ns)|
-          count + node.truncate?(names) ?
-            node.truncate(names).length : names.length
+          count + node.truncate?(ns) ?
+            node.truncate(ns).length : ns.length
         end
       end
 
@@ -332,7 +332,7 @@ module CiteProc
               # Variables rendered as substitutes
               # must be suppressed during the remainder
               # of the rendering process!
-              item.suppress! *observer.accessed
+              item.suppress!(*observer.accessed)
 
               return string # break out of each loop!
             end
