@@ -125,10 +125,10 @@ module CiteProc
         it 'is supported in an outer container' do
           node[:'display'] = 'block'
           node[:'text-decoration'] = 'underline'
-          format.apply('foo bar', node).should == '<div style="display: block"><span style="text-decoration: underline">foo bar</span></div>'
+          format.apply('foo bar', node).should == '<div class="csl-block"><span style="text-decoration: underline">foo bar</span></div>'
 
           node[:prefix] = '('
-          format.apply('foo bar', node).should == '<div style="display: block">(<span style="text-decoration: underline">foo bar</span></div>'
+          format.apply('foo bar', node).should == '<div class="csl-block">(<span style="text-decoration: underline">foo bar</span></div>'
         end
       end
 

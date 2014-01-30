@@ -106,7 +106,7 @@ module CiteProc
 
         def apply_display
           output.replace(
-            content_tag(config[:display], output, 'style' => { 'display' => options[:display] })
+            content_tag(config[:display], output, 'class' => "csl-#{options[:display]}" )
           )
         end
 
