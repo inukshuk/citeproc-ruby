@@ -49,6 +49,8 @@ module CiteProc
               idx += 1 unless error
             end
           end
+
+          format.apply_to_bibliography(bib)
         end
       end
 
@@ -76,6 +78,10 @@ module CiteProc
         end
       end
 
+
+      def format
+        renderer.send :fmt
+      end
 
       def update!
         renderer.format = processor.options[:format]
