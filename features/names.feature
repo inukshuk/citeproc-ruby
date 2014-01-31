@@ -172,3 +172,21 @@ Feature: CSL Name Rendering
     Then the results should be:
       | Jane Doe (author). Trans. John Doe                        |
       | Jane Doe & Jill Doe (authors). Trans. John Doe & Jack Doe |
+
+  Scenario: EtAlUseFirst options
+    Given the following style node:
+      """
+      <group delimiter=" // ">
+        <names variable="author">
+          <name et-al-min="2" et-al-use-first="0"/>
+        </names>
+        <names variable="author">
+          <name et-al-min="2" et-al-use-first="1"/>
+        </names>
+      </group>
+      """
+    When I render the following citation item as "text":
+      | author | John Doe and Jane Roe |
+    Then the result should be: John Doe et al.
+
+

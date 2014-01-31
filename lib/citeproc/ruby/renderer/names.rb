@@ -88,10 +88,16 @@ module CiteProc
               label = render_label item, names_node.label, role
               label = format! label, names_node.label
 
-              if names_node.prefix_label?
-                concat label, render_name(ns, name)
+              rendered_names = render_name(ns, name)
+
+              if rendered_names.empty?
+                rendered_names
               else
-                concat render_name(ns, name), label
+                if names_node.prefix_label?
+                  concat label, rendered_names
+                else
+                  concat rendered_names, label
+                end
               end
 
             else
@@ -165,6 +171,8 @@ module CiteProc
         rendered_names = case
           when node.truncate?(names)
             truncated = node.truncate(names)
+
+            return '' if truncated.empty?
 
             if node.delimiter_precedes_last?(truncated)
               connector = join [delimiter, connector].compact
