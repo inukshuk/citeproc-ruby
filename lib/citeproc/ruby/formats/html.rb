@@ -34,7 +34,7 @@ module CiteProc
           end
         end
 
-        def bibliography(bibliography, locale = nil)
+        def bibliography(bibliography)
           ol, li, indent, unit =
             config.values_at(:bib_container, :bib_entry, :bib_indent, :bib_unit)
 
@@ -182,6 +182,37 @@ module CiteProc
 
         def closing_tag(name)
           "</#{name}>"
+        end
+      end
+
+      class CiteProcJS < Html
+        def initialize
+          super(
+            :bib_container => 'div',
+            :bib_container_class => 'csl-bib-body',
+            :bib_entry => 'div',
+            :bib_entry_class => 'csl-entry'
+          )
+        end
+
+        def bibliography
+          ol, li, indent =
+            config.values_at(:bib_container, :bib_entry, :bib_indent)
+
+          container_options = {}
+          container_options['class'] = config[:bib_container_class]
+
+          entry_options = {}
+          entry_options['class'] = config[:bib_entry_class]
+
+          bibliography.header = opening_tag(ol, container_options)
+          bibliography.footer = closing_tag(ol)
+
+          bibliography.prefix = [indent, opening_tag(li, entry_options)].join('')
+          bibliography.suffix = closing_tag(li)
+
+          bibliography.connector = indent ? "\n" : ''
+          bibliography
         end
       end
 

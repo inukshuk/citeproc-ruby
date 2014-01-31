@@ -29,7 +29,7 @@ module CiteProc
         attr_reader :available, :stopwords
 
         def inherited(base)
-          available << base
+          Format.available << base
         end
 
         def load(name = nil)
