@@ -195,7 +195,7 @@ module CiteProc
           )
         end
 
-        def bibliography
+        def bibliography(bibliography)
           ol, li, indent =
             config.values_at(:bib_container, :bib_entry, :bib_indent)
 
