@@ -55,11 +55,11 @@ module CiteProc
             hanging_indent = "#{config[:bib_hanging_indent]}#{bib_unit}"
 
             container_options['style']['padding-left'] = hanging_indent
-            entry-options['style']['text-indent'] = "-#{hanging_indent}"
+            entry_options['style']['text-indent'] = "-#{hanging_indent}"
           end
 
           if bibliography.entry_spacing != 1.0
-            entry-options['style']['margin-bottom'] = "#{bibliography.entry_spacing}#{unit}"
+            entry_options['style']['margin-bottom'] = "#{bibliography.entry_spacing}#{unit}"
           end
 
           bibliography.header = opening_tag(ol, container_options)
