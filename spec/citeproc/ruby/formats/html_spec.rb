@@ -142,7 +142,7 @@ module CiteProc
 
         it 'can be applied' do
           format.config[:bib_indent] = nil
-          format.apply_to_bibliography(bibliography)
+          format.bibliography(bibliography)
           bibliography.join.should == '<ol class="csl-bibliography"><li class="csl-entry">foo</li><li class="csl-entry">bar</li></ol>'
         end
 
@@ -152,7 +152,7 @@ module CiteProc
           format.config[:bib_entry] = 'span'
           format.config[:bib_container] = 'div'
 
-          format.apply_to_bibliography(bibliography)
+          format.bibliography(bibliography)
           bibliography.join.should == '<div class="csl-bibliography"><span>foo</span><span>bar</span></div>'
         end
       end

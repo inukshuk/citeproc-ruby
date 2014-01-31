@@ -137,8 +137,9 @@ module CiteProc
         end
       end
 
-      def apply_to_bibliography(bibliography, locale = nil)
+      def bibliography(bibliography, locale = nil)
         bibliography.connector = "\n" * bibliography.entry_spacing
+        bibliography
       end
 
       def apply(input, node, locale = nil)

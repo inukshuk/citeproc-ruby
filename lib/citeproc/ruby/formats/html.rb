@@ -34,7 +34,7 @@ module CiteProc
           end
         end
 
-        def apply_to_bibliography(bibliography, locale = nil)
+        def bibliography(bibliography, locale = nil)
           ol, li, indent, unit =
             config.values_at(:bib_container, :bib_entry, :bib_indent, :bib_unit)
 

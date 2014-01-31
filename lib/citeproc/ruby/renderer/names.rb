@@ -86,7 +86,7 @@ module CiteProc
           names.map! do |role, ns|
             if names_node.has_label?
               label = render_label item, names_node.label, role
-              label = format label, names_node.label
+              label = format! label, names_node.label
 
               if names_node.prefix_label?
                 concat label, render_name(ns, name)
@@ -182,7 +182,7 @@ module CiteProc
 
             else
               others = node.et_al ?
-                format(translate(node.et_al[:term]), node.et_al) :
+                format!(translate(node.et_al[:term]), node.et_al) :
                 translate('et-al')
 
               connector = node.delimiter_precedes_et_al?(truncated) ?
@@ -230,7 +230,7 @@ module CiteProc
           rendered_names = state.node.subsequent_author_substitute
         end
 
-        format rendered_names, node
+        format! rendered_names, node
       end
 
       # @param names [CiteProc::Name]
@@ -263,9 +263,9 @@ module CiteProc
             case part[:name]
             when 'family'
               if !name.particle? || name.demote_particle?
-                name.family = format(name.family, part)
+                name.family = format!(name.family, part)
               else
-                name.family = format("#{name.particle} #{name.family}", part)
+                name.family = format!("#{name.particle} #{name.family}", part)
                 name.particle = nil
               end
 
@@ -282,10 +282,10 @@ module CiteProc
 
             when 'given'
               if name.dropping_particle?
-                name.given = format("#{name.initials} #{name.dropping_particle}", part)
+                name.given = format!("#{name.initials} #{name.dropping_particle}", part)
                 name.dropping_particle = nil
               else
-                name.given = format(name.initials, part)
+                name.given = format!(name.initials, part)
               end
 
               # Demoted particles must be enclosed by
@@ -306,7 +306,7 @@ module CiteProc
 
         end
 
-        format name.format, node
+        format! name.format, node
       end
 
       # @param item [CiteProc::CitationItem]

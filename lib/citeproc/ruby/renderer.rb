@@ -14,6 +14,10 @@ module CiteProc
         end
       end
 
+      def locale
+        @locale ||= CSL::Locale.load
+      end
+
       # @param item [CiteProc::CitationItem]
       # @param node [CSL::Node]
       # @return [String] the rendered and formatted string
@@ -26,7 +30,7 @@ module CiteProc
         raise ArgumentError, "#{specialize} not implemented" unless
           respond_to?(specialize, true)
 
-        format send(specialize, item, node), node
+        format! send(specialize, item, node), node
       end
 
       def render_citation(item, node)

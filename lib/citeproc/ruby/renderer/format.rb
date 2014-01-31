@@ -5,18 +5,22 @@ module CiteProc
 
     class Renderer
 
-      # Applies the current format on the string using the
-      # node's formatting options.
-      def format(string, node)
-        fmt.apply(string, node, locale)
+      def format
+       @format ||= Format.load
       end
 
       def format=(format)
         @format = Format.load(format)
       end
 
+      # Applies the current format on the string using the
+      # node's formatting options.
+      def format!(string, node)
+        format.apply(string, node, locale)
+      end
+
       def join(list, delimiter = nil)
-        fmt.join(list, delimiter)
+        format.join(list, delimiter)
       end
 
       # Concatenates two strings, making sure that squeezable
@@ -28,7 +32,7 @@ module CiteProc
       # @return [String] new string consisting of string
       #   and suffix
       def concat(string, suffix)
-        fmt.concat(string, suffix)
+        format.concat(string, suffix)
       end
 
 
@@ -119,12 +123,6 @@ module CiteProc
         #   ------------  -2-  ------------             ------------  -5-  ------------
         /\b([[:alpha:]]*)(\d+)([[:alpha:]]*)\s*[–-]+\s*([[:alpha:]]*)(\d+)([[:alpha:]]*)\b/
 
-
-      protected
-
-      def fmt
-       @format ||= Format.load
-      end
     end
 
   end

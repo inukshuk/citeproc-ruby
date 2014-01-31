@@ -12,11 +12,18 @@ module CiteProc
 
       attr_reader :renderer, :style
 
+      def_delegators :renderer,
+        :format, :format=, :locale, :locale=
+
       def initialize(*arguments)
         super(*arguments)
         @renderer = Renderer.new
 
         update! unless processor.nil?
+      end
+
+      def style=(new_style)
+        @style = CSL::Style.load new_style
       end
 
       def process
@@ -38,6 +45,8 @@ module CiteProc
         sort!(selection, node.sort_keys) unless selection.empty? || !node.sort?
 
         Bibliography.new(node.bibliography_options) do |bib|
+          format.bibliography(bib)
+
           idx = 1
 
           selection.each do |item|
@@ -49,8 +58,6 @@ module CiteProc
               idx += 1 unless error
             end
           end
-
-          format.apply_to_bibliography(bib)
         end
       end
 
@@ -78,10 +85,6 @@ module CiteProc
         end
       end
 
-
-      def format
-        renderer.send :fmt
-      end
 
       def update!
         renderer.format = processor.options[:format]
