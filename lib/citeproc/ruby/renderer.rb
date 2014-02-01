@@ -33,19 +33,34 @@ module CiteProc
         format! send(specialize, item, node), node
       end
 
-      def render_citation(item, node)
-        state.store! item, node
+      # @param data [CiteProc::CitationData]
+      # @param node [CSL::Style::Citation]
+      # @return [String] the rendered and formatted string
+      def render_citation(data, node)
+        state.store! data, node
 
-        # TODO add item.prefix/suffix before (or after?) formatting
-        # TODO author_only
+        citations = data.map do |item|
+          render_single_citation item, node.layout
+        end
 
-        item.suppress! 'author' if item.suppress_author?
-
-        result = render item, node.layout
+        result = format! citations.join(node.layout.delimiter || ''), node.layout
       ensure
         state.clear! result
       end
 
+      # @param data [CiteProc::CitationItem]
+      # @param node [CSL::Style::Layout]
+      # @return [String] the rendered and string
+      def render_single_citation(item, node)
+        # TODO author_only
+        item.suppress! 'author' if item.suppress_author?
+
+        join [item.prefix, render_layout(item, node), item.suffix].compact
+      end
+
+      # @param item [CiteProc::CitationItem]
+      # @param node [CSL::Style::Bibliography]
+      # @return [String] the rendered and formatted string
       def render_bibliography(item, node)
         state.store! item, node
 

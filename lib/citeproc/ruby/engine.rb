@@ -26,8 +26,23 @@ module CiteProc
         @style = CSL::Style.load new_style
       end
 
-      def process
-        raise NotImplementedByEngine
+      def process(data)
+        node = style.bibliography
+
+        return unless node
+        return '' if data.empty?
+
+        # populate item data
+        data.each do |item|
+          item.data = processor[item.id].dup
+        end
+
+        # TODO implement sort in citation data
+        sort!(data, node.sort_keys) unless !node.sort?
+
+        # TODO citation number (after sorting?)
+
+        renderer.render_citation data, node
       end
 
       def append
@@ -51,7 +66,7 @@ module CiteProc
 
           selection.each do |item|
             begin
-              bib.push item.id, renderer.render(item.cite(idx), node)
+              bib.push item.id, renderer.render_bibliography(item.cite(idx), node)
             rescue => error
               bib.errors << [item.id.to_s, error]
             ensure
@@ -69,19 +84,28 @@ module CiteProc
         raise NotImplementedByEngine
       end
 
+      # @return [String, Array<String>]
       def render(mode, data)
-        node = case mode
-          when :bibliography
-            style.bibliography
-          when :citation
-            style.citation
-          else
-            raise ArgumentError, "cannot render unknown mode: #{mode.inspect}"
+        case mode
+        when :bibliography
+          node = style.bibliography
+
+          data.map do |item|
+            item.data = processor[item.id].dup
+            renderer.render item, node
           end
 
-        data.map do |item|
-          item.data = processor[item.id].dup
-          renderer.render item, node
+        when :citation
+          node = style.citation
+
+          data.each do |item|
+            item.data = processor[item.id].dup
+          end
+
+          renderer.render_citation data, node
+
+        else
+          raise ArgumentError, "cannot render unknown mode: #{mode.inspect}"
         end
       end
 
