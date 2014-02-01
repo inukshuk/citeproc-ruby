@@ -27,7 +27,7 @@ module CiteProc
       end
 
       def process(data)
-        node = style.bibliography
+        node = style.citation
 
         return unless node
         return '' if data.empty?
