@@ -17,7 +17,7 @@ module CiteProc
 
       def initialize(*arguments)
         super(*arguments)
-        @renderer = Renderer.new
+        @renderer = Renderer.new(self)
 
         update! unless processor.nil?
       end

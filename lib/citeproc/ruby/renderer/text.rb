@@ -20,9 +20,19 @@ module CiteProc
 
           else
             text = item.data.variable(node.variable, node.variable_options).to_s
+
+            # Check for abbreviations or short-form fallbacks!
+            context, was_short_form = node.variable.split(/-short/, 2)
+
+            if was_short_form || node[:form] == 'short'
+              if text.empty?
+                text = item.data.variable(context, node.variable_options).to_s
+              else
+                text = abbreviate(context, text) || text
+              end
+            end
           end
 
-          # TODO abbreviate? if node.form = 'short'
 
           case
           when node.variable == 'page'

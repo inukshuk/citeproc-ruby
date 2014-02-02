@@ -5,11 +5,16 @@ module CiteProc
 
       attr_reader :state
 
-      def initialize(options = nil)
+      attr_accessor :engine
+
+      def initialize(options_or_engine = nil)
         @state = State.new
 
-        unless options.nil?
-          locale, format = options.values_at(:locale, :format)
+        case options_or_engine
+        when Engine
+          @engine = options_or_engine
+        when Hash
+          locale, format = options_or_engine.values_at(:locale, :format)
           @locale, @format = CSL::Locale.load(locale), Format.load(format)
         end
       end
@@ -17,6 +22,16 @@ module CiteProc
       def locale
         @locale ||= CSL::Locale.load
       end
+
+      def locale=(new_locale)
+        @locale = CSL::Locale.load new_locale
+      end
+
+      def abbreviate(*arguments)
+        return unless engine
+        engine.abbreviate(*arguments)
+      end
+      alias abbrev abbreviate
 
       # @param item [CiteProc::CitationItem]
       # @param node [CSL::Node]
