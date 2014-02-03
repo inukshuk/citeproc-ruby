@@ -54,11 +54,11 @@ module CiteProc
       def render_citation(data, node)
         state.store! data, node
 
-        citations = data.map do |item|
+        citations = join data.map { |item|
           render_single_citation item, node.layout
-        end
+        }, node.layout.delimiter || ''
 
-        result = format! citations.join(node.layout.delimiter || ''), node.layout
+        result = format! citations, node.layout
       ensure
         state.clear! result
       end

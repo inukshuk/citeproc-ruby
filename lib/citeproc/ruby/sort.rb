@@ -4,8 +4,21 @@ module CiteProc
     module SortItems
 
       def sort!(items, keys)
-        return itmes.sort! unless !keys.nil? && !keys.empty?
+        return itmes unless !keys.nil? && !keys.empty?
 
+        # TODO refactor
+        if items.is_a?(CitationData)
+          items.sort! do |a, b|
+            compare_items_by_keys(a.data, b.data, keys)
+          end
+        else
+          items.sort! do |a, b|
+            compare_items_by_keys(a, b, keys)
+          end
+        end
+      end
+
+      def sort_data!(data, keys)
         items.sort! do |a, b|
           compare_items_by_keys(a, b, keys)
         end

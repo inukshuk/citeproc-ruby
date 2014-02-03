@@ -57,6 +57,29 @@ module CiteProc
       end
     end
 
+    describe '#process' do
+      describe 'when there are no items in the processor' do
+      end
+
+      describe 'when there are items in the processor' do
+        before(:each) do
+          cp << items(:grammatology).data
+          cp << items(:knuth1968).data
+        end
+
+        it 'renders the citation for the given id' do
+          cp.process(:id => 'knuth1968', :locator => '23').should == '(Knuth, 1968, p. 23)'
+        end
+
+        it 'combines and sorts multiple cite items' do
+          cp.process([
+            {:id => 'knuth1968', :locator => '23'},
+            {:id => 'grammatology', :locator => '11-14'}
+          ]).should == '(Derrida, 1976, pp. 11-14; Knuth, 1968, p. 23)'
+        end
+      end
+    end
+
   end
 
   end
