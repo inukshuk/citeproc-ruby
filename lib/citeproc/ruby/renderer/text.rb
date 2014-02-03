@@ -27,9 +27,9 @@ module CiteProc
             if was_short_form || node[:form] == 'short'
               if text.empty?
                 text = item.data.variable(context, node.variable_options).to_s
-              else
-                text = abbreviate(context, text) || text
               end
+
+              text = abbreviate(context, text) || text
             end
           end
 
