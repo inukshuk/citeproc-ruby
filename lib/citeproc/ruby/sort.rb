@@ -18,12 +18,6 @@ module CiteProc
         end
       end
 
-      def sort_data!(data, keys)
-        items.sort! do |a, b|
-          compare_items_by_keys(a, b, keys)
-        end
-      end
-
       # @returns [-1, 0, 1, nil]
       def compare_items_by_keys(a, b, keys)
         result = 0
@@ -42,9 +36,7 @@ module CiteProc
           result = renderer.render_sort(a, b, key.macro, key).reduce(&:<=>)
 
         else
-          va, vb = a[key.variable], b[key.variable]
-
-          return 0 if va == vb
+          va, vb = a.data[key.variable], b.data[key.variable]
 
           # Return early if one side is nil. In this
           # case ascending/descending is irrelevant!
