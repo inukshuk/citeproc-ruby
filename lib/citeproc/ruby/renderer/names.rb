@@ -81,7 +81,7 @@ module CiteProc
             name.all_names_as_sort_order!
           end
 
-          return count_names(names, name) if name.count?
+          return count_names(names, name).to_s if name.count?
 
           names.map! do |role, ns|
             if names_node.has_label?
@@ -114,8 +114,8 @@ module CiteProc
 
       def count_names(names, node)
         names.reduce(0) do |count, (_, ns)|
-          count + node.truncate?(ns) ?
-            node.truncate(ns).length : ns.length
+          ns = node.truncate(ns) if node.truncate?(ns)
+          count + ns
         end
       end
 
