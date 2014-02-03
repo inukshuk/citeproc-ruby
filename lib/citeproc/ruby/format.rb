@@ -228,8 +228,9 @@ module CiteProc
           output.gsub!(/\b(\p{Lu})(\p{Lu}+)\b/) { "#{$1}#{CiteProc.downcase($2)}" }
 
         when 'title'
+          return if locale && locale.language != :en
+
           # TODO add support for stop words consisting of multiple words
-          # TODO localize
           #output.gsub!(/\b(\p{Lu})(\p{Lu}+)\b/) { "#{$1}#{CiteProc.downcase($2)}" }
 
           # TODO exceptions: first, last word; followed by colon
