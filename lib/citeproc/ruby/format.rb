@@ -230,7 +230,7 @@ module CiteProc
         when 'title'
           # TODO add support for stop words consisting of multiple words
           # TODO localize
-          output.gsub!(/\b(\p{Lu})(\p{Lu}+)\b/) { "#{$1}#{CiteProc.downcase($2)}" }
+          #output.gsub!(/\b(\p{Lu})(\p{Lu}+)\b/) { "#{$1}#{CiteProc.downcase($2)}" }
 
           # TODO exceptions: first, last word; followed by colon
           output.gsub!(/\b(\p{Ll})(\p{L}+)\b/) do |word|
