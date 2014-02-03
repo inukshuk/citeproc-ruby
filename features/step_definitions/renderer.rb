@@ -37,12 +37,8 @@ When(/^I sort the following items:$/) do |items|
   engine = CiteProc::Ruby::Engine.new
 
   @order = items.hashes.map.with_index do |data, idx|
-    i = CiteProc::CitationItem.new(:id => "ID-#{idx}")
-
     data[:id] = "ID-#{idx}"
-    i.data = CiteProc::Item.new(data)
-
-    i
+    CiteProc::Item.new(data)
   end
 
   engine.sort! @order, @sort.children

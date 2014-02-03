@@ -36,7 +36,7 @@ module CiteProc
           result = renderer.render_sort(a, b, key.macro, key).reduce(&:<=>)
 
         else
-          va, vb = a.data[key.variable], b.data[key.variable]
+          va, vb = a[key.variable], b[key.variable]
 
           # Return early if one side is nil. In this
           # case ascending/descending is irrelevant!
