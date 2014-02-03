@@ -114,8 +114,11 @@ module CiteProc
 
       def count_names(names, node)
         names.reduce(0) do |count, (_, ns)|
-          ns = node.truncate(ns) if node.truncate?(ns)
-          count + ns
+          if node.truncate?(ns)
+            count + node.truncate(ns).length
+          else
+            count + ns.length
+          end
         end
       end
 
