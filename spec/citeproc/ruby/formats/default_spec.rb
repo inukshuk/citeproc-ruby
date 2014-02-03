@@ -106,6 +106,7 @@ module CiteProc
           node[:'text-case'] = 'title'
 
           format.apply('The adventures of Huckleberry Finn', node).should == 'The Adventures of Huckleberry Finn'
+          format.apply("This IS a pen that is a smith pencil", node).should == 'This IS a Pen That Is a Smith Pencil'
           #format.apply('of mice and men', node).should == 'Of Mice And Men'
         end
       end

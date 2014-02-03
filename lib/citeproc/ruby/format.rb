@@ -81,6 +81,8 @@ module CiteProc
         string, stripped = strip(string)
         string, quotes = split_closing_quotes(string)
 
+        suffix = decode_entities(suffix)
+
         suffix = suffix.each_char.drop_while.with_index { |c, i|
           squeezable?(c) && string.end_with?(suffix[0, i + 1])
         }.join('')
@@ -281,6 +283,12 @@ module CiteProc
       end
 
       def setup!
+      end
+
+      def decode_entities(string)
+        string.gsub(/&#x([0-9a-f]);/i) do
+          [Integer("0x#{$1}")].pack('U')
+        end
       end
 
       def cleanup!
