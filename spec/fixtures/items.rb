@@ -59,7 +59,21 @@ module Fixtures
         :issued => 1976,
         :publisher => 'Johns Hopkins University Press',
         :'publisher-place' => 'Baltimore'
+      ),
+
+      :difference => CiteProc::Item.new(
+        :id => 'difference',
+        :type => 'book',
+        :title => 'L’écriture et la différence',
+        :author => @people[:derrida],
+        :issued => 1967,
+        :edition => 1,
+        :pages => 446,
+        :language => 'fr',
+        :publisher => 'Éditions du Seuil',
+        :'publisher-place' => 'Paris'
       )
+
     }
   end
 

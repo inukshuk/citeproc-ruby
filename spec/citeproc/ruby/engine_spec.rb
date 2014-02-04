@@ -39,6 +39,7 @@ module CiteProc
         before(:each) do
           cp << items(:grammatology).data
           cp << items(:knuth1968).data
+          cp << items(:difference).data
         end
 
         it 'renders the reference for the given id' do
@@ -49,10 +50,17 @@ module CiteProc
           node = cp.engine.style.macros['author']
           (node > 'names' > 'name')[:initialize] = 'false'
 
-          cp.engine.renderer.format = 'html'
+          cp.engine.format = 'html'
           cp.render(:bibliography, :id => 'knuth1968').should == ['Knuth, Donald. (1968). <i>The art of computer programming</i> (Vol. 1). Boston: Addison-Wesley.']
 
           cp.render(:citation, :id => 'knuth1968', :locator => '23').should == '(Knuth, 1968, p. 23)'
+        end
+
+        it 'overrides locales if the processor option is set' do
+          cp.render(:bibliography, :id => 'difference').should == ['Derrida, J. (1967). L’écriture et la différence (1st ed.). Paris: Éditions du Seuil.']
+
+          cp.options[:allow_locale_overrides] = true
+          cp.render(:bibliography, :id => 'difference').should == ['Derrida, J. (1967). L’écriture et la différence (1ʳᵉ éd.). Paris: Éditions du Seuil.']
         end
       end
     end

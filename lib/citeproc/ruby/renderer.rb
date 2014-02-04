@@ -33,6 +33,11 @@ module CiteProc
       end
       alias abbrev abbreviate
 
+      def allow_locale_overrides?
+        return false unless engine
+        engine.options[:allow_locale_overrides]
+      end
+
       # @param item [CiteProc::CitationItem]
       # @param node [CSL::Node]
       # @return [String] the rendered and formatted string
@@ -79,9 +84,26 @@ module CiteProc
       def render_bibliography(item, node)
         state.store! item, node
 
-        # TODO load item-specific locale
+        if allow_locale_overrides? && item.language != locale.language
+          begin
+            new_locale = CSL::Locale.load(item.language)
+
+            unless new_locale.nil?
+              new_locale.merge!(locale)
+              original_locale, @locale = @locale, new_locale
+            end
+          rescue ParseError
+            # locale not found
+          end
+        end
+
         result = render item, node.layout
+
       ensure
+        unless original_locale.nil?
+          @locale = original_locale
+        end
+
         state.clear! result
       end
 
