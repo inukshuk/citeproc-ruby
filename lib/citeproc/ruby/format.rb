@@ -7,7 +7,7 @@ module CiteProc
 
       @available = []
 
-      @squeezable = /^[\s\.,;]+$/
+      @squeezable = /^[\s\.,:;!?]+$/
 
       @stopwords = {
         :en => [
