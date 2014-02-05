@@ -16,6 +16,6 @@ Feature: Sorting
       | ANZ-Group |
       | Aardvaark |
     Then the order should be:
-      | ID-1      |
       | ID-2      |
+      | ID-1      |
       | ID-0      |
