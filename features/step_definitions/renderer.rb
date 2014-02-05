@@ -11,6 +11,10 @@ Given(/^the following sort keys:$/) do |string|
   @sort = CSL.parse!(string, CSL::Style)
 end
 
+Given(/^the following macro:$/) do |string|
+  @macro = CSL.parse!(string, CSL::Style)
+end
+
 When(/^I render the following citation items as "(.*?)":$/) do |format, items|
   r = CiteProc::Ruby::Renderer.new(:format => format)
 
@@ -39,6 +43,13 @@ When(/^I sort the following items:$/) do |items|
   @order = items.hashes.map.with_index do |data, idx|
     data[:id] = "ID-#{idx}"
     CiteProc::Item.new(data)
+  end
+
+  unless @macro.nil?
+    @sort.each_child do |key|
+      key.stub(:macro).and_return(@macro)
+      key.stub(:macro?).and_return(true)
+    end
   end
 
   engine.sort! @order, @sort.children

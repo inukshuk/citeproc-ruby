@@ -19,6 +19,7 @@ rescue LoadError
   # ignore
 end
 
+require 'cucumber/rspec/doubles'
 require 'citeproc/ruby'
 
 module Fixtures
