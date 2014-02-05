@@ -256,6 +256,12 @@ module CiteProc
           # because name parts may include particles etc.
 
 
+          # Strip away some unusual characters to normalize
+          # sort order for names.
+          if sort_mode?
+            name.family = name.family.to_s.gsub(/[\[\]]|^\W+/, '')
+          end
+
           name.options.merge! node.name_options
           name.sort_order! node.name_as_sort_order_at?(position)
 
