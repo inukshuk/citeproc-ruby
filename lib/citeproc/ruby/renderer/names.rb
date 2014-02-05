@@ -60,26 +60,7 @@ module CiteProc
             names_node = node
           end
 
-          # Make a copy of the name node and inherit
-          # options from root and citation/bibliography
-          # depending on current rendering mode.
-          if names_node.has_name?
-            name = names_node.name.deep_copy
-          else
-            name = CSL::Style::Name.new
-          end
-
-          # Inherit name options from style and the
-          # current rendering node. We pass both in,
-          # because this is now an unlinked node!
-          name.reverse_merge! name.inherited_name_options(state.node, node.root)
-          name.et_al = names_node.et_al if names_node.has_et_al?
-
-          # Override options if we are rendering a sort key!
-          if sort_mode?
-            name.merge! state.node.name_options
-            name.all_names_as_sort_order!
-          end
+          name = name_node_for(names_node)
 
           return count_names(names, name).to_s if name.count?
 
@@ -368,6 +349,33 @@ module CiteProc
 
 
       private
+
+      def name_node_for(names_node)
+        # Make a copy of the name node and inherit
+        # options from root and citation/bibliography
+        # depending on current rendering mode.
+        if names_node.has_name?
+          name = names_node.name.deep_copy
+        else
+          name = CSL::Style::Name.new
+        end
+
+        # Inherit name options from style and the
+        # current rendering node. We pass both in,
+        # because this is now an unlinked node!
+        options = name.inherited_name_options(state.node, names_node.root)
+
+        name.reverse_merge! options
+        name.et_al = names_node.et_al if names_node.has_et_al?
+
+        # Override options if we are rendering a sort key!
+        if sort_mode?
+          name.merge! state.node.name_options
+          name.all_names_as_sort_order!
+        end
+
+        name
+      end
 
       def resolve_editor_translator_exception!(names)
 
