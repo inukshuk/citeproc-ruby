@@ -39,7 +39,7 @@ module CiteProc
             format_page_range!(text, node.page_range_format)
 
           when node.variable == 'page-first' && text.empty?
-            text = item.data[:'page-first'].to_s[/\d+/].to_s
+            text = item.data[:'page'].to_s[/\d+/].to_s
 
           end
 

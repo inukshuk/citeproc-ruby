@@ -7,7 +7,7 @@ module CiteProc
 
       @available = []
 
-      @squeezable = /^[\s\.,:;!?]+$/
+      @squeezable = /^[\s\.,:;!?\)\(\[\]]+$/
 
       @stopwords = {
         :en => [
@@ -127,6 +127,8 @@ module CiteProc
 
       def join(list, delimiter = nil)
         raise ArgumentError unless list.is_a?(Enumerable)
+        return '' if list.length.zero?
+        return list[0] if list.length == 1
 
         if delimiter.nil? || delimiter.empty?
           list.inject do |m, n|
