@@ -47,7 +47,7 @@ task :release do |t|
   system "gem build citeproc-ruby.gemspec"
   system "git tag #{CiteProc::Ruby::VERSION}"
   system "git push --tags"
-  system "gem push citeproc-ruby-#{CSL::VERSION}.gem"
+  system "gem push citeproc-ruby-#{CiteProc::Ruby::VERSION}.gem"
 end
 
 task :default => [:spec, :cucumber]
