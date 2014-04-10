@@ -17,8 +17,8 @@ end
 begin
   case
   when RUBY_PLATFORM == 'java'
-    require 'debug'
-    Debugger.start
+    # require 'debug'
+    # Debugger.start
   when defined?(RUBY_ENGINE) && RUBY_ENGINE == 'rbx'
     require 'rubinius/debugger'
   else
