@@ -58,7 +58,7 @@ module CiteProc
         describe 'when the form attribute is set to :short' do
           before(:each) {
             item.data.title = 'the full title'
-            node[:form] = :short
+            node[:form] = 'short'
           }
 
           it "prefers the short version if available" do
@@ -67,6 +67,11 @@ module CiteProc
           end
 
           it "falls back to the variable if unavailable" do
+            renderer.render_text(item, node).should == 'the full title'
+          end
+
+          it "falls back to the long form if the short form variable is not present" do
+            node[:variable] = 'title-short'
             renderer.render_text(item, node).should == 'the full title'
           end
         end
