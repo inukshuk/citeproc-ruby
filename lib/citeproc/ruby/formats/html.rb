@@ -66,9 +66,7 @@ module CiteProc
           bibliography.footer = closing_tag(ol)
 
           bibliography.prefix = [indent, opening_tag(li, entry_options)].join('')
-          bibliography.suffix = closing_tag(li)
-
-          bibliography.connector = indent ? "\n" : ''
+          bibliography.suffix = closing_tag(li)          bibliography.connector = indent ? "\n" : ''
           bibliography
         end
 
