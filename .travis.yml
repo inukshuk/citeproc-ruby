@@ -2,13 +2,13 @@ language: ruby
 bundler_args: --without debug extra
 script: bundle exec rake test_with_coveralls
 rvm:
+  - ruby-head
   - 2.1.0
   - 2.0.0
   - 1.9.3
   - jruby-19mode
 #  - jruby-head
-  - rbx
-  - rbx-2.2.3
+  - rbx-2
 notifications:
   email:
     recipients:
