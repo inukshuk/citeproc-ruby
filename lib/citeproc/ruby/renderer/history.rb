@@ -33,6 +33,11 @@ module CiteProc
         def bibliography
           memory['bibliography']
         end
+
+        def discard
+          memory.clear
+          self
+        end
       end
 
     end

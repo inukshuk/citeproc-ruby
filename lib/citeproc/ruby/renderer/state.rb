@@ -48,15 +48,16 @@ module CiteProc
 
         def clear!(result = nil)
           memories = conserve(result)
-          @item, @node, @substitute, @authors, @names = nil, nil, nil, [], nil
+          reset
         ensure
-          changed
           notify_observers :clear!, memories.delete(:mode), memories
         end
 
-        def discard
-          history.memory.clear
+        def reset
+          @item, @node, @substitute, @authors, @names = nil, nil, nil, [], nil
           self
+        ensure
+          changed
         end
 
         def mode
