@@ -251,6 +251,9 @@ module CiteProc
         !locale.nil? && locale.punctuation_in_quotes?
       end
 
+      def apply_display
+      end
+
       def apply_prefix
         output.replace(squeeze_prefix(output, prefix))
       end
