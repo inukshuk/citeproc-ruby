@@ -54,6 +54,11 @@ module CiteProc
           notify_observers :clear!, memories.delete(:mode), memories
         end
 
+        def discard
+          history.memory.clear
+          self
+        end
+
         def mode
           node && node.nodename
         end
