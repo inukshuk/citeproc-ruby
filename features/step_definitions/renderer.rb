@@ -47,8 +47,8 @@ When(/^I sort the following items:$/) do |items|
 
   unless @macro.nil?
     @sort.each_child do |key|
-      key.stub(:macro).and_return(@macro)
-      key.stub(:macro?).and_return(true)
+      allow(key).to receive(:macro).and_return(@macro)
+      allow(key).to receive(:macro?).and_return(true)
     end
   end
 
@@ -58,23 +58,23 @@ end
 Then(/^the results should be:$/) do |expected|
   expected = expected.raw.map(&:first)
 
-  @results.length.should == expected.length
+  expect(@results.length).to eq(expected.length)
 
   @results.zip(expected).each do |result, expectation|
-    result.should == expectation
+    expect(result).to eq(expectation)
   end
 end
 
 Then(/^the result should be: (.*)$/) do |expected|
-  @result.should == expected
+  expect(@result).to eq(expected)
 end
 
 Then(/^the order should be:$/) do |expected|
   expected = expected.raw.map(&:first)
 
-  @order.length.should == expected.length
+  expect(@order.length).to eq(expected.length)
 
   @order.zip(expected).each do |order, expectation|
-    order['id'].should == expectation
+    expect(order['id']).to eq(expectation)
   end
 end

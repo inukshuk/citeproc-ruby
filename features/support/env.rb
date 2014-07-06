@@ -19,7 +19,7 @@ rescue LoadError
   # ignore
 end
 
-require 'cucumber/rspec/doubles'
+require 'rspec/mocks/standalone'
 require 'citeproc/ruby'
 
 module Fixtures
