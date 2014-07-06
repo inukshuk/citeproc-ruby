@@ -15,7 +15,7 @@ module CiteProc
         let(:node) { CSL::Style::Choose.new }
 
         it 'returns an empty string by default' do
-          renderer.render(item, node).should == ''
+          expect(renderer.render(item, node)).to eq('')
         end
 
         describe 'when there is a single nested block' do
@@ -30,12 +30,12 @@ module CiteProc
           it 'returns the content of the nested node when the condition evaluates' do
             block[:variable] = 'issue'
             item.data[:issue] = 1
-            renderer.render(item, node).should == 'retrieved'
+            expect(renderer.render(item, node)).to eq('retrieved')
           end
 
           it 'returns an empty string when the condition does not hold' do
             block[:variable] = 'issue'
-            renderer.render(item, node).should == ''
+            expect(renderer.render(item, node)).to eq('')
           end
         end
       end
@@ -44,14 +44,14 @@ module CiteProc
         let(:node) { CSL::Style::Choose::Block.new }
 
         it 'returns an empty string by default' do
-          renderer.render(item, node).should == ''
+          expect(renderer.render(item, node)).to eq('')
         end
 
         describe 'when there is a text node in the block' do
           before(:each) { node << CSL::Style::Text.new( :term => 'retrieved') }
 
           it 'returns the content of the nested node when there is no condition' do
-            renderer.render(item, node).should == 'retrieved'
+            expect(renderer.render(item, node)).to eq('retrieved')
           end
         end
       end
@@ -60,38 +60,38 @@ module CiteProc
         let(:node) { CSL::Style::Choose::Block.new }
 
         it 'returns true by default (else block)' do
-          renderer.evaluates?(item, node).should be_true
+          expect(renderer.evaluates?(item, node)).to be_truthy
         end
 
         it 'fails if there is an unknown condition type' do
-          node.stub(:conditions).and_return([[:unknown, :all?, 'x']])
-          lambda { renderer.evaluates?(item, node) }.should raise_error
+          allow(node).to receive(:conditions).and_return([[:unknown, :all?, 'x']])
+          expect { renderer.evaluates?(item, node) }.to raise_error
         end
 
         it 'returns false for disambiguate (implementation pending)' do
           node[:disambiguate] = true
-          renderer.evaluates?(item, node).should be_false
+          expect(renderer.evaluates?(item, node)).to be_falsey
         end
 
         it 'returns false for position (implementation pending)' do
           node[:position] = 'first'
-          renderer.evaluates?(item, node).should be_false
+          expect(renderer.evaluates?(item, node)).to be_falsey
         end
 
         describe 'for is-numeric conditions' do
           before { node[:'is-numeric'] = 'note archive' }
 
           it 'returns false unless all variables are numeric' do
-            renderer.evaluates?(item, node).should be_false
+            expect(renderer.evaluates?(item, node)).to be_falsey
             
             item.data[:archive] = 1
-            renderer.evaluates?(item, node).should be_false
+            expect(renderer.evaluates?(item, node)).to be_falsey
             
             item.data[:note] = 'L2d'
-            renderer.evaluates?(item, node).should be_true
+            expect(renderer.evaluates?(item, node)).to be_truthy
 
             item.data[:archive] = 'second'
-            renderer.evaluates?(item, node).should be_false
+            expect(renderer.evaluates?(item, node)).to be_falsey
           end
         end
 
@@ -99,13 +99,13 @@ module CiteProc
           before { node[:'is-uncertain-date'] = 'issued' }
 
           it 'returns false unless all variables contain uncertain dates' do
-            renderer.evaluates?(item, node).should be_false
+            expect(renderer.evaluates?(item, node)).to be_falsey
             
             item.data[:issued] = 2012
-            renderer.evaluates?(item, node).should be_false
+            expect(renderer.evaluates?(item, node)).to be_falsey
             
             item.data[:issued].uncertain!
-            renderer.evaluates?(item, node).should be_true
+            expect(renderer.evaluates?(item, node)).to be_truthy
           end
         end
 
@@ -113,40 +113,40 @@ module CiteProc
           before { node[:locator] = 'figure book sub-verbo' }
 
           it 'returns false unless the locator matches all of the given locators' do
-            renderer.evaluates?(item, node).should be_false
+            expect(renderer.evaluates?(item, node)).to be_falsey
             
             item.locator = :book
-            renderer.evaluates?(item, node).should be_false
+            expect(renderer.evaluates?(item, node)).to be_falsey
             
             item.locator = 'volume'
-            renderer.evaluates?(item, node).should be_false
+            expect(renderer.evaluates?(item, node)).to be_falsey
 
             item.locator = 'figure'
-            renderer.evaluates?(item, node).should be_false
+            expect(renderer.evaluates?(item, node)).to be_falsey
           end
 
           describe 'when the match attribute is set to "any"' do
             before { node[:match] = 'any' }
 
             it 'returns false unless the locator matches any of the given locators' do
-              renderer.evaluates?(item, node).should be_false
+              expect(renderer.evaluates?(item, node)).to be_falsey
               
               item.locator = :book
-              renderer.evaluates?(item, node).should be_true
+              expect(renderer.evaluates?(item, node)).to be_truthy
               
               item.locator = 'volume'
-              renderer.evaluates?(item, node).should be_false
+              expect(renderer.evaluates?(item, node)).to be_falsey
 
               item.locator = 'figure'
-              renderer.evaluates?(item, node).should be_true
+              expect(renderer.evaluates?(item, node)).to be_truthy
             end
 
             it 'matches "sub verbo" as "sub-verbo"' do
               item.locator = 'sub-verbo'
-              renderer.evaluates?(item, node).should be_true
+              expect(renderer.evaluates?(item, node)).to be_truthy
 
               item.locator = 'sub verbo'
-              renderer.evaluates?(item, node).should be_true
+              expect(renderer.evaluates?(item, node)).to be_truthy
             end
           end
         end
@@ -155,32 +155,32 @@ module CiteProc
           before { node[:type] = 'book treaty' }
 
           it 'returns false unless the type matches all of the given types' do
-            renderer.evaluates?(item, node).should be_false
+            expect(renderer.evaluates?(item, node)).to be_falsey
             
             item.data[:type] = :book
-            renderer.evaluates?(item, node).should be_false
+            expect(renderer.evaluates?(item, node)).to be_falsey
             
             item.data[:type] = 'article'
-            renderer.evaluates?(item, node).should be_false
+            expect(renderer.evaluates?(item, node)).to be_falsey
 
             item.data[:type] = 'treaty'
-            renderer.evaluates?(item, node).should be_false
+            expect(renderer.evaluates?(item, node)).to be_falsey
           end
 
           describe 'when the match attribute is set to "any"' do
             before { node[:match] = 'any' }
 
             it 'returns false unless the locator matches any of the given locators' do
-              renderer.evaluates?(item, node).should be_false
+              expect(renderer.evaluates?(item, node)).to be_falsey
               
               item.data[:type] = :book
-              renderer.evaluates?(item, node).should be_true
+              expect(renderer.evaluates?(item, node)).to be_truthy
               
               item.data[:type] = 'article'
-              renderer.evaluates?(item, node).should be_false
+              expect(renderer.evaluates?(item, node)).to be_falsey
 
               item.data[:type] = 'treaty'
-              renderer.evaluates?(item, node).should be_true
+              expect(renderer.evaluates?(item, node)).to be_truthy
             end
           end
         end
@@ -189,32 +189,32 @@ module CiteProc
           before { node[:variable] = 'volume issue' }
           
           it 'returns false unless the item has all variables' do
-            renderer.evaluates?(item, node).should be_false
+            expect(renderer.evaluates?(item, node)).to be_falsey
             
             item.data[:volume] = 1
-            renderer.evaluates?(item, node).should be_false
+            expect(renderer.evaluates?(item, node)).to be_falsey
             
             item.data[:issue] = 1
-            renderer.evaluates?(item, node).should be_true
+            expect(renderer.evaluates?(item, node)).to be_truthy
 
             item.data[:volume] = nil
-            renderer.evaluates?(item, node).should be_false
+            expect(renderer.evaluates?(item, node)).to be_falsey
           end
 
           describe 'with internal negations' do
             before { node[:variable] = 'volume not:issue' }
             
             it 'returns false unless the item has (or does not have) all variables' do
-              renderer.evaluates?(item, node).should be_false
+              expect(renderer.evaluates?(item, node)).to be_falsey
 
               item.data[:volume] = 1
-              renderer.evaluates?(item, node).should be_true
+              expect(renderer.evaluates?(item, node)).to be_truthy
 
               item.data[:issue] = 1
-              renderer.evaluates?(item, node).should be_false
+              expect(renderer.evaluates?(item, node)).to be_falsey
 
               item.data[:volume] = nil
-              renderer.evaluates?(item, node).should be_false
+              expect(renderer.evaluates?(item, node)).to be_falsey
             end
           end
 
@@ -222,32 +222,32 @@ module CiteProc
             before { node[:match] = 'any' }
 
             it 'returns false unless the item has any of the variables' do
-              renderer.evaluates?(item, node).should be_false
+              expect(renderer.evaluates?(item, node)).to be_falsey
 
               item.data[:volume] = 1
-              renderer.evaluates?(item, node).should be_true
+              expect(renderer.evaluates?(item, node)).to be_truthy
 
               item.data[:issue] = 1
-              renderer.evaluates?(item, node).should be_true
+              expect(renderer.evaluates?(item, node)).to be_truthy
               
               item.data[:volume] = nil
-              renderer.evaluates?(item, node).should be_true
+              expect(renderer.evaluates?(item, node)).to be_truthy
             end
             
             describe 'with internal negations' do
               before { node[:variable] = 'volume not:issue' }
 
               it 'returns false unless the item has (or does not have) any of the variables' do
-                renderer.evaluates?(item, node).should be_true
+                expect(renderer.evaluates?(item, node)).to be_truthy
 
                 item.data[:volume] = 1
-                renderer.evaluates?(item, node).should be_true
+                expect(renderer.evaluates?(item, node)).to be_truthy
 
                 item.data[:issue] = 1
-                renderer.evaluates?(item, node).should be_true
+                expect(renderer.evaluates?(item, node)).to be_truthy
 
                 item.data[:volume] = nil
-                renderer.evaluates?(item, node).should be_false
+                expect(renderer.evaluates?(item, node)).to be_falsey
               end
             end
           end
@@ -256,32 +256,32 @@ module CiteProc
             before { node[:match] = 'none' }
 
             it 'returns false unless the item has none of the variables' do
-              renderer.evaluates?(item, node).should be_true
+              expect(renderer.evaluates?(item, node)).to be_truthy
 
               item.data[:volume] = 1
-              renderer.evaluates?(item, node).should be_false
+              expect(renderer.evaluates?(item, node)).to be_falsey
 
               item.data[:issue] = 1
-              renderer.evaluates?(item, node).should be_false
+              expect(renderer.evaluates?(item, node)).to be_falsey
               
               item.data[:volume] = nil
-              renderer.evaluates?(item, node).should be_false
+              expect(renderer.evaluates?(item, node)).to be_falsey
             end
             
             describe 'with internal negations' do
               before { node[:variable] = 'volume not:issue' }
 
               it 'returns false unless the item has (or does not have) none of the variables' do
-                renderer.evaluates?(item, node).should be_false
+                expect(renderer.evaluates?(item, node)).to be_falsey
 
                 item.data[:volume] = 1
-                renderer.evaluates?(item, node).should be_false
+                expect(renderer.evaluates?(item, node)).to be_falsey
 
                 item.data[:issue] = 1
-                renderer.evaluates?(item, node).should be_false
+                expect(renderer.evaluates?(item, node)).to be_falsey
 
                 item.data[:volume] = nil
-                renderer.evaluates?(item, node).should be_true
+                expect(renderer.evaluates?(item, node)).to be_truthy
               end
             end
           end

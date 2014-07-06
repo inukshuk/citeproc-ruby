@@ -16,12 +16,12 @@ module CiteProc
         let(:node) { CSL::Style::Text.new }
 
         it 'returns an empty string for an empty item' do
-          renderer.render_text(item, node).should == ''
+          expect(renderer.render_text(item, node)).to eq('')
         end
 
         it 'returns an empty string for an item with variables' do
           item.data.title = 'foo'
-          renderer.render_text(item, node).should == ''
+          expect(renderer.render_text(item, node)).to eq('')
         end
       end
 
@@ -29,12 +29,12 @@ module CiteProc
         let(:node) { CSL::Style::Text.new(:value => 'foobar') }
 
         it 'returns the value for an empty item' do
-          renderer.render_text(item, node).should == 'foobar'
+          expect(renderer.render_text(item, node)).to eq('foobar')
         end
 
         it 'returns the value for an item with variables' do
           item.data.title = 'foo'
-          renderer.render_text(item, node).should == 'foobar'
+          expect(renderer.render_text(item, node)).to eq('foobar')
         end
       end
 
@@ -42,17 +42,17 @@ module CiteProc
         let(:node) { CSL::Style::Text.new(:variable => 'title') }
 
         it 'returns an empty strong for an empty item' do
-          renderer.render_text(item, node).should == ''
+          expect(renderer.render_text(item, node)).to eq('')
         end
 
         it 'returns an empty strong for an item with no matching variable' do
           item.data.publisher = 'the full title'
-          renderer.render_text(item, node).should == ''
+          expect(renderer.render_text(item, node)).to eq('')
         end
 
         it "returns the variable's value for an item with a matching variable" do
           item.data.title = 'the full title'
-          renderer.render_text(item, node).should == 'the full title'
+          expect(renderer.render_text(item, node)).to eq('the full title')
         end
 
         describe 'when the form attribute is set to :short' do
@@ -63,16 +63,16 @@ module CiteProc
 
           it "prefers the short version if available" do
             item.data.title_short = 'the short title'
-            renderer.render_text(item, node).should == 'the short title'
+            expect(renderer.render_text(item, node)).to eq('the short title')
           end
 
           it "falls back to the variable if unavailable" do
-            renderer.render_text(item, node).should == 'the full title'
+            expect(renderer.render_text(item, node)).to eq('the full title')
           end
 
           it "falls back to the long form if the short form variable is not present" do
             node[:variable] = 'title-short'
-            renderer.render_text(item, node).should == 'the full title'
+            expect(renderer.render_text(item, node)).to eq('the full title')
           end
         end
       end
@@ -81,19 +81,19 @@ module CiteProc
         let(:node) { CSL::Style::Text.new(:term => 'anonymous') }
 
         it "returns the term's long form by default" do
-          renderer.render_text(item, node).should == 'anonymous'
+          expect(renderer.render_text(item, node)).to eq('anonymous')
         end
 
         describe 'when the form attribute is set to :short' do
           before(:each) { node[:form] = 'short' }
 
           it "returns the term's short form by default" do
-            renderer.render_text(item, node).should == 'anon.'
+            expect(renderer.render_text(item, node)).to eq('anon.')
           end
 
           it 'falls back to the long version if there is no short version' do
             node[:term] = 'et-al'
-            renderer.render_text(item, node).should == 'et al.'
+            expect(renderer.render_text(item, node)).to eq('et al.')
           end
         end
       end
@@ -108,15 +108,15 @@ module CiteProc
         end
 
         it 'renders the macro' do
-          node.stub(:macro).and_return(macro)
-          renderer.render(item, node).should == 'foobar'
+          allow(node).to receive(:macro).and_return(macro)
+          expect(renderer.render(item, node)).to eq('foobar')
         end
 
         it 'applies formats to the result' do
-          node.stub(:macro).and_return(macro)
+          allow(node).to receive(:macro).and_return(macro)
           node[:prefix] = '('
           node[:suffix] = ')'
-          renderer.render(item, node).should == '(foobar)'
+          expect(renderer.render(item, node)).to eq('(foobar)')
         end
       end
     end

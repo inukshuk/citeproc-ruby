@@ -16,12 +16,12 @@ module CiteProc
 
       describe 'given an empty node' do
         it 'returns an empty string for an empty item' do
-          renderer.render_number(item, node).should == ''
+          expect(renderer.render_number(item, node)).to eq('')
         end
 
         it 'returns an empty string for an item with variables' do
           item.data.edition = 'foo'
-          renderer.render_number(item, node).should == ''
+          expect(renderer.render_number(item, node)).to eq('')
         end
       end
 
@@ -29,14 +29,14 @@ module CiteProc
         before(:each) { node[:variable] = :edition }
 
         it 'returns an empty string for an empty item' do
-          renderer.render_number(item, node).should == ''
+          expect(renderer.render_number(item, node)).to eq('')
         end
 
         describe 'and an item with a corresponding text value' do
           before(:each) { item.data.edition = 'foo,bar' }
 
           it 'returns the text value as is' do
-            renderer.render_number(item, node).should == 'foo,bar'
+            expect(renderer.render_number(item, node)).to eq('foo,bar')
           end
         end
 
@@ -44,14 +44,14 @@ module CiteProc
           before(:each) { item.data.edition = '42' }
 
           it 'returns the number as a string' do
-            renderer.render_number(item, node).should == '42'
+            expect(renderer.render_number(item, node)).to eq('42')
           end
           
           describe 'when the node is set to roman' do
             before(:each) { node[:form] = :roman }
             
             it 'returns the number romanized' do
-              renderer.render_number(item, node).should == 'xlii'
+              expect(renderer.render_number(item, node)).to eq('xlii')
             end
           end
           
@@ -59,7 +59,7 @@ module CiteProc
             before(:each) { node[:form] = :ordinal }
             
             it 'returns the number ordinalized' do
-              renderer.render_number(item, node).should == '42nd'
+              expect(renderer.render_number(item, node)).to eq('42nd')
             end
           end
           
@@ -69,14 +69,14 @@ module CiteProc
           before(:each) { item.data.edition = '42, 43 , 44 ,45,46   , 47,  48' }
 
           it 'returns the numbers as a normalized list' do
-            renderer.render_number(item, node).should == '42, 43, 44, 45, 46, 47, 48'
+            expect(renderer.render_number(item, node)).to eq('42, 43, 44, 45, 46, 47, 48')
           end
           
           describe 'when the node is set to roman' do
             before(:each) { node[:form] = :roman }
             
             it 'returns the romanized list' do
-              renderer.render_number(item, node).should == 'xlii, xliii, xliv, xlv, xlvi, xlvii, xlviii'
+              expect(renderer.render_number(item, node)).to eq('xlii, xliii, xliv, xlv, xlvi, xlvii, xlviii')
             end
           end
           
@@ -84,7 +84,7 @@ module CiteProc
             before(:each) { node[:form] = :ordinal }
             
             it 'returns the ordinalized list' do
-              renderer.render_number(item, node).should == '42nd, 43rd, 44th, 45th, 46th, 47th, 48th'
+              expect(renderer.render_number(item, node)).to eq('42nd, 43rd, 44th, 45th, 46th, 47th, 48th')
             end
           end
         end
@@ -93,7 +93,7 @@ module CiteProc
           before(:each) { item.data.edition = '42-44, 46 -51 & 52 - 65& 66- 68' }
 
           it 'returns the numbers as a normalized list' do
-            renderer.render_number(item, node).should == '42-44, 46-51 & 52-65 & 66-68'
+            expect(renderer.render_number(item, node)).to eq('42-44, 46-51 & 52-65 & 66-68')
           end
         end
 
@@ -101,14 +101,14 @@ module CiteProc
           before(:each) { item.data.edition = 'A42 - B44, 46-51 & 52-65ff' }
 
           it 'returns the numbers as a normalized list' do
-            renderer.render_number(item, node).should == 'A42-B44, 46-51 & 52-65ff'
+            expect(renderer.render_number(item, node)).to eq('A42-B44, 46-51 & 52-65ff')
           end
           
           describe 'when the node is set to roman' do
             before(:each) { node[:form] = :roman }
             
             it 'returns the list with only the simple numbers romanized' do
-              renderer.render_number(item, node).should == 'A42-B44, xlvi-li & lii-65ff'
+              expect(renderer.render_number(item, node)).to eq('A42-B44, xlvi-li & lii-65ff')
             end
           end
         end

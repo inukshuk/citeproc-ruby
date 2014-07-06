@@ -16,12 +16,12 @@ module CiteProc
 
       describe 'given an empty node' do
         it 'returns an empty string for an empty item' do
-          renderer.render_label(item, node).should == ''
+          expect(renderer.render_label(item, node)).to eq('')
         end
 
         it 'returns an empty string for an item with variables' do
           item.data.edition = 'foo'
-          renderer.render_label(item, node).should == ''
+          expect(renderer.render_label(item, node)).to eq('')
         end
       end
 
@@ -33,27 +33,27 @@ module CiteProc
 
         describe "for an item with no page value" do
           it 'returns an empty string' do
-            renderer.render_label(item, node).should == ''
+            expect(renderer.render_label(item, node)).to eq('')
           end
         end
 
         describe 'for an item with a page value' do
           it 'returns the singular label for a number' do
             item.write_attribute :page, '23'
-            renderer.render_label(item, node).should == 'page'
+            expect(renderer.render_label(item, node)).to eq('page')
           end
 
           it 'returns the plural label for a page-range' do
             item.write_attribute :page, '23-24'
-            renderer.render_label(item, node).should == 'pages'
+            expect(renderer.render_label(item, node)).to eq('pages')
           end
 
           it 'returns the plural label for multiple pages' do
             item.write_attribute :page, '23 & 24'
-            renderer.render_label(item, node).should == 'pages'
+            expect(renderer.render_label(item, node)).to eq('pages')
 
             item.write_attribute :page, '23, 24, 25'
-            renderer.render_label(item, node).should == 'pages'
+            expect(renderer.render_label(item, node)).to eq('pages')
           end
 
           describe 'when pluralization is contextual' do
@@ -61,12 +61,12 @@ module CiteProc
 
             it 'returns the singular label for a number' do
               item.write_attribute :page, '23'
-              renderer.render_label(item, node).should == 'page'
+              expect(renderer.render_label(item, node)).to eq('page')
             end
 
             it 'returns the plural label for a page-range' do
               item.write_attribute :page, '23-24'
-              renderer.render_label(item, node).should == 'pages'
+              expect(renderer.render_label(item, node)).to eq('pages')
             end
           end
 
@@ -75,12 +75,12 @@ module CiteProc
 
             it 'returns the singular label for a number' do
               item.write_attribute :page, '1'
-              renderer.render_label(item, node).should == 'pages'
+              expect(renderer.render_label(item, node)).to eq('pages')
             end
 
             it 'returns the plural label for a page-range' do
               item.write_attribute :page, '1-3'
-              renderer.render_label(item, node).should == 'pages'
+              expect(renderer.render_label(item, node)).to eq('pages')
             end
           end
 
@@ -89,12 +89,12 @@ module CiteProc
 
             it 'returns the singular label for a number' do
               item.write_attribute :page, '1'
-              renderer.render_label(item, node).should == 'page'
+              expect(renderer.render_label(item, node)).to eq('page')
             end
 
             it 'returns the plural label for a page-range' do
               item.write_attribute :page, '1-3'
-              renderer.render_label(item, node).should == 'page'
+              expect(renderer.render_label(item, node)).to eq('page')
             end
           end
         end
@@ -108,22 +108,22 @@ module CiteProc
 
         describe "for an item with no 'number-of-pages' value" do
           it 'returns an empty string' do
-            renderer.render_label(item, node).should == ''
+            expect(renderer.render_label(item, node)).to eq('')
           end
         end
 
         describe "for an item with a 'number-of-pages' value" do
           it 'returns the singular label for number 1' do
             item.data[:'number-of-pages'] = 1
-            renderer.render_label(item, node).should == 'page'
+            expect(renderer.render_label(item, node)).to eq('page')
           end
 
           it 'returns the plural label for numbers higher than 1' do
             item.data[:'number-of-pages'] = '2'
-            renderer.render_label(item, node).should == 'pages'
+            expect(renderer.render_label(item, node)).to eq('pages')
 
             item.data[:'number-of-pages'] = 42
-            renderer.render_label(item, node).should == 'pages'
+            expect(renderer.render_label(item, node)).to eq('pages')
           end
 
           describe 'when pluralization is set to "contextual"' do
@@ -131,15 +131,15 @@ module CiteProc
 
             it 'returns the singular label for number 1' do
               item.data[:'number-of-pages'] = '1'
-              renderer.render_label(item, node).should == 'page'
+              expect(renderer.render_label(item, node)).to eq('page')
             end
 
             it 'returns the plural label for numbers higher than 1' do
               item.data[:'number-of-pages'] = '2'
-              renderer.render_label(item, node).should == 'pages'
+              expect(renderer.render_label(item, node)).to eq('pages')
 
               item.data[:'number-of-pages'] = 42
-              renderer.render_label(item, node).should == 'pages'
+              expect(renderer.render_label(item, node)).to eq('pages')
             end
           end
 
@@ -148,15 +148,15 @@ module CiteProc
 
             it 'returns the singular label for number 1' do
               item.data[:'number-of-pages'] = 1
-              renderer.render_label(item, node).should == 'pages'
+              expect(renderer.render_label(item, node)).to eq('pages')
             end
 
             it 'returns the plural label for numbers higher than 1' do
               item.data[:'number-of-pages'] = '2'
-              renderer.render_label(item, node).should == 'pages'
+              expect(renderer.render_label(item, node)).to eq('pages')
 
               item.data[:'number-of-pages'] = 42
-              renderer.render_label(item, node).should == 'pages'
+              expect(renderer.render_label(item, node)).to eq('pages')
             end
           end
 
@@ -165,15 +165,15 @@ module CiteProc
 
             it 'returns the singular label for number 1' do
               item.data[:'number-of-pages'] = 1
-              renderer.render_label(item, node).should == 'page'
+              expect(renderer.render_label(item, node)).to eq('page')
             end
 
             it 'returns the plural label for numbers higher than 1' do
               item.data[:'number-of-pages'] = '2'
-              renderer.render_label(item, node).should == 'page'
+              expect(renderer.render_label(item, node)).to eq('page')
 
               item.data[:'number-of-pages'] = 42
-              renderer.render_label(item, node).should == 'page'
+              expect(renderer.render_label(item, node)).to eq('page')
             end
           end
         end
@@ -187,15 +187,15 @@ module CiteProc
         describe "for an item with a 'number-of-volumes' value" do
           it 'returns the singular label for number 1' do
             item.data[:'number-of-volumes'] = 1
-            renderer.render_label(item, node).should == 'volume'
+            expect(renderer.render_label(item, node)).to eq('volume')
           end
 
           it 'returns the plural label for numbers higher than 1' do
             item.data[:'number-of-volumes'] = '2'
-            renderer.render_label(item, node).should == 'volumes'
+            expect(renderer.render_label(item, node)).to eq('volumes')
 
             item.data[:'number-of-volumes'] = 42
-            renderer.render_label(item, node).should == 'volumes'
+            expect(renderer.render_label(item, node)).to eq('volumes')
           end
         end
       end
@@ -209,13 +209,13 @@ module CiteProc
           it "returns the singular label for a single number" do
             item.locator = 2
             item.label = 'book'
-            renderer.render_label(item, node).should == 'book'
+            expect(renderer.render_label(item, node)).to eq('book')
           end
 
           it "returns the plural label for multiple numbers" do
             item.locator = '23 & 4'
             item.label = 'book'
-            renderer.render_label(item, node).should == 'books'
+            expect(renderer.render_label(item, node)).to eq('books')
           end
         end
       end

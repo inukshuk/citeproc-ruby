@@ -15,14 +15,14 @@ module CiteProc
       }
 
       it 'returns an empty string when empty' do
-        renderer.render(item, node).should == ''
+        expect(renderer.render(item, node)).to eq('')
       end
 
       it 'renders each child' do
         node << CSL::Style::Text.new(:value => 'foo')
         node << CSL::Style::Text.new(:value => 'bar')
 
-        renderer.render(item, node).should == 'foobar'
+        expect(renderer.render(item, node)).to eq('foobar')
       end
 
     end

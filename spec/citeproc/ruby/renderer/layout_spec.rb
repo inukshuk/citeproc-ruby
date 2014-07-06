@@ -15,7 +15,7 @@ module CiteProc
       }
 
       it 'returns an empty string when empty' do
-        renderer.render(item, node).should == ''
+        expect(renderer.render(item, node)).to eq('')
       end
 
       describe 'with child nodes' do
@@ -25,12 +25,12 @@ module CiteProc
         end
 
         it 'renders each child' do
-          renderer.render(item, node).should == 'foobar'
+          expect(renderer.render(item, node)).to eq('foobar')
         end
 
         it 'uses the delimiters if specified' do
           node[:delimiter] = '-'
-          renderer.render(item, node).should == 'foo-bar'
+          expect(renderer.render(item, node)).to eq('foo-bar')
         end
       end
 

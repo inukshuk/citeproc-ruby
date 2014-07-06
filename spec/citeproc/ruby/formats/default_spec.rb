@@ -10,103 +10,103 @@ module CiteProc
       let(:node) { CSL::Style::Text.new }
 
       it 'returns an empty string if input is nil' do
-        format.apply(nil, node).should == ''
+        expect(format.apply(nil, node)).to eq('')
       end
 
       it 'returns the string unchanged if empty' do
         input = ''
-        format.apply(input, node).should be_equal(input)
-        input.should == ''
+        expect(format.apply(input, node)).to be_equal(input)
+        expect(input).to eq('')
       end
 
       it 'returns the string unchanged if node is nil' do
         input = 'foo'
-        format.apply(input, nil).should be_equal(input)
-        input.should == 'foo'
+        expect(format.apply(input, nil)).to be_equal(input)
+        expect(input).to eq('foo')
       end
 
       it 'supports localized quotes' do
         locale = double(:locale)
-        locale.stub(:punctuation_in_quotes?).and_return(true)
-        locale.stub(:quote).and_return('bar')
+        allow(locale).to receive(:punctuation_in_quotes?).and_return(true)
+        allow(locale).to receive(:quote).and_return('bar')
 
         node[:quotes] = true
 
-        format.apply('foo', node, locale).should == 'bar'
+        expect(format.apply('foo', node, locale)).to eq('bar')
       end
 
       it 'disregards localized closing quotes when squeezing affixes' do
         locale = double(:locale)
-        locale.stub(:punctuation_in_quotes?).and_return(true)
-        locale.stub(:quote) { |t| '"' << t << '"' }
-        locale.stub(:t) { |t| t == 'close-quote' ? '"' : "'" }
+        allow(locale).to receive(:punctuation_in_quotes?).and_return(true)
+        allow(locale).to receive(:quote) { |t| '"' << t << '"' }
+        allow(locale).to receive(:t) { |t| t == 'close-quote' ? '"' : "'" }
 
         node[:quotes] = true
         node[:suffix] = '.'
 
-        format.apply('foo', node, locale).should == '"foo."'
-        format.apply("'foo'", node, locale).should == "\"'foo.'\""
+        expect(format.apply('foo', node, locale)).to eq('"foo."')
+        expect(format.apply("'foo'", node, locale)).to eq("\"'foo.'\"")
       end
 
       describe 'text-case formats' do
         it 'supports lowercase' do
           node[:'text-case'] = 'lowercase'
-          format.apply('Foo BAR', node).should == 'foo bar'
+          expect(format.apply('Foo BAR', node)).to eq('foo bar')
         end
 
         it 'supports lowercase for non-ascii letters' do
           node[:'text-case'] = 'lowercase'
-          format.apply('SCHÖN!', node).should == 'schön!'
+          expect(format.apply('SCHÖN!', node)).to eq('schön!')
         end
 
         it 'supports uppercase' do
           node[:'text-case'] = 'uppercase'
-          format.apply('Foo BAR', node).should == 'FOO BAR'
+          expect(format.apply('Foo BAR', node)).to eq('FOO BAR')
         end
 
         it 'supports uppercase for non-ascii letters' do
           node[:'text-case'] = 'uppercase'
-          format.apply('schön!', node).should == 'SCHÖN!'
+          expect(format.apply('schön!', node)).to eq('SCHÖN!')
         end
 
         it 'does not alter the original string' do
           node[:'text-case'] = 'lowercase'
           input = 'fooBar'
 
-          format.apply(input, node).should == 'foobar'
-          input.should == 'fooBar'
+          expect(format.apply(input, node)).to eq('foobar')
+          expect(input).to eq('fooBar')
         end
 
         it 'supports capitalize-first' do
           node[:'text-case'] = 'capitalize-first'
 
-          format.apply('foo bar', node).should == 'Foo bar'
-          format.apply('Foo bar', node).should == 'Foo bar'
-          format.apply('!foo bar', node).should == '!Foo bar'
-          format.apply('én foo bar', node).should == 'Én foo bar'
+          expect(format.apply('foo bar', node)).to eq('Foo bar')
+          expect(format.apply('Foo bar', node)).to eq('Foo bar')
+          expect(format.apply('!foo bar', node)).to eq('!Foo bar')
+          expect(format.apply('én foo bar', node)).to eq('Én foo bar')
         end
 
         it 'supports capitalize-all' do
           node[:'text-case'] = 'capitalize-all'
 
-          format.apply('foo bar', node).should == 'Foo Bar'
-          format.apply('!foo bar', node).should == '!Foo Bar'
-          format.apply('én foo bar', node).should == 'Én Foo Bar'
+          expect(format.apply('foo bar', node)).to eq('Foo Bar')
+          expect(format.apply('!foo bar', node)).to eq('!Foo Bar')
+          expect(format.apply('én foo bar', node)).to eq('Én Foo Bar')
         end
 
         it 'supports sentence case' do
           node[:'text-case'] = 'sentence'
 
-          format.apply('FOO bar', node).should == 'Foo bar'
-          format.apply('foo Bar BAR', node).should == 'Foo Bar Bar'
-          format.apply('én Foo bar', node).should == 'Én Foo bar'
+          expect(format.apply('FOO bar', node)).to eq('Foo bar')
+          expect(format.apply('foo Bar BAR', node)).to eq('Foo Bar Bar')
+          expect(format.apply('én Foo bar', node)).to eq('Én Foo bar')
         end
 
         it 'supports title case' do
           node[:'text-case'] = 'title'
 
-          format.apply('The adventures of Huckleberry Finn', node).should == 'The Adventures of Huckleberry Finn'
-          format.apply("This IS a pen that is a smith pencil", node).should == 'This IS a Pen That Is a Smith Pencil'
+          expect(format.apply('The adventures of Huckleberry Finn', node)).to eq('The Adventures of Huckleberry Finn')
+          expect(format.apply("This IS a pen that is a smith pencil", node)).to eq('This IS a Pen That Is a Smith Pencil')
           #format.apply('of mice and men', node).should == 'Of Mice And Men'
         end
       end
@@ -115,15 +115,15 @@ module CiteProc
         before { node[:'strip-periods'] = true }
 
         it 'strips all periods from the output' do
-          format.apply('hello there...! how.are.you?', node).should == 'hello there! howareyou?'
-          format.apply('foo bar!', node).should == 'foo bar!'
+          expect(format.apply('hello there...! how.are.you?', node)).to eq('hello there! howareyou?')
+          expect(format.apply('foo bar!', node)).to eq('foo bar!')
         end
 
         it 'does not strip periods from affixes' do
           node[:prefix] = '...('
           node[:suffix] = ').'
 
-          format.apply('foo.bar.', node).should == '...(foobar).'
+          expect(format.apply('foo.bar.', node)).to eq('...(foobar).')
         end
       end
 
@@ -133,24 +133,24 @@ module CiteProc
           node[:suffix] = 'ooo'
           node[:'text-case'] = 'uppercase'
 
-          format.apply('ooo', node).should == 'fooOOOooo'
+          expect(format.apply('ooo', node)).to eq('fooOOOooo')
         end
 
         it 'drop squeezable characters at start/end' do
           node[:suffix] = ' '
 
-          format.apply('foo', node).should == 'foo '
-          format.apply('foo ', node).should == 'foo '
+          expect(format.apply('foo', node)).to eq('foo ')
+          expect(format.apply('foo ', node)).to eq('foo ')
 
           node[:suffix] = '. '
-          format.apply('foo', node).should == 'foo. '
-          format.apply('foo.', node).should == 'foo. '
-          format.apply('foo?', node).should == 'foo? '
+          expect(format.apply('foo', node)).to eq('foo. ')
+          expect(format.apply('foo.', node)).to eq('foo. ')
+          expect(format.apply('foo?', node)).to eq('foo? ')
 
           node[:prefix] = '.'
-          format.apply('foo', node).should == '.foo. '
-          format.apply('.foo', node).should == '.foo. '
-          format.apply(',foo', node).should == '.,foo. '
+          expect(format.apply('foo', node)).to eq('.foo. ')
+          expect(format.apply('.foo', node)).to eq('.foo. ')
+          expect(format.apply(',foo', node)).to eq('.,foo. ')
         end
       end
     end

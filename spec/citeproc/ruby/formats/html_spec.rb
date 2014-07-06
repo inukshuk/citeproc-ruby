@@ -5,7 +5,7 @@ module CiteProc
 
     describe 'Formats::Html' do
       it 'can be created with an options hash' do
-        Formats::Html.new(:css_only => true).should be_css_only
+        expect(Formats::Html.new(:css_only => true)).to be_css_only
       end
     end
 
@@ -16,20 +16,20 @@ module CiteProc
       describe 'text-case formats' do
         it 'supports lowercase' do
           node[:'text-case'] = 'lowercase'
-          format.apply('Foo BAR', node).should == 'foo bar'
+          expect(format.apply('Foo BAR', node)).to eq('foo bar')
         end
       end
 
       describe 'entity escaping' do
         it 'escapes entities in the original text' do
           node[:'text-case'] = 'lowercase'
-          format.apply('Foo & BAR', node).should == 'foo &amp; bar'
+          expect(format.apply('Foo & BAR', node)).to eq('foo &amp; bar')
         end
 
         it 'escapes entities in affixes' do
           node[:prefix] = '<'
           node[:suffix] = '>'
-          format.apply('foo', node).should == '&lt;foo&gt;'
+          expect(format.apply('foo', node)).to eq('&lt;foo&gt;')
         end
 
         it 'escapes entities in quotes' do
@@ -38,7 +38,7 @@ module CiteProc
           locale.store 'close-quote', '>'
 
           node[:quotes] = true
-          format.apply('foo', node, locale).should == '&lt;foo&gt;'
+          expect(format.apply('foo', node, locale)).to eq('&lt;foo&gt;')
         end
       end
 
@@ -48,7 +48,7 @@ module CiteProc
           node[:suffix] = 'ooo'
           node[:'font-style'] = 'italic'
 
-          format.apply('ooo', node).should == 'foo<i>ooo</i>ooo'
+          expect(format.apply('ooo', node)).to eq('foo<i>ooo</i>ooo')
         end
 
         it 'are added before text formats have been applied for layout nodes' do
@@ -58,7 +58,7 @@ module CiteProc
           layout[:suffix] = 'ooo'
           layout[:'font-style'] = 'italic'
 
-          format.apply('ooo', layout).should == '<i>foooooooo</i>'
+          expect(format.apply('ooo', layout)).to eq('<i>foooooooo</i>')
         end
       end
 
@@ -66,69 +66,69 @@ module CiteProc
         it 'supports italic in both modes' do
           node[:'font-style'] = 'italic'
 
-          format.apply('foo bar', node).should == '<i>foo bar</i>'
+          expect(format.apply('foo bar', node)).to eq('<i>foo bar</i>')
 
           format.config[:italic] = 'em'
-          format.apply('foo bar', node).should == '<em>foo bar</em>'
+          expect(format.apply('foo bar', node)).to eq('<em>foo bar</em>')
 
           format.config[:css_only] = true
-          format.apply('foo bar', node).should == '<span style="font-style: italic">foo bar</span>'
+          expect(format.apply('foo bar', node)).to eq('<span style="font-style: italic">foo bar</span>')
         end
 
         it 'supports normal and oblique via css' do
           node[:'font-style'] = 'oblique'
-          format.apply('foo bar', node).should == '<span style="font-style: oblique">foo bar</span>'
+          expect(format.apply('foo bar', node)).to eq('<span style="font-style: oblique">foo bar</span>')
 
           node[:'font-style'] = 'normal'
-          format.apply('foo bar', node).should == '<span style="font-style: normal">foo bar</span>'
+          expect(format.apply('foo bar', node)).to eq('<span style="font-style: normal">foo bar</span>')
         end
       end
 
       it 'supports font-variant via css' do
         node[:'font-variant'] = 'small-caps'
-        format.apply('foo bar', node).should == '<span style="font-variant: small-caps">foo bar</span>'
+        expect(format.apply('foo bar', node)).to eq('<span style="font-variant: small-caps">foo bar</span>')
       end
 
       describe 'font-weight' do
         it 'supports bold in both modes' do
           node[:'font-weight'] = 'bold'
 
-          format.apply('foo bar', node).should == '<b>foo bar</b>'
+          expect(format.apply('foo bar', node)).to eq('<b>foo bar</b>')
 
           format.config[:bold] = 'strong'
-          format.apply('foo bar', node).should == '<strong>foo bar</strong>'
+          expect(format.apply('foo bar', node)).to eq('<strong>foo bar</strong>')
 
           format.config[:css_only] = true
-          format.apply('foo bar', node).should == '<span style="font-weight: bold">foo bar</span>'
+          expect(format.apply('foo bar', node)).to eq('<span style="font-weight: bold">foo bar</span>')
         end
 
         it 'supports normal and light via css' do
           node[:'font-weight'] = 'light'
-          format.apply('foo bar', node).should == '<span style="font-weight: light">foo bar</span>'
+          expect(format.apply('foo bar', node)).to eq('<span style="font-weight: light">foo bar</span>')
 
           node[:'font-weight'] = 'normal'
-          format.apply('foo bar', node).should == '<span style="font-weight: normal">foo bar</span>'
+          expect(format.apply('foo bar', node)).to eq('<span style="font-weight: normal">foo bar</span>')
         end
       end
 
       it 'supports text-decoration via css' do
         node[:'text-decoration'] = 'underline'
-        format.apply('foo bar', node).should == '<span style="text-decoration: underline">foo bar</span>'
+        expect(format.apply('foo bar', node)).to eq('<span style="text-decoration: underline">foo bar</span>')
       end
 
       it 'supports vertical-align via css' do
         node[:'vertical-align'] = 'sup'
-        format.apply('foo bar', node).should == '<span style="vertical-align: sup">foo bar</span>'
+        expect(format.apply('foo bar', node)).to eq('<span style="vertical-align: sup">foo bar</span>')
       end
 
       describe 'display' do
         it 'is supported in an outer container' do
           node[:'display'] = 'block'
           node[:'text-decoration'] = 'underline'
-          format.apply('foo bar', node).should == '<div class="csl-block"><span style="text-decoration: underline">foo bar</span></div>'
+          expect(format.apply('foo bar', node)).to eq('<div class="csl-block"><span style="text-decoration: underline">foo bar</span></div>')
 
           node[:prefix] = '('
-          format.apply('foo bar', node).should == '<div class="csl-block">(<span style="text-decoration: underline">foo bar</span></div>'
+          expect(format.apply('foo bar', node)).to eq('<div class="csl-block">(<span style="text-decoration: underline">foo bar</span></div>')
         end
       end
 
@@ -143,7 +143,7 @@ module CiteProc
         it 'can be applied' do
           format.config[:bib_indent] = nil
           format.bibliography(bibliography)
-          bibliography.join.should == '<ol class="csl-bibliography"><li class="csl-entry">foo</li><li class="csl-entry">bar</li></ol>'
+          expect(bibliography.join).to eq('<ol class="csl-bibliography"><li class="csl-entry">foo</li><li class="csl-entry">bar</li></ol>')
         end
 
         it 'can be customized' do
@@ -153,7 +153,7 @@ module CiteProc
           format.config[:bib_container] = 'div'
 
           format.bibliography(bibliography)
-          bibliography.join.should == '<div class="csl-bibliography"><span>foo</span><span>bar</span></div>'
+          expect(bibliography.join).to eq('<div class="csl-bibliography"><span>foo</span><span>bar</span></div>')
         end
       end
     end
