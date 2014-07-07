@@ -51,7 +51,7 @@ module CiteProc
               node[:delimiter] = ' foo '
               node[:prefix] = '('
               node[:suffix] = ')'
-              expect(renderer.render(item, node)).to eq('(RETRIEVED foo FROM)')
+              expect(renderer.render(item, node)).to eq('(RETRIEVED FOO FROM)')
             end
 
             describe 'when a nested node produces no output' do
