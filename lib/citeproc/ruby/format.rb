@@ -10,19 +10,13 @@ module CiteProc
       @squeezable = /^[\s\.,:;!?\)\(\[\]]+$/
 
       @stopwords = {
-        :en => [
-          'about', 'above', 'across', 'afore', 'after', 'against', 'along',
-          'alongside', 'amid', 'amidst', 'among', 'amongst', 'anenst', 'apropos',
-          'apud', 'around', 'as', 'aside', 'astride', 'at', 'athwart', 'atop',
-          'barring', 'before', 'behind', 'below', 'beneath', 'beside', 'besides',
-          'between', 'beyond', 'but', 'by', 'circa', 'despite', 'd', 'down', 'during',
-          'except', 'for', 'forenenst', 'from', 'given', 'in', 'inside', 'into',
-          'lest', 'like', 'modulo' 'near', 'next', 'notwithstanding', 'of', 'off',
-          'on', 'onto', 'out', 'over', 'per', 'plus', 'pro', 'qua', 'sans', 'since',
-          'than', 'through', 'thru', 'throughout', 'thruout', 'till', 'to', 'toward',
-          'towards', 'under', 'underneath', 'until', 'unto', 'up', 'upon', 'versus',
-          'vs', 'v', 'via', 'vis-à-vis', 'with', 'within', 'without'
-        ]
+        :en => %w(a about above across afore after against along alongside amid amidst among amongst
+          an and anenst apropos apud around as aside astride at athwart atop barring before behind
+          below beneath beside besides between beyond but by circa despite d down during except for
+          forenenst from given in inside into lest like modulo near next nor notwithstanding of off
+          on onto or out over per plus pro qua sans since so than the through thru throughout thruout
+          till to toward towards under underneath until unto up upon versus vs v via vis-à-vis with
+          within without)
       }
 
       class << self
