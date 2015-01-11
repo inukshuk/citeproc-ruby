@@ -40,7 +40,9 @@ module CiteProc
 
           when node.variable == 'page-first' && text.empty?
             text = item.data[:'page'].to_s[/\d+/].to_s
-
+        
+          when node.variable == 'citation-label'
+            text = item[:id]
           end
 
           text
