@@ -46,7 +46,7 @@ Feature: Rendering CSL nodes
       """
       <group>
         <group suffix=" " font-weight="bold">
-          <!--group formatting is pushed down-->
+          <!--group formatting is not pushed down-->
           <text variable="volume" suffix=","/>
         </group>
         <text variable="page" suffix="," font-weight="bold"/>
@@ -55,7 +55,7 @@ Feature: Rendering CSL nodes
     When I render the following citation item as "html":
       | volume |   5 |
       | page   |  23 |
-    Then the result should be: <b>5</b>, <b>23</b>,
+    Then the result should be: <b>5,</b> <b>23</b>,
 
   Scenario: Page labels
     Given the following style node:
