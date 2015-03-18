@@ -229,14 +229,17 @@ module CiteProc
           # TODO add support for stop words consisting of multiple words
           #output.gsub!(/\b(\p{Lu})(\p{Lu}+)\b/) { "#{$1}#{CiteProc.downcase($2)}" }
 
-          # TODO exceptions: first, last word; followed by colon
+          # TODO exceptions: word followed by colon
+          first = true
           output.gsub!(/\b(\p{Ll})(\p{L}+)\b/) do |word|
-            if Format.stopword?(word)
+            if Format.stopword?(word) and not first
               word
             else
+              first = false
               "#{CiteProc.upcase($1)}#{$2}"
             end
           end
+          output.gsub!(/\b(\p{Ll})(\p{L}+)\b$/) { "#{CiteProc.upcase($1)}#{$2}" }
 
         end
       end
