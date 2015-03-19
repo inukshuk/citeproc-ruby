@@ -106,8 +106,11 @@ module CiteProc
           node[:'text-case'] = 'title'
 
           expect(format.apply('The adventures of Huckleberry Finn', node)).to eq('The Adventures of Huckleberry Finn')
-          expect(format.apply("This IS a pen that is a smith pencil", node)).to eq('This IS a Pen That Is a Smith Pencil')
-          #format.apply('of mice and men', node).should == 'Of Mice And Men'
+          expect(format.apply('This IS a pen that is a smith pencil', node)).to eq('This IS a Pen That Is a Smith Pencil')
+          expect(format.apply('of mice and men', node)).to eq('Of Mice and Men')
+          expect(format.apply('history of the word the', node)).to eq('History of the Word The')
+          expect(format.apply('faster than the speed of sound', node)).to eq('Faster than the Speed of Sound')
+          expect(format.apply('on the drug-resistance of enteric bacteria', node)).to eq('On the Drug-Resistance of Enteric Bacteria')
         end
       end
 
