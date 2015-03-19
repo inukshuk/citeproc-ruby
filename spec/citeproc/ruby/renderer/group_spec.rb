@@ -83,6 +83,32 @@ module CiteProc
           end
         end
       end
+
+      describe 'when there is a names node with substitute in the group' do
+
+        before(:each) do
+          subst = CSL::Style::Substitute.new()
+          subst << CSL::Style::Text.new( :value => 'Anonymous') 
+          names = CSL::Style::Names.new( :variable => 'author')
+          names << subst
+          node << names
+        end
+
+        describe 'when the variable is set' do
+          before(:each) { item.data.author = 'Some Author' }
+
+          it 'returns the content of the nested node' do
+            expect(renderer.render_group(item, node)).to eq('Some Author')
+          end
+        end
+
+        describe 'when the variable is not set' do
+          it 'returns the substitution of the nested node' do
+            expect(renderer.render_group(item, node)).to eq('Anonymous')
+          end
+        end
+
+      end
     end
   end
 end
