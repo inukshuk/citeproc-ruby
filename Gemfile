@@ -14,8 +14,14 @@ group :development, :test do
 end
 
 group :debug do
+  if RUBY_VERSION >= '2.0'
+    gem 'byebug', :require => false, :platforms => :mri
+  else
+    gem 'debugger', :require => false, :platforms => :mri
+  end
+
   gem 'ruby-debug', :require => false, :platforms => :jruby
-  gem 'debugger', :require => false, :platforms => :mri_19
+
   gem 'rubinius-debugger', :require => false, :platforms => :rbx
   gem 'rubinius-compiler', :require => false, :platforms => :rbx
 end
