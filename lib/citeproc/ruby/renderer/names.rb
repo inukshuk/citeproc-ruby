@@ -327,12 +327,16 @@ module CiteProc
             string = render(item, child)
 
             unless string.empty?
-              item.data.changed true
-              item.data.notify_observers :read, node.parent[:variable], string
               # Variables rendered as substitutes
               # must be suppressed during the remainder
               # of the rendering process!
               item.suppress!(*observer.accessed)
+
+              # Report a read-access using the substitution string
+              # for the name variable being substituted, or the first
+              # name variable (if there are more than one).
+              variable = node.parent.variable[/\w+/]
+              item.data.simulate_read_attribute variable, string
 
               return string # break out of each loop!
             end
