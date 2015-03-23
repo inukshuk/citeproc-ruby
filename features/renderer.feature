@@ -72,3 +72,24 @@ Feature: Rendering CSL nodes
       |        |
       | pages  |
 
+  @group @substitute @wip
+  Scenario: Substitute in Groups
+    Given the following style node:
+      """
+      <group>
+        <text value="by: "/>
+        <names variable="author">
+          <substitute>
+            <text value="Anonymous"/>
+          </substitute>
+        </names>
+      </group>
+      """
+    When I render the following citation items as "text":
+      | author   |
+      | Jane Doe |
+      |          |
+    Then the results should be:
+      | by: Jane Doe  |
+      |               |
+#     | by: Anonymous |

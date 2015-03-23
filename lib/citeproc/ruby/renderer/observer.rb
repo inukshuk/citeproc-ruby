@@ -25,7 +25,9 @@ module CiteProc
         end
 
         def skip?
-          !history.empty? && history.values.all?(&:nil?)
+          !history.empty? && history.values.all? { |v|
+            v.nil? || v.respond_to?(:empty?) && v.empty?
+          }
         end
 
         def accessed
