@@ -1,8 +1,8 @@
 module CiteProc
   module Ruby
-    
+
     class Renderer
-      
+
       private
 
       # @param item [CiteProc::CitationItem]
@@ -13,8 +13,8 @@ module CiteProc
           render item, child
         }.join('')
       end
-      
+
     end
-    
+
   end
 end
