@@ -72,7 +72,7 @@ Feature: Rendering CSL nodes
       |        |
       | pages  |
 
-  @group @substitute @wip
+  @group @substitute
   Scenario: Substitute in Groups
     Given the following style node:
       """
@@ -91,5 +91,4 @@ Feature: Rendering CSL nodes
       |          |
     Then the results should be:
       | by: Jane Doe  |
-      |               |
-#     | by: Anonymous |
+      | by: Anonymous |
