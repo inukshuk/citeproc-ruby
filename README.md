@@ -146,7 +146,7 @@ this project as part of [Google Summer of Code](https://developers.google.com/op
 
 Copyright
 ---------
-Copyright 2009-2014 Sylvester Keil. All rights reserved.
+Copyright 2009-2015 Sylvester Keil. All rights reserved.
 
 Copyright 2012 President and Fellows of Harvard College.
 
