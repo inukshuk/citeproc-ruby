@@ -114,7 +114,19 @@ module CiteProc
         renderer.format = processor.options[:format]
         renderer.locale = processor.options[:locale]
 
-        @style = CSL::Style.load processor.options[:style]
+        if processor.options[:style].is_a? CSL::Style
+          @style = processor.options[:style]
+        else
+          @style = CSL::Style.load processor.options[:style]
+        end
+
+        # Preliminary locale override implementation!
+        # Does not yet reverse merge default region and default locale.
+        @style.locales.sort.reverse.each do |locale|
+          renderer.locale.merge! locale if renderer.locale.like?(locale)
+        end
+
+        self
       end
 
     end
