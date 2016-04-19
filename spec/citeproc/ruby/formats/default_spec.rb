@@ -111,6 +111,7 @@ module CiteProc
           expect(format.apply('history of the word the', node)).to eq('History of the Word The')
           expect(format.apply('faster than the speed of sound', node)).to eq('Faster than the Speed of Sound')
           expect(format.apply('on the drug-resistance of enteric bacteria', node)).to eq('On the Drug-Resistance of Enteric Bacteria')
+          expect(format.apply("The Mote in God's eye", node)).to eq("The Mote in God's Eye")
         end
       end
 
