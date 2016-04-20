@@ -72,6 +72,19 @@ module Fixtures
         :language => 'fr',
         :publisher => 'Éditions du Seuil',
         :'publisher-place' => 'Paris'
+      ),
+
+      :literal_date => CiteProc::Item.new(
+        :id => 'literal_date',
+        :type => 'book',
+        :title => 'L’écriture et la différence',
+        :author => @people[:derrida],
+        :issued => { 'literal' => 'sometime in 1967' },
+        :edition => 1,
+        :pages => 446,
+        :language => 'fr',
+        :publisher => 'Éditions du Seuil',
+        :'publisher-place' => 'Paris'
       )
 
     }

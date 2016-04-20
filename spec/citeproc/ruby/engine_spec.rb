@@ -40,6 +40,7 @@ module CiteProc
           cp << items(:grammatology).data
           cp << items(:knuth1968).data
           cp << items(:difference).data
+          cp << items(:literal_date).data
         end
 
         it 'renders the reference for the given id' do
@@ -61,6 +62,10 @@ module CiteProc
 
           cp.options[:allow_locale_overrides] = true
           expect(cp.render(:bibliography, :id => 'difference')).to eq(['Derrida, J. (1967). L’écriture et la différence (1ʳᵉ éd.). Paris: Éditions du Seuil.'])
+        end
+
+        it 'can handle literal dates' do
+          expect(cp.render(:bibliography, :id => 'literal_date')).to eq(['Derrida, J. (sometime in 1967). L’écriture et la différence (1st ed.). Paris: Éditions du Seuil.'])
         end
       end
     end
