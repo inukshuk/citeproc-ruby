@@ -37,6 +37,14 @@
       </term>
     </terms>
   </locale>
+  <locale xml:lang="fr">
+    <terms>
+      <term name="translator" form="short">
+        <single>le merveilleux traducteur</single>
+        <multiple>les traducteurs merveilleux</multiple>
+      </term>
+    </terms>
+  </locale>
   <macro name="container-contributors">
     <choose>
       <if type="chapter paper-conference" match="any">
