@@ -50,6 +50,8 @@ module CiteProc
         raise ArgumentError, "#{specialize} not implemented" unless
           respond_to?(specialize, true)
 
+        merge_locale_with_style_locale!(node)
+
         format! send(specialize, item, node), node
       end
 
