@@ -27,15 +27,16 @@ module CiteProc
           @merged_locales.compare_by_identity
         end
 
-        return if @merged_locales[@locale]
-
         style = node.root
         return unless style.respond_to?(:locales)
+
+        return if @merged_locales[@locale] && @merged_locales[@locale].include?(style)
 
         matching_locale_in_style = style.locales.detect { |l| l == @locale }
         if matching_locale_in_style
           @locale = matching_locale_in_style.merge(@locale)
-          @merged_locales[@locale] = true
+          @merged_locales[@locale] ||= []
+          @merged_locales[@locale] << style
         end
       end
 
