@@ -13,6 +13,8 @@ module CiteProc
         date = item.data[node.variable]
         return '' if date.nil? || date.empty?
 
+        return date.to_s if date.literal?
+
         # TODO date-ranges
 
         if node.localized?
