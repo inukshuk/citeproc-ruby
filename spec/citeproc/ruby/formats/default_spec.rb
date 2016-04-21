@@ -115,6 +115,8 @@ module CiteProc
           expect(format.apply("The Mote in God eye", node)).to eq("The Mote in God Eye")
           expect(format.apply("Music community mourns death of one of its leaders", node)).to eq("Music Community Mourns Death of One of Its Leaders")
           expect(format.apply("Pride and Prejudice", node)).to eq("Pride and Prejudice")
+          expect(format.apply("Check the page: easybib.com", node)).to eq("Check the Page: Easybib.com")
+          expect(format.apply("Dogs life.obviously the best guide for pet owners", node)).to eq("Dogs Life.obviously the Best Guide for Pet Owners")
         end
       end
 
