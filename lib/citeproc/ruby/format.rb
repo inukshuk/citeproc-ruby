@@ -231,16 +231,29 @@ module CiteProc
 
           # TODO exceptions: word followed by colon
           first = true
-          output.gsub!(/\b(\p{Ll})(\p{L}+)\b/) do |word|
-            if Format.stopword?(word) and not first
+          output.gsub!(/\b(\p{L})([\p{L}\.]+)\b/) do |word|
+            first_letter = $1
+            rest_of_word = $2
+            result = word
+
+            if first_letter.match(/^\p{Ll}/) && (!Format.stopword?(word) || first)
+              result = "#{CiteProc.upcase(first_letter)}#{rest_of_word}"
+            end
+            first = false
+            result
+          end
+
+          output.gsub!(/(\.|\b)(\p{Ll})([\p{L}\.]+)\b$/) do |word|
+            word_boundary = $1
+            first_letter = $2
+            rest_of_word = $3
+
+            if word_boundary == '.'
               word
             else
-              first = false
-              "#{CiteProc.upcase($1)}#{$2}"
+              "#{CiteProc.upcase($2)}#{$3}"
             end
           end
-          output.gsub!(/\b(\p{Ll})(\p{L}+)\b$/) { "#{CiteProc.upcase($1)}#{$2}" }
-
         end
       end
 
