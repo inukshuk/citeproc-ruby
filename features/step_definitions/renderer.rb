@@ -15,8 +15,13 @@ Given(/^the following macro:$/) do |string|
   @macro = CSL.parse!(string, CSL::Style)
 end
 
+Given(/^the "(.*?)" locale$/) do |locale|
+  @locale = locale
+end
+
 When(/^I render the following citation items as "(.*?)":$/) do |format, items|
-  r = CiteProc::Ruby::Renderer.new(:format => format)
+  @locale ||= 'en'
+  r = CiteProc::Ruby::Renderer.new(:format => format, :locale => @locale)
 
   @results = items.hashes.map.with_index do |data, idx|
     i = CiteProc::CitationItem.new(:id => "ID-#{idx}")
