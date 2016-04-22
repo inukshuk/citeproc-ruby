@@ -19,14 +19,6 @@ module CiteProc
         end
       end
 
-      def locale
-        @locale ||= CSL::Locale.load
-      end
-
-      def locale=(new_locale)
-        @locale = CSL::Locale.load new_locale
-      end
-
       def abbreviate(*arguments)
         return unless engine
         engine.abbreviate(*arguments)
