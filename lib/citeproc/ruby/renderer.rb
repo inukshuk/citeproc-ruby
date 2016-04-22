@@ -50,8 +50,6 @@ module CiteProc
         raise ArgumentError, "#{specialize} not implemented" unless
           respond_to?(specialize, true)
 
-        merge_locale_with_style_locale!(node)
-
         format! send(specialize, item, node), node
       end
 
@@ -91,7 +89,6 @@ module CiteProc
             new_locale = CSL::Locale.load(item.language)
 
             unless new_locale.nil?
-              new_locale.merge!(locale)
               original_locale, @locale = @locale, new_locale
             end
           rescue ParseError

@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 gemspec
 
-#gem 'citeproc', :github => 'inukshuk/citeproc.git'
-#gem 'csl', :github => 'inukshuk/csl-ruby.git'
+#gem 'citeproc', :github => 'inukshuk/citeproc'
+#gem 'csl', :github => 'inukshuk/csl-ruby'
 
 group :development, :test do
   gem 'rake', '~>10.0'
