@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
     processor implementation written in pure Ruby.
 		""".gsub(/^\s+/, '')
 
-  s.license     = 'AGPL'
+  s.license     = 'AGPL-3.0'
   s.date        = Time.now.strftime('%Y-%m-%d')
 
   s.required_ruby_version = '>= 1.9.3'
