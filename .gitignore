@@ -8,3 +8,4 @@ coverage
 .bundle
 .ruby-version
 *.swp
+.byebug_history
