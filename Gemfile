@@ -6,8 +6,8 @@ gemspec
 
 group :development, :test do
   gem 'rake', '~>10.0'
-  gem 'rspec', '~>3.0'
-  gem 'cucumber', '~>1.2'
+  gem 'rspec', '~>3.0', '<3.2.0'
+  gem 'cucumber', '~>2.3'
   gem 'simplecov', '~>0.8'
   gem 'rubinius-coverage', :platforms => :rbx
   gem 'coveralls', :require => false
