@@ -5,7 +5,7 @@ gemspec
 #gem 'csl', :github => 'inukshuk/csl-ruby.git'
 
 group :development, :test do
-  gem 'rake', '~>11.0'
+  gem 'rake', '~>10.0'
   gem 'rspec', '~>3.0', '<3.2.0'
   gem 'cucumber', '~>2.3'
   gem 'simplecov', '~>0.8'
