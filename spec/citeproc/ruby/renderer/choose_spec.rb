@@ -10,7 +10,7 @@ module CiteProc
         i.data = CiteProc::Item.new(:id => 'ID-1')
         i
       }
-      
+
       describe 'Renderer#render_choose' do
         let(:node) { CSL::Style::Choose.new }
 
@@ -65,7 +65,7 @@ module CiteProc
 
         it 'fails if there is an unknown condition type' do
           allow(node).to receive(:conditions).and_return([[:unknown, :all?, 'x']])
-          expect { renderer.evaluates?(item, node) }.to raise_error
+          expect { renderer.evaluates?(item, node) }.to raise_error(RuntimeError)
         end
 
         it 'returns false for disambiguate (implementation pending)' do
@@ -83,7 +83,7 @@ module CiteProc
 
           it 'returns false unless all variables are numeric' do
             expect(renderer.evaluates?(item, node)).to be_falsey
-            
+
             item.data[:archive] = 1
             expect(renderer.evaluates?(item, node)).to be_falsey
             
