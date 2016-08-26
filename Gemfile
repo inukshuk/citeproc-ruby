@@ -8,8 +8,6 @@ group :development, :test do
   gem 'rake', '~>10.0'
   gem 'rspec', '~>3.0', '<3.2.0'
   gem 'cucumber', '~>2.3'
-  gem 'simplecov', '~>0.8'
-  gem 'rubinius-coverage', :platforms => :rbx
   gem 'coveralls', :require => false
 end
 
@@ -39,6 +37,8 @@ group :extra do
   gem 'pry'
 	gem 'yard', '~>0.8', :platforms => :mri
 	gem 'redcarpet', '~>3.0', :platforms => :mri
+  gem 'simplecov', '~>0.8'
+  gem 'rubinius-coverage', :platforms => :rbx
 end
 
 platform :rbx do
