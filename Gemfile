@@ -45,8 +45,8 @@ group :extra do
   gem 'rubinius-coverage', :platforms => :rbx
 end
 
-platform :rbx do
-  gem 'rubysl'
-  gem 'racc'
-  gem 'json'
+group :rbx do
+  gem 'rubysl', :platforms => :rbx
+  gem 'racc', :platforms => :rbx
+  gem 'json', '~>1.8', :platforms => :rbx
 end
