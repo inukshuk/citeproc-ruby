@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 1.9.3'
 
-  s.add_dependency 'citeproc', '>= 1.0.2', '< 2.0'
+  s.add_dependency 'citeproc', '>= 1.0.4', '< 2.0'
   s.add_dependency 'csl', '~> 1.4'
 
   s.files        = `git ls-files`.split("\n") - %w{
