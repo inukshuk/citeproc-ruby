@@ -18,6 +18,12 @@ matrix:
     env: WITH_COVERALLS=false
   - rvm: rbx-2
     env: WITH_COVERALLS=false
+install:
+  - if [[ $WITH_COVERALLS = "true" ]]; then
+      bundle install --without debug extra
+    else
+      bundle install --without debug extra coverage
+    fi
 script:
   - if [[ $WITH_COVERALLS = "true" ]]; then
       bundle exec rake test_with_coveralls;
