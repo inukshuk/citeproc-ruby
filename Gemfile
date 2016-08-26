@@ -25,7 +25,11 @@ group :debug do
 end
 
 group :optional do
-	gem 'edtf'
+  if RUBY_VERSION >= '2.2.2'
+    gem 'edtf', '~>3.0'
+  else
+    gem 'edtf', '~>2.0'
+  end
 	gem 'chronic'
 end
 
