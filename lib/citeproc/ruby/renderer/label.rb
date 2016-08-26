@@ -13,7 +13,7 @@ module CiteProc
 
         case
         when node.page?
-          value, name = item.read_attribute(:page) || item.data[:page].to_s, :page
+          value, name = item.read_attribute(:page) || item.data.unobservable_read_attribute(:page).to_s, :page
 
           format_page_range!(value, node.page_range_format)
 
@@ -23,7 +23,7 @@ module CiteProc
           # in item.data; there should be no locator there
           # either but the read access will be noticed by
           # observers (if any).
-          value, name = item.locator || item.data.locator, item.label || 'page'
+          value, name = item.locator || item.data.unobservable_read_attribute(:locator), item.label || 'page'
 
         when node.names_label?
 
@@ -31,13 +31,13 @@ module CiteProc
           # by fetching editors since we can assume
           # that both are present and identical!
           if variable == :editortranslator
-            value, name = item.data[:editor], variable.to_s
+            value, name = item.data.unobservable_read_attribute(:editor), variable.to_s
           else
-            value, name = item.data[variable], variable.to_s
+            value, name = item.data.unobservable_read_attribute(variable), variable.to_s
           end
 
         else
-          value, name = item.data[variable], node.term
+          value, name = item.data.unobservable_read_attribute(variable), node.term
         end
 
         return '' if value.nil? || value.respond_to?(:empty?) && value.empty?
