@@ -20,15 +20,15 @@ matrix:
     env: WITH_COVERALLS=false
 install:
   - if [[ $WITH_COVERALLS = "true" ]]; then
-      bundle install --without debug extra
+      bundle install --without debug extra;
     else
-      bundle install --without debug extra coverage
+      bundle install --without debug extra coverage;
     fi
 script:
   - if [[ $WITH_COVERALLS = "true" ]]; then
       bundle exec rake test_with_coveralls;
     else
-      bundle exec rake
+      bundle exec rake;
     fi
 notifications:
   email:
