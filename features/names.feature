@@ -88,6 +88,7 @@ Feature: CSL Name Rendering
       | UNKNOWN                 |
       | Doe, John, and Jane Doe |
 
+
   Scenario: Suppression after substitutions
     Given the following style node:
       """
@@ -101,6 +102,9 @@ Feature: CSL Name Rendering
         </names>
         <names variable="editor">
           <label prefix=" (" suffix=")"/>
+          <substitute>
+            <text variable="title"/>
+          </substitute>
         </names>
         <text variable="title" text-case="uppercase"/>
       </group>
@@ -108,10 +112,12 @@ Feature: CSL Name Rendering
     When I render the following citation items as "html":
       | editor                  | author                  | title     |
       | John Doe                | Jane Doe                | The Title |
+      |                         | Jane Doe                | The Title |
       | John Doe                |                         | The Title |
       |                         |                         | The Title |
     Then the results should be:
       | Doe, Jane, John Doe (editor), THE TITLE           |
+      | Doe, Jane, The Title                              |
       | Doe, John, THE TITLE                              |
       | The Title                                         |
 

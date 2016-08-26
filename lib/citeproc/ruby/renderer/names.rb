@@ -13,12 +13,9 @@ module CiteProc
           [role.to_sym, item.data[role]]
         end
 
-        names.reject! { |n| n[1].nil? || n[1].empty? }
+        suppressed = names.reject! { |n| item.suppressed? n[0] }
 
-        # Filter out suppressed names only now, because
-        # we are not interested in suppressed variables
-        # which are empty anyway!
-        suppressed = names.reject! { |n| item.suppressed? n }
+        names.reject! { |n| n[1].nil? || n[1].empty? }
 
         if names.empty?
           # We also return when the list is empty because
