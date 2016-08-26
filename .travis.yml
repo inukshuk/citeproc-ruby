@@ -17,8 +17,6 @@ matrix:
     env: WITH_COVERALLS=false
   - rvm: rbx-2
     env: WITH_COVERALLS=false
-  allow_failures:
-    - rvm: rbx-2
 install:
   - if [[ $WITH_COVERALLS = "true" ]]; then
       bundle install --without debug extra;
