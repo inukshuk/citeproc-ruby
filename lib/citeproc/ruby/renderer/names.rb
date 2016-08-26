@@ -149,7 +149,8 @@ module CiteProc
         # Add spaces around connector
         connector = " #{connector} " unless connector.nil?
 
-        rendered_names = case
+        rendered_names =
+          case
           when node.truncate?(names)
             truncated = node.truncate(names)
 

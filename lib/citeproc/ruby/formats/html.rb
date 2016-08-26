@@ -165,7 +165,7 @@ module CiteProc
         def attribute_assignments(options)
           return unless options
 
-          options = options.select { |k, v| !v.nil? }
+          options = options.select { |_, v| !v.nil? }
 
           return unless !options.empty?
 

@@ -251,7 +251,7 @@ module CiteProc
             if word_boundary == '.'
               word
             else
-              "#{CiteProc.upcase($2)}#{$3}"
+              "#{CiteProc.upcase(first_letter)}#{rest_of_word}"
             end
           end
         end
