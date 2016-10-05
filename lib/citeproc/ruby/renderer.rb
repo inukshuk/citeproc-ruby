@@ -102,7 +102,7 @@ module CiteProc
         state.store! nil, key
 
         original_format = @format
-        @format = Formats::Text.new
+        @format = Formats::Sort.new
 
         if a.is_a?(CiteProc::Names)
           [render_name(a, node), render_name(b, node)]
