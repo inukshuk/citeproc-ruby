@@ -4,7 +4,7 @@ module CiteProc
     module SortItems
 
       def sort!(items, keys)
-        return itmes unless !keys.nil? && !keys.empty?
+        return items unless !keys.nil? && !keys.empty?
 
         # TODO refactor
         if items.is_a?(CitationData)
@@ -41,7 +41,7 @@ module CiteProc
           # Return early if one side is nil. In this
           # case ascending/descending is irrelevant!
           return  1 if va.nil? || va.empty?
-          return -1 if vb.nil? || va.empty?
+          return -1 if vb.nil? || vb.empty?
 
           result = case CiteProc::Variable.types[key.variable]
             when :names
