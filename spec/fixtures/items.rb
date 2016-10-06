@@ -85,8 +85,28 @@ module Fixtures
         :language => 'fr',
         :publisher => 'Éditions du Seuil',
         :'publisher-place' => 'Paris'
-      )
+      ),
 
+      :aaron1 => CiteProc::Item.new(
+          type: 'website',
+          id: 2,
+          author: [{given: 'Hank', family: 'Aaron'}],
+          title: 'Spitball'
+      ),
+
+      :aaron2 => CiteProc::Item.new(
+          type: 'website',
+          id: 3,
+          author: [{given: 'Hank', family: 'Aaron'}],
+          title: 'Baseball Fever'
+      ),
+
+      :abbott => CiteProc::Item.new(
+          type: 'website',
+          id: 4,
+          title: 'Abbott and Costello',
+          :'container-title' => 'McMillan'
+      )
     }
   end
 

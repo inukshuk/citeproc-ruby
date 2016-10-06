@@ -27,7 +27,28 @@ module CiteProc
           expect(cp.bibliography(:none => {})).to be_empty
         end
       end
+      describe 'should order entries correctly' do
+        describe 'mla 8' do
+          let(:cp_mla) { CiteProc::Processor.new :style => 'modern-language-association-8th-edition', :format => 'html' }
+          before(:each) do
+            cp_mla << items(:aaron2).data
+            cp_mla << items(:abbott).data
+            cp_mla << items(:knuth1968).data
+          end
 
+          it 'should not add quotes around text items when rendering for sorting purposes' do
+            cp_bib1_hash = cp_mla.bibliography.to_citeproc
+            bib_entries = cp_bib1_hash[1]
+            expect(bib_entries[0]).to start_with('Aaron')
+            # no author specified on Abbott.  In MLA8 title is a substitute for name, thus it was being rendered in text
+            # format to get a sortable value for author.  This produced a string starting with a quote character which
+            # messed up sorting.  Have created a special sort format which is overridden to not inject these quotes.
+            # may be other things that could be prevented here (suffix/prefix) but I haven't run across them yet
+            expect(bib_entries[1]).to start_with('“Abbott')
+            expect(bib_entries[2]).to start_with('Knuth')
+          end
+        end
+      end
     end
 
     describe '#render' do
