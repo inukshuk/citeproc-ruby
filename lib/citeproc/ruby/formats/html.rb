@@ -137,7 +137,7 @@ module CiteProc
           output.replace content_tag(config[:container], output, 'style' => css) if @css
         end
 
-        def setup!
+        def finalize!
           # TODO find a better solution for this (strip tags?)
           # For now make sure not to double encode entities
           # by matching spaces before or after.
