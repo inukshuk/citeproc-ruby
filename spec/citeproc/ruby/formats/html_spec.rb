@@ -26,6 +26,11 @@ module CiteProc
           expect(format.apply('Foo & BAR', node)).to eq('foo &amp; bar')
         end
 
+        it 'does not not apply casing to escaped entities' do
+          node[:'text-case'] = 'uppercase'
+          expect(format.apply('Foo & BAR', node)).to eq('FOO &amp; BAR')
+        end
+
         it 'escapes entities in affixes' do
           node[:prefix] = '<'
           node[:suffix] = '>'
