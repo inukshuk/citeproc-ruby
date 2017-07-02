@@ -123,7 +123,7 @@ module CiteProc
 
       it 'supports vertical-align via css' do
         node[:'vertical-align'] = 'sup'
-        expect(format.apply('foo bar', node)).to eq('<span style="vertical-align: sup">foo bar</span>')
+        expect(format.apply('foo bar', node)).to eq('<span style="vertical-align: super">foo bar</span>')
       end
 
       describe 'display' do

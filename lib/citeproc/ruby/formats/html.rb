@@ -20,8 +20,12 @@ module CiteProc
           :bib_indent          => '  '
         }
 
+        @vertical_align = Hash.new { |_,k| k }
+        @vertical_align['sup'] = 'super'
+
         class << self
           attr_reader :defaults
+          attr_reader :vertical_align
         end
 
         attr_reader :config
@@ -101,7 +105,9 @@ module CiteProc
         end
 
         def apply_vertical_align
-          css['vertical-align'] = options[:'vertical-align']
+          css['vertical-align'] = Html.vertical_align[
+            options[:'vertical-align']
+          ]
         end
 
         def apply_display
