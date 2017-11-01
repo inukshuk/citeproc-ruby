@@ -74,10 +74,15 @@ module CiteProc
           year = date.year
           year = year % 100 if node.short?
 
-          year = year.to_s
-
-          year << translate(:ad) if date.ad?
-          year << translate(:ad) if date.ad?
+          if date.ad?
+            year = year.to_s
+            year << translate(:ad) if date.ad?
+          elsif date.bc?
+            year = (-1*year).to_s
+            year << translate(:bc) if date.bc?
+          else
+            year = year.to_s
+          end
 
           year
 

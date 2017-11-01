@@ -159,11 +159,11 @@ module CiteProc
         end
 
         it 'adds AD if applicable' do
-          renderer.render_date_part(CiteProc::Date.new([200]), node) == '200AD'
+          expect(renderer.render_date_part(CiteProc::Date.new([200]), node)).to eq('200AD')
         end
 
         it 'adds BC if applicable' do
-          renderer.render_date_part(CiteProc::Date.new([-200]), node) == '200BC'
+          expect(renderer.render_date_part(CiteProc::Date.new([-200]), node)).to eq('200BC')
         end
       end
 
