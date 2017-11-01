@@ -13,8 +13,8 @@ matrix:
     env: WITH_COVERALLS=false
   - rvm: 2.0
     env: WITH_COVERALLS=false
-  - rvm: 1.9.3
-    env: WITH_COVERALLS=false
+#  - rvm: 1.9.3
+#    env: WITH_COVERALLS=false
   - rvm: jruby-19mode
     env: WITH_COVERALLS=false
 #  - rvm: rbx-2
