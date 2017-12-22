@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
 		""".gsub(/^\s+/, '')
 
   s.required_ruby_version = '>= 1.9.3'
-  s.add_dependency 'citeproc', '>= 1.0.8'
+  s.add_dependency 'citeproc', '~> 1.0', '>= 1.0.8'
   s.add_dependency 'csl', '~> 1.5'
 
   s.files        = `git ls-files`.split("\n") - %w{
