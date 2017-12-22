@@ -8,10 +8,10 @@ Gem::Specification.new do |s|
   s.name        = 'citeproc-ruby'
   s.version     = CiteProc::Ruby::VERSION.dup
   s.platform    = Gem::Platform::RUBY
-
   s.authors     = ['Sylvester Keil']
   s.email       = ['http://sylvester.keil.or.at']
-
+  s.license     = 'AGPL-3.0'
+  s.date        = Time.now.strftime('%Y-%m-%d')
   s.homepage    = 'https://github.com/inukshuk/citeproc-ruby'
   s.summary     = 'A Citation Style Language (CSL) cite processor'
   s.description =
@@ -20,26 +20,22 @@ Gem::Specification.new do |s|
     processor implementation written in pure Ruby.
 		""".gsub(/^\s+/, '')
 
-  s.license     = 'AGPL-3.0'
-  s.date        = Time.now.strftime('%Y-%m-%d')
-
   s.required_ruby_version = '>= 1.9.3'
-
-  s.add_dependency 'citeproc', '>= 1.0.4', '< 2.0'
-  s.add_dependency 'csl', '~> 1.4'
+  s.add_dependency 'citeproc', '>= 1.0.8'
+  s.add_dependency 'csl', '~> 1.5'
 
   s.files        = `git ls-files`.split("\n") - %w{
     .coveralls.yml
     .gitignore
+    .rspec
+    .rubocop.yml
+    .simplecov
     .travis.yml
     citeproc-ruby.gemspec
-  }
+  } - `git ls-files -- {spec,features}/*`.split("\n")
 
-  s.test_files   = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables  = []
   s.require_path = 'lib'
-
-  s.has_rdoc      = 'yard'
+  s.has_rdoc     = 'yard'
 end
 
 # vim: syntax=ruby

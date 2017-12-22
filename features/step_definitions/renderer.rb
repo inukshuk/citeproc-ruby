@@ -52,8 +52,9 @@ When(/^I sort the following items:$/) do |items|
 
   unless @macro.nil?
     @sort.each_child do |key|
-      allow(key).to receive(:macro).and_return(@macro)
-      allow(key).to receive(:macro?).and_return(true)
+      key.define_singleton_method(:macro) { @macro }
+      key.define_singleton_method(:macro?) { true }
+      key.instance_variable_set :@macro, @macro
     end
   end
 
