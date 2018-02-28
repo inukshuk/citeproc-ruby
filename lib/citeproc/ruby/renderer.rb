@@ -15,7 +15,8 @@ module CiteProc
           @engine = options_or_engine
         when Hash
           locale, format = options_or_engine.values_at(:locale, :format)
-          @locale, @format = CSL::Locale.load(locale), Format.load(format)
+          @locale = locale.is_a?(CSL::Locale) ? locale : CSL::Locale.load(locale)
+          @format = Format.load(format)
         end
       end
 
