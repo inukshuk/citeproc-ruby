@@ -8,6 +8,7 @@ group :development, :test do
   gem 'rake'
   gem 'rspec'
   gem 'cucumber'
+  gem 'unicode_utils', require: false unless RUBY_VERSION >= '2.4'
 end
 
 group :debug do
