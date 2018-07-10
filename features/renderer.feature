@@ -92,3 +92,16 @@ Feature: Rendering CSL nodes
     Then the results should be:
       | by: Jane Doe  |
       | by: Anonymous |
+
+  Scenario: HTML input
+    Given the following style node:
+      """
+      <group font-weight="bold">
+        <text variable="title"/>
+      </group>
+      """
+    When I render the following citation items as "html":
+      | title                      |
+      | Some <i>italics</i>        |
+    Then the results should be:
+      | <b>Some <i>italics</i></b> |
