@@ -76,6 +76,10 @@ Start rendering you references with any CSL style!
     # You can also render citations on the fly.
     cp.render :citation, id: 'knuth', locator: '23'
     #-> (Knuth, 1968, p. 23)
+    
+    # Pass an array if you want to render multiple citations:
+    cp.render :citation, [{ id: 'knuth' }, { id: 'perez' }]
+    #-> (Knuth, 1968; Perez, 1989)
 
 Documentation
 -------------
