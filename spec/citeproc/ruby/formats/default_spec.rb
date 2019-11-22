@@ -145,6 +145,13 @@ module CiteProc
           expect(format.apply('ooo', node)).to eq('fooOOOooo')
         end
 
+        it 'xml entities are not encoded' do
+          node[:prefix] = '<'
+          node[:suffix] = '>'
+          expect(format.apply('x', node)).to eq('<x>')
+        end
+
+
         it 'drop squeezable characters at start/end' do
           node[:suffix] = ' '
 
