@@ -60,6 +60,7 @@ module CiteProc
 
       def format_page_range!(pages, format)
         return if pages.nil?
+        return pages if pages.empty?
 
         dash = translate('page-range-delimiter') || '–' # en-dash
 
