@@ -198,7 +198,7 @@ module CiteProc
       end
 
       def split_closing_quotes(string)
-        string.split(/([#{close_inner_quote}#{close_quote}]+)$/, 2)
+        string.split(/((#{Regexp.quote(close_inner_quote)}|#{Regexp.quote(close_quote)})+)$/, 2)
       end
 
       def apply_quotes
