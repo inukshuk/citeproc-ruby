@@ -140,7 +140,9 @@ module CiteProc
 
         def finalize_content!
           super
-          output.replace content_tag(config[:container], output, 'style' => css) if @css
+          if instance_variable_defined?("@css")
+            output.replace content_tag(config[:container], output, 'style' => css) if @css
+          end
         end
 
         def finalize!

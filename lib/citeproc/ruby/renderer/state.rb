@@ -80,6 +80,7 @@ module CiteProc
         end
 
         def rendered_names?
+          @names = false unless instance_variable_defined?("@names")
           @names
         end
 
