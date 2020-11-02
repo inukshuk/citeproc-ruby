@@ -9,6 +9,7 @@ require 'citeproc/ruby/format'
 
 require 'citeproc/ruby/formats/default'
 require 'citeproc/ruby/formats/html'
+require 'citeproc/ruby/formats/latex'
 
 require 'citeproc/ruby/renderer'
 
