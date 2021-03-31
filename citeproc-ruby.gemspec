@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ['Sylvester Keil']
   s.email       = ['http://sylvester.keil.or.at']
-  s.license     = 'AGPL-3.0'
+  s.licenses     = ['AGPL-3.0','BSD-2-Clause']
   s.date        = Time.now.strftime('%Y-%m-%d')
   s.homepage    = 'https://github.com/inukshuk/citeproc-ruby'
   s.summary     = 'A Citation Style Language (CSL) cite processor'
