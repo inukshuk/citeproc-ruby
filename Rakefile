@@ -39,14 +39,6 @@ Cucumber::Rake::Task.new(:cucumber) do |t|
   t.profile = 'default'
 end
 
-begin
-  require 'coveralls/rake/task'
-  Coveralls::RakeTask.new
-  task :test_with_coveralls => [:spec, :cucumber, 'coveralls:push']
-rescue LoadError => e
-  # ignore
-end
-
 task :release do |t|
   system "gem build citeproc-ruby.gemspec"
   system "git tag #{CiteProc::Ruby::VERSION}"
