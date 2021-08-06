@@ -6,10 +6,6 @@ processor's rendering engine only; for more documentation on the whole
 cite processor, please refer to the documentation of the
 [citeproc](https://rubygems.org/gems/citeproc) gem instead.
 
-[![Build Status](https://secure.travis-ci.org/inukshuk/citeproc-ruby.png)](http://travis-ci.org/inukshuk/citeproc-ruby)
-[![Coverage Status](https://coveralls.io/repos/github/inukshuk/citeproc-ruby/badge.svg?branch=master)](https://coveralls.io/github/inukshuk/citeproc-ruby?branch=master)
-[![Code Climate](https://codeclimate.com/github/inukshuk/citeproc-ruby/badges/gpa.svg)](https://codeclimate.com/github/inukshuk/citeproc-ruby)
-
 Quickstart
 ----------
 Install CiteProc-Ruby and all official CSL styles (optional).
