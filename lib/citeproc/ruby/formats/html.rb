@@ -36,6 +36,8 @@ module CiteProc
           else
             @config = Html.defaults.merge(config)
           end
+
+          @css = nil
         end
 
         def bibliography(bibliography)

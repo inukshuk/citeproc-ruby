@@ -32,6 +32,7 @@ module CiteProc
 
         def initialize
           @history, @authors = History.new(self, 3), []
+          reset
         end
 
         def store!(item, node)
