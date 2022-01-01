@@ -1,7 +1,7 @@
 CiteProc-Ruby
 =============
 CiteProc-Ruby is a [Citation Style Language](http://citationstyles.org/) (CSL)
-1.0.1 cite processor written in pure Ruby. This Ruby gem contains the
+1.0.2 cite processor written in pure Ruby. This Ruby gem contains the
 processor's rendering engine only; for more documentation on the whole
 cite processor, please refer to the documentation of the
 [citeproc](https://rubygems.org/gems/citeproc) gem instead.
