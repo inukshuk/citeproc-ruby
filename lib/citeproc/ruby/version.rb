@@ -1,5 +1,5 @@
 module CiteProc
   module Ruby
-    VERSION = '1.1.14'
+    VERSION = '1.2.0'
   end
 end
