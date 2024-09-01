@@ -24,9 +24,12 @@ module CiteProc
 
         join node.each_child.map { |child|
           render item, child
-        }
+        }, closest_delimiter_for(node)
       end
 
+      def closest_delimiter_for(node)
+        node.closest(/^group|layout$/)&.delimiter || ''
+      end
 
       # Evaluates the conditions of the passed-in Choose::Block
       # against the passed-in CitationItem using the Block's matcher.
@@ -101,6 +104,5 @@ module CiteProc
         end
       end
     end
-
   end
 end
