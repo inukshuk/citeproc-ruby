@@ -10,17 +10,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      RUBYOPT: W2
       BUNDLE_WITHOUT: debug:extra
     strategy:
       matrix:
         ruby-version:
-          - 3.1
-          - '3.0'
-          - 2.7
-          - 2.6
+          - '3.3'
+          - '3.2'
+          - '3.1'
+          - '2.7'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
