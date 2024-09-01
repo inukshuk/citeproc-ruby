@@ -1,12 +1,3 @@
-require 'bundler'
-begin
-  Bundler.setup
-rescue Bundler::BundlerError => e
-  $stderr.puts e.message
-  $stderr.puts "Run `bundle install` to install missing gems"
-  exit e.status_code
-end
-
 begin
   require 'simplecov'
 rescue LoadError
@@ -20,10 +11,8 @@ begin
     # Debugger.start
   when defined?(RUBY_ENGINE) && RUBY_ENGINE == 'rbx'
     require 'rubinius/debugger'
-  when RUBY_VERSION < '2.0'
-    require 'debugger'
   else
-    require 'byebug'
+    require 'debug'
   end
 rescue LoadError
   # ignore
@@ -68,5 +57,4 @@ RSpec.configure do |config|
   config.after :all do
     CSL::Style.root, CSL::Locale.root = @style_root, @locale_root
   end
-
 end

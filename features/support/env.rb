@@ -10,7 +10,7 @@ begin
     require 'debug'
     Debugger.start
   else
-    require 'byebug'
+    require 'debug'
   end
 rescue LoadError
   # ignore
