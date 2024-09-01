@@ -26,12 +26,10 @@ Gem::Specification.new do |s|
   s.add_dependency 'observer'
 
   s.files        = `git ls-files`.split("\n") - %w{
-    .coveralls.yml
     .gitignore
     .rspec
     .rubocop.yml
     .simplecov
-    .travis.yml
     citeproc-ruby.gemspec
   } - `git ls-files -- {spec,features}/*`.split("\n")
 
