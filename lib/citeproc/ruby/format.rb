@@ -214,7 +214,7 @@ module CiteProc
           output.replace CiteProc.upcase output
 
         when 'capitalize-first'
-          output.sub!(/^([^\p{L}]*)(\p{Ll})/) { "#{$1}#{CiteProc.upcase($2)}" }
+          output.sub!(/^([^\p{Alnum}]*)(\p{Ll})/) { "#{$1}#{CiteProc.upcase($2)}" }
 
         when 'capitalize-all'
           output.gsub!(/\b(\p{Ll})/) { CiteProc.upcase($1) }

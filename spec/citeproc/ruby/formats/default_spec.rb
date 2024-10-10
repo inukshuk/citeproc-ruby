@@ -86,6 +86,13 @@ module CiteProc
           expect(format.apply('én foo bar', node)).to eq('Én foo bar')
         end
 
+        it 'supports capitalize-first with ordinal numbers' do
+          node[:'text-case'] = 'capitalize-first'
+
+          expect(format.apply('1st edition', node)).to eq('1st edition')
+          expect(format.apply('first edition', node)).to eq('First edition')
+        end
+
         it 'supports capitalize-all' do
           node[:'text-case'] = 'capitalize-all'
 
