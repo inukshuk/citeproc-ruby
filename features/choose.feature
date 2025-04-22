@@ -23,3 +23,27 @@ Feature: Rendering CSL choose nodes
       | publisher       | William Collins |
       | publisher-place | Glasgow         |
     Then the result should be: Nature, William Collins, Glasgow
+
+  Scenario: No date
+    Given the following style node:
+      """
+      <group>
+        <choose>
+          <if variable="issued">
+            <date variable="issued">
+              <date-part name="year"/>
+            </date>
+          </if>
+          <else>
+            <text term="no date" form="short"/>
+          </else>
+        </choose>
+      </group>
+      """
+    When I render the following citation item as "text":
+      | type            | book            |
+      | issued          | 1990            |
+    Then the result should be: 1990
+    When I render the following citation item as "text":
+      | type            | book            |
+    Then the result should be: n.d.
