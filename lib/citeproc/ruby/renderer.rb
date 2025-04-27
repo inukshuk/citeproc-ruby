@@ -31,12 +31,25 @@ module CiteProc
         engine.options[:allow_locale_overrides]
       end
 
-      # @param item [CiteProc::CitationItem]
+      # Render a single item, from either CiteProc::CitationItem or
+      # Hash of CSL input data matching https://github.com/citation-style-language/schema/blob/master/csl-data.json
+      #
+      # Eg
+      #
+      #    renderer.render({"id" => "1", title => "something"}, CSL::Style.load("apa").bibliography)
+      #
+      # @param item [CiteProc::CitationItem,Hash]
       # @param node [CSL::Node]
       # @return [String] the rendered and formatted string
       def render(item, node)
         raise ArgumentError, "no CSL node: #{node.inspect}" unless
           node.respond_to?(:nodename)
+
+        unless item.is_a?(CiteProc::Attributes)
+          item = CiteProc::CitationItem.new() do |c|
+            c.data = CiteProc::Item.new(item)
+          end
+        end
 
         specialize = "render_#{node.nodename.tr('-', '_')}"
 
@@ -44,6 +57,19 @@ module CiteProc
           respond_to?(specialize, true)
 
         format! send(specialize, item, node), node
+      end
+
+      # convenience method suitable for high-level API to render a single
+      # json hash object
+      #
+      # @param csl_json_hash [Hash]
+      # @param mode
+      # @return [String] the rendered and formatted string
+      def render_csl_json(csl_json_hash, style_mode)
+        citation_item = CiteProc::CitationItem.new() do |c|
+          c.data = CiteProc::Item.new(csl_json_hash)
+        end
+        render citation_item, style_mode
       end
 
       # @param data [CiteProc::CitationData]
