@@ -56,6 +56,14 @@ module CiteProc
           expect(format.apply('ooo', node)).to eq('foo<i>ooo</i>ooo')
         end
 
+        it 'tags are ignored when squeezing' do
+          node[:suffix] = ','
+          node[:'font-style'] = 'italic'
+
+          expect(format.apply('ooo', node)).to eq('<i>ooo</i>,')
+          expect(format.apply('ooo,', node)).to eq('<i>ooo,</i>')
+        end
+
         it 'are added before text formats have been applied for layout nodes' do
           layout = CSL::Style::Layout.new
 
