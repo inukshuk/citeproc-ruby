@@ -84,7 +84,7 @@ module CiteProc
 
           when :variable
             evaluates_condition? matcher, values do |value|
-              item.data.attribute?(value)
+              item.data.attribute?(value) || (value == 'locator' && item.locator?)
             end
 
           else
