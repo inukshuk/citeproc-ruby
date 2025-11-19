@@ -24,7 +24,7 @@ module CiteProc
 
         join node.each_child.map { |child|
           render item, child
-        }, closest_delimiter_for(node)
+        }.reject(&:empty?), closest_delimiter_for(node)
       end
 
       def closest_delimiter_for(node)
