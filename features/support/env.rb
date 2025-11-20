@@ -6,7 +6,7 @@ end
 
 begin
   case
-  when RUBY_PLATFORM < 'java'
+  when RUBY_PLATFORM == 'java'
     require 'debug'
     Debugger.start
   else
