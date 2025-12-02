@@ -47,3 +47,29 @@ Feature: Rendering CSL choose nodes
     When I render the following citation item as "text":
       | type            | book            |
     Then the result should be: n.d.
+
+  Scenario: Match locators
+    Given the following style node:
+      """
+      <group>
+        <choose>
+          <if locator="page">
+            <label form="short" variable="locator"/>
+            <text variable="locator"/>
+          </if>
+          <else>
+            <text variable="title"/>
+          </else>
+        </choose>
+      </group>
+      """
+    When I render the following citation item as "text":
+      | type            | book            |
+      | title           | 1990            |
+    Then the result should be: 1990
+    When I render the following citation item as "text":
+      | type            | book            |
+      | title           | 1990            |
+      | locator         | 23              |
+      | locator-label   | page            |
+    Then the result should be: p.23

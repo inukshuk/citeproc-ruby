@@ -66,7 +66,7 @@ module CiteProc
 
 
           when :locator
-            locator = item.locator.to_s.tr(' ', '-')
+            locator = item.label.to_s.tr(' ', '-')
 
             evaluates_condition? matcher, values do |value|
               value.to_s == locator

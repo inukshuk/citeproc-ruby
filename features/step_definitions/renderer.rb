@@ -39,6 +39,11 @@ When(/^I render the following citation item as "(.*?)":$/) do |format, item|
   i = CiteProc::CitationItem.new(:id => 'ID-1')
   i.data = CiteProc::Item.new(item.rows_hash.merge(:id => 'ID-1'))
 
+  if item.rows_hash.key? 'locator'
+    i.locator = item.rows_hash['locator']
+    i.label = item.rows_hash['locator-label']
+  end
+
   @result = r.render i, @node
 end
 

@@ -115,13 +115,13 @@ module CiteProc
           it 'returns false unless the locator matches all of the given locators' do
             expect(renderer.evaluates?(item, node)).to be_falsey
             
-            item.locator = :book
+            item.label = :book
             expect(renderer.evaluates?(item, node)).to be_falsey
             
-            item.locator = 'volume'
+            item.label = 'volume'
             expect(renderer.evaluates?(item, node)).to be_falsey
 
-            item.locator = 'figure'
+            item.label = 'figure'
             expect(renderer.evaluates?(item, node)).to be_falsey
           end
 
@@ -131,21 +131,21 @@ module CiteProc
             it 'returns false unless the locator matches any of the given locators' do
               expect(renderer.evaluates?(item, node)).to be_falsey
               
-              item.locator = :book
+              item.label = :book
               expect(renderer.evaluates?(item, node)).to be_truthy
               
-              item.locator = 'volume'
+              item.label = 'volume'
               expect(renderer.evaluates?(item, node)).to be_falsey
 
-              item.locator = 'figure'
+              item.label = 'figure'
               expect(renderer.evaluates?(item, node)).to be_truthy
             end
 
             it 'matches "sub verbo" as "sub-verbo"' do
-              item.locator = 'sub-verbo'
+              item.label = 'sub-verbo'
               expect(renderer.evaluates?(item, node)).to be_truthy
 
-              item.locator = 'sub verbo'
+              item.label = 'sub verbo'
               expect(renderer.evaluates?(item, node)).to be_truthy
             end
           end
