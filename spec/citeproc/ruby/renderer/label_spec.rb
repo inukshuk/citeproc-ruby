@@ -218,6 +218,13 @@ module CiteProc
             expect(renderer.render_label(item, node)).to eq('books')
           end
         end
+
+        describe "for an item with a locator and no label" do
+          it "returns nil" do
+            item.locator = 2
+            expect(renderer.render_label(item, node)).to eq(nil)
+          end
+        end
       end
 
     end # render_label

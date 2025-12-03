@@ -23,7 +23,8 @@ module CiteProc
           # in item.data; there should be no locator there
           # either but the read access will be noticed by
           # observers (if any).
-          value, name = item.locator || item.data.unobservable_read_attribute(:locator), item.label || 'page'
+          value = item.locator || item.data.unobservable_read_attribute(:locator)
+          name = item.label
 
         when node.names_label?
 
