@@ -71,5 +71,10 @@ Feature: Rendering CSL choose nodes
       | type            | book            |
       | title           | 1990            |
       | locator         | 23              |
-      | locator-label   | page            |
+    Then the result should be: 1990
+    When I render the following citation item as "text":
+      | type            | book            |
+      | title           | 1990            |
+      | locator         | 23              |
+      | label           | page            |
     Then the result should be: p.23

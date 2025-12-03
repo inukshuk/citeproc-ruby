@@ -35,15 +35,11 @@ end
 
 When(/^I render the following citation item as "(.*?)":$/) do |format, item|
   r = CiteProc::Ruby::Renderer.new(:format => format)
-
+  h = item.rows_hash.merge(:id => 'ID-1')
   i = CiteProc::CitationItem.new(:id => 'ID-1')
-  i.data = CiteProc::Item.new(item.rows_hash.merge(:id => 'ID-1'))
-
-  if item.rows_hash.key? 'locator'
-    i.locator = item.rows_hash['locator']
-    i.label = item.rows_hash['locator-label']
-  end
-
+  i.locator = h.delete('locator')
+  i.label = h.delete('label')
+  i.data = CiteProc::Item.new(h)
   @result = r.render i, @node
 end
 
