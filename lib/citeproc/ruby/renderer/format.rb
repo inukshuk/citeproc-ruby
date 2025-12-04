@@ -42,7 +42,7 @@ module CiteProc
 			end
 
 
-      # Formats pages accoring to format. Valid formats are:
+      # Formats pages according to format. Valid formats are:
       #
       # * "chicago": page ranges are abbreviated according to
       #   the Chicago Manual of Style rules.
