@@ -82,6 +82,7 @@ module CiteProc
               # TODO
               if format == 'chicago-16' || format == 'chicago-15'
                 format = 'chicago'
+              end
 
               if format == 'chicago'
                 changes = dim - f.chars.zip(t.chars).
