@@ -79,6 +79,10 @@ module CiteProc
             if delta >= 0
               t.prepend f[0, delta] unless delta.zero?
 
+              # TODO
+              if format == 'chicago-16' || format == 'chicago-15'
+                format = 'chicago'
+
               if format == 'chicago'
                 changes = dim - f.chars.zip(t.chars).
                   take_while { |a,b| a == b }.length if dim == 4
