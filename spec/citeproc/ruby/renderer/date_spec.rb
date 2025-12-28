@@ -22,6 +22,13 @@ module CiteProc
             expect(renderer.render(item, node)).to eq('01/27/2012')
           end
         end
+
+        describe 'range rendering' do
+          it 'supports day ranges' do
+            item.data[:issued] = [[2003, 8, 10], [2003, 8, 23]]
+            expect(renderer.render(item, node)).to eq('08/10–08/23/2003')
+          end
+        end
       end
 
       describe 'static rendering' do
@@ -70,7 +77,6 @@ module CiteProc
           end
         end
       end
-
     end
 
     describe 'Renderer#render_date_part' do
@@ -166,7 +172,6 @@ module CiteProc
           expect(renderer.render_date_part(CiteProc::Date.new([-200]), node)).to eq('200BC')
         end
       end
-
     end
 
   end
