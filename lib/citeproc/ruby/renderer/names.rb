@@ -238,7 +238,7 @@ module CiteProc
           # Strip away some unusual characters to normalize
           # sort order for names.
           if sort_mode?
-            name.family = name.family.to_s.gsub(/[\[\]]|^\W+/, '')
+            name.family = name.family.to_s.gsub(/[\[\]]|^[^[:word:]]+/, '')
           end
 
           name.options.merge! node.name_options

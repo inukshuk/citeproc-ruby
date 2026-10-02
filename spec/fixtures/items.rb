@@ -26,6 +26,8 @@ module Fixtures
 
       :japanese => CiteProc::Names.new(:family => '穂積', :given => '陳重'),
 
+      :papadopoulos => CiteProc::Names.new(:family => 'Παπαδόπουλος', :given => 'Γιώργος'),
+
       :humboldt => CiteProc::Names.new(:given => 'Alexander',
         :dropping_particle => 'von', :family => 'Humboldt'),
 
