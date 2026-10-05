@@ -1,3 +1,9 @@
+begin
+  require 'ffi-icu'
+rescue LoadError
+  # ignore
+end
+
 module CiteProc
   module Ruby
 
@@ -69,17 +75,38 @@ module CiteProc
 
       def sort_key(string)
         string = string.to_s
+        return collator.collation_key(string) unless collator.nil?
+
         folded = string.downcase(:fold)
         key = [folded.unicode_normalize(:nfd).gsub(/\p{Mn}/, ''), folded]
         sort_case_sensitively? ? key << string : key
+      end
+
+      def collator
+        return unless defined?(ICU::Collation::Collator)
+
+        lc = renderer.locale.to_s
+        cs = sort_case_sensitively?
+
+        @collators ||= {}
+        @collators[[lc, cs]] ||= create_collator(lc, cs)
+      end
+
+      def create_collator(locale, case_sensitive)
+        collator = ICU::Collation::Collator.new(locale)
+        collator.case_first = :upper_first
+
+        # Secondary strength compares letters and diacritics
+        # but ignores case; tertiary strength considers case too.
+        collator.strength = case_sensitive ? :tertiary : :secondary
+
+        collator
       end
 
       def sort_case_sensitively?
         return false unless processor && processor.options
         processor.options[:sort_case_sensitively]
       end
-
     end
-
   end
 end
