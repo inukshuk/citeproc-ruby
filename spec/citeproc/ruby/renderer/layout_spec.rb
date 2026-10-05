@@ -28,9 +28,9 @@ module CiteProc
           expect(renderer.render(item, node)).to eq('foobar')
         end
 
-        it 'uses the delimiters if specified' do
+        it 'does not use the delimiter between its children' do
           node[:delimiter] = '-'
-          expect(renderer.render(item, node)).to eq('foo-bar')
+          expect(renderer.render(item, node)).to eq('foobar')
         end
       end
 
