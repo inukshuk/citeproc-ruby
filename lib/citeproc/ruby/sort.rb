@@ -64,11 +64,13 @@ module CiteProc
       end
 
       def compare_items(a, b)
-        if sort_case_sensitively?
-          a <=> b
-        else
-          a.to_s.downcase <=> b.to_s.downcase
-        end
+        sort_key(a) <=> sort_key(b)
+      end
+
+      def sort_key(string)
+        string = string.to_s
+        string = string.downcase(:fold) unless sort_case_sensitively?
+        [string.unicode_normalize(:nfd).gsub(/\p{Mn}/, ''), string]
       end
 
       def sort_case_sensitively?

@@ -48,3 +48,24 @@ Feature: Sorting
     Then the order should be:
       | ID-1      |
       | ID-0      |
+
+  Scenario: Name sorting with diacritics
+    Given the following sort keys:
+      """
+      <sort>
+        <key variable="author"/>
+      </sort>
+      """
+    When I sort the following items:
+      | author |
+      | Zola   |
+      | Martin |
+      | Éluard |
+      | Klein  |
+      | Abel   |
+    Then the order should be:
+      | ID-4   |
+      | ID-2   |
+      | ID-3   |
+      | ID-1   |
+      | ID-0   |
