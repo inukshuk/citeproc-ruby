@@ -69,8 +69,9 @@ module CiteProc
 
       def sort_key(string)
         string = string.to_s
-        string = string.downcase(:fold) unless sort_case_sensitively?
-        [string.unicode_normalize(:nfd).gsub(/\p{Mn}/, ''), string]
+        folded = string.downcase(:fold)
+        key = [folded.unicode_normalize(:nfd).gsub(/\p{Mn}/, ''), folded]
+        sort_case_sensitively? ? key << string : key
       end
 
       def sort_case_sensitively?

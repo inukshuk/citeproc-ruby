@@ -35,8 +35,12 @@ module CiteProc
       describe 'when sorting case sensitively' do
         before { cp.options[:sort_case_sensitively] = true }
 
-        it 'does not ignore case' do
-          expect(sort('b', 'A', 'a', 'B')).to eq(['A', 'B', 'a', 'b'])
+        it 'sorts upper case first' do
+          expect(sort('b', 'A', 'a', 'B')).to eq(['A', 'a', 'B', 'b'])
+        end
+
+        it 'considers diacritics before case' do
+          expect(sort('é', 'É', 'e', 'E')).to eq(['E', 'e', 'É', 'é'])
         end
 
         it 'ignores diacritics' do
