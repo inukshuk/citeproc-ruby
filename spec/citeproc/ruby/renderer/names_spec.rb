@@ -392,5 +392,38 @@ module CiteProc
         end
       end
     end
+
+    describe "Renderer#render_sort" do
+      let(:renderer) { Renderer.new }
+
+      let(:node) { CSL::Style::Name.new }
+
+      let(:key) { CSL::Style::Sort::Key.new }
+
+      it 'keeps leading non-ASCII letters in family names' do
+        ecrivain = CiteProc::Names.new('Écrivain, Jean')
+        expect(renderer.render_sort(ecrivain, people(:papadopoulos), node, key)).to eq(['Jean Écrivain', 'Γιώργος Παπαδόπουλος'])
+      end
+
+      it 'strips leading punctuation from family names' do
+        ecrivain = CiteProc::Names.new('Écrivain, Jean')
+        ecrivain[0].family = '"Écrivain'
+
+        papadopoulos = people(:papadopoulos)
+        papadopoulos[0].family = '«Παπαδόπουλος'
+
+        expect(renderer.render_sort(ecrivain, papadopoulos, node, key)).to eq(['Jean Écrivain', 'Γιώργος Παπαδόπουλος'])
+      end
+
+      it 'strips square brackets from family names' do
+        ecrivain = CiteProc::Names.new('Écrivain, Jean')
+        ecrivain[0].family = '[Écrivain]'
+
+        papadopoulos = people(:papadopoulos)
+        papadopoulos[0].family = '[Παπαδόπουλος]'
+
+        expect(renderer.render_sort(ecrivain, papadopoulos, node, key)).to eq(['Jean Écrivain', 'Γιώργος Παπαδόπουλος'])
+      end
+    end
   end
 end
