@@ -162,7 +162,7 @@ module CiteProc
         private
 
         def content_tag(name, content, options = nil)
-          opening_tag(name, options) << content << closing_tag(name)
+          "#{opening_tag(name, options)}#{content}#{closing_tag(name)}"
         end
 
         def style_for(options)
@@ -177,7 +177,7 @@ module CiteProc
 
           return unless !options.empty?
 
-          ' ' << options.map { |k, v| [k, v.inspect].join('=') }.join(' ')
+          " #{options.map { |k, v| [k, v.inspect].join('=') }.join(' ')}"
         end
 
         def opening_tag(name, options = nil)

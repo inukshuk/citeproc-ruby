@@ -38,7 +38,7 @@ module CiteProc
       it 'disregards localized closing quotes when squeezing affixes' do
         locale = double(:locale)
         allow(locale).to receive(:punctuation_in_quotes?).and_return(true)
-        allow(locale).to receive(:quote) { |t| '"' << t << '"' }
+        allow(locale).to receive(:quote) { |t| %("#{t}") }
         allow(locale).to receive(:t) { |t| t == 'close-quote' ? '"' : "'" }
 
         node[:quotes] = true
