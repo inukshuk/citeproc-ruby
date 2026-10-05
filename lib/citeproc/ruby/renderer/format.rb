@@ -58,11 +58,16 @@ module CiteProc
         format_page_range!(pages.dup, format)
       end
 
+      # @return [String] the localized range delimiter; defaults to an en-dash
+      def range_delimiter
+        translate('page-range-delimiter') || '–'
+      end
+
       def format_page_range!(pages, format)
         return if pages.nil?
         return pages if pages.empty?
 
-        dash = translate('page-range-delimiter') || '–' # en-dash
+        dash = range_delimiter
 
         pages.gsub! PAGE_RANGE_PATTERN do
           affixes, f, t = [$1, $3, $4, $6], $2, $5
