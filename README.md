@@ -113,12 +113,6 @@ Alternatively, you can `gem install csl-styles` to install all official CSL
 styles and locales. To make the styles and locales available, simply
 `require 'csl/styles`.
 
-Compatibility
--------------
-The cite processor and the CSL API libraries have been developed for MRI,
-Rubinius, and JRuby. Please note that we try to support only Ruby versions
-1.9.3 and upwards.
-
 Development
 -----------
 The CiteProc-Ruby source code is
