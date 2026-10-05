@@ -45,10 +45,3 @@ task :release do |t|
 end
 
 task :default => [:spec, :cucumber]
-
-begin
-  require 'yard'
-  YARD::Rake::YardocTask.new
-rescue LoadError => e
-  # ignore
-end
