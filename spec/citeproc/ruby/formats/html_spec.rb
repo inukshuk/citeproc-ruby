@@ -171,5 +171,29 @@ module CiteProc
       end
     end
 
+    describe 'Formats::CiteProcJS#apply' do
+      let(:format) { Format.load 'citeprocjs' }
+      let(:node) { CSL::Style::Text.new }
+
+      it 'writes css styles like citeproc-js' do
+        node[:'font-variant'] = 'small-caps'
+        node[:'text-decoration'] = 'underline'
+        expect(format.apply('foo bar', node)).to eq('<span style="font-variant:small-caps;text-decoration:underline;">foo bar</span>')
+      end
+
+      it 'uses sup and sub tags for vertical-align' do
+        node[:'vertical-align'] = 'sup'
+        expect(format.apply('foo', node)).to eq('<sup>foo</sup>')
+
+        node[:'vertical-align'] = 'sub'
+        expect(format.apply('foo', node)).to eq('<sub>foo</sub>')
+      end
+
+      it 'uses typographic apostrophes' do
+        expect(format.apply("Plato's thought", node)).to eq('Plato’s thought')
+        expect(format.apply("ETFA '09", node)).to eq('ETFA ’09')
+      end
+    end
+
   end
 end
