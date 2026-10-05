@@ -12,7 +12,7 @@ end
 $:.unshift(File.join(File.dirname(__FILE__), './lib'))
 require 'citeproc/ruby/version'
 
-desc 'Run a Pry session with CiteProc-Ruby loaded'
+desc 'Run an IRB session with CiteProc-Ruby loaded'
 task :console do
   ARGV.clear
   require 'irb'
