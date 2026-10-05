@@ -44,10 +44,13 @@ module CiteProc
         else
           va, vb = a[key.variable], b[key.variable]
 
-          # Return early if one side is nil. In this
-          # case ascending/descending is irrelevant!
-          return  1 if va.nil? || va.empty?
-          return -1 if vb.nil? || vb.empty?
+          # Return early if one side is nil.
+          # In this case ascending/descending is irrelevant!
+          if va.nil? || va.empty?
+            return vb.nil? || vb.empty? ? 0 : 1
+          elsif vb.nil? || vb.empty?
+            return -1
+          end
 
           result = case CiteProc::Variable.types[key.variable]
             when :names

@@ -67,5 +67,22 @@ module CiteProc
       end
     end
 
+    describe 'SortItems#compare_items_by_key' do
+      let(:engine) { CiteProc::Processor.new(:style => 'apa', :format => 'text').engine }
+      let(:key) { CSL::Style::Sort::Key.new(:variable => 'title') }
+
+      let(:a) { CiteProc::Item.new(:id => 'a', :title => 'A') }
+      let(:empty) { CiteProc::Item.new(:id => 'empty') }
+
+      it 'sorts items with empty variables last' do
+        expect(engine.compare_items_by_key(empty, a, key)).to eq(1)
+        expect(engine.compare_items_by_key(a, empty, key)).to eq(-1)
+      end
+
+      it 'treats items with empty variables as equal' do
+        expect(engine.compare_items_by_key(empty, empty.dup, key)).to eq(0)
+      end
+    end
+
   end
 end
