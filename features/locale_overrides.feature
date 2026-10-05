@@ -1,6 +1,6 @@
 Feature: Locale overrides
   As a hacker of CSL styles
-  I want to overrice localized terms
+  I want to override localized terms
   In the locale section of a CSL style
 
   @locale-override @page-range
