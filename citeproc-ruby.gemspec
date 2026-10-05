@@ -16,11 +16,11 @@ Gem::Specification.new do |s|
   s.summary     = 'A Citation Style Language (CSL) cite processor'
   s.description =
 		"""
-    CiteProc-Ruby is a Citation Style Language (CSL) 1.0.1 compatible cite
+    CiteProc-Ruby is a Citation Style Language (CSL) 1.0.2 compatible cite
     processor implementation written in pure Ruby.
 		""".gsub(/^\s+/, '')
 
-  s.required_ruby_version = '>= 1.9.3'
+  s.required_ruby_version = '>= 3.1'
   s.add_dependency 'citeproc', '~> 1.0', '>= 1.0.9'
   s.add_dependency 'csl', '~> 2.0'
   s.add_dependency 'observer', '< 1.0'

@@ -18,6 +18,7 @@ jobs:
           - '3.4'
           - '3.3'
           - '3.2'
+          - '3.1'
     steps:
       - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
