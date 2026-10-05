@@ -16,7 +16,16 @@ module CiteProc
       # Applies the current format on the string using the
       # node's formatting options.
       def format!(string, node)
-        format.apply(string, node, locale)
+        format.apply(string, node, locale, state.language)
+      end
+
+      # Reads the item's language without notifying observers.
+      #
+      # @param item [CiteProc::Item, nil]
+      # @return [String, nil] the item's language
+      def language_of(item)
+        return unless item.respond_to?(:unobservable_read_attribute)
+        item.unobservable_read_attribute(:language).to_s
       end
 
       def join(list, delimiter = nil)

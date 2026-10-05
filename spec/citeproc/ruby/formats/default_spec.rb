@@ -125,6 +125,32 @@ module CiteProc
           expect(format.apply("Check the page: easybib.com", node)).to eq("Check the Page: Easybib.com")
           expect(format.apply("Dogs life.obviously the best guide for pet owners", node)).to eq("Dogs Life.obviously the Best Guide for Pet Owners")
         end
+
+        describe 'title case and languages' do
+          before { node[:'text-case'] = 'title' }
+
+          let(:en) { CSL::Locale.new('en-US') }
+          let(:de) { CSL::Locale.new('de-DE') }
+
+          it 'applies to items in English' do
+            expect(format.apply('of mice and men', node, en, 'en')).to eq('Of Mice and Men')
+            expect(format.apply('of mice and men', node, de, 'en-GB')).to eq('Of Mice and Men')
+          end
+
+          it 'applies to items without language in English locales' do
+            expect(format.apply('of mice and men', node, en, '')).to eq('Of Mice and Men')
+            expect(format.apply('of mice and men', node, en)).to eq('Of Mice and Men')
+          end
+
+          it 'does not apply to items in other languages' do
+            expect(format.apply('syntax und stilistik', node, en, 'de')).to eq('syntax und stilistik')
+            expect(format.apply('syntax und stilistik', node, en, 'english')).to eq('syntax und stilistik')
+          end
+
+          it 'does not apply to items without language in other locales' do
+            expect(format.apply('syntax und stilistik', node, de)).to eq('syntax und stilistik')
+          end
+        end
       end
 
       describe 'strip-periods' do

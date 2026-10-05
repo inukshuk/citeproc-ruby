@@ -30,6 +30,9 @@ module CiteProc
 
         attr_reader :history, :node, :item, :authors, :substitute
 
+        # @return [String, nil] the language of the item being rendered
+        attr_accessor :language
+
         def initialize
           @history, @authors = History.new(self, 3), []
           reset
@@ -55,7 +58,8 @@ module CiteProc
         end
 
         def reset
-          @item, @node, @substitute, @authors, @names = nil, nil, nil, [], nil
+          @item, @node, @substitute, @authors, @names, @language =
+            nil, nil, nil, [], nil, nil
           self
         ensure
           changed

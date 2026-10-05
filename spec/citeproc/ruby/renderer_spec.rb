@@ -8,6 +8,58 @@ module CiteProc
     describe Renderer do
       let(:renderer) { Renderer.new }
 
+      describe 'title case and the item language' do
+        let(:layout) do
+          CSL::Style::Layout.new do |l|
+            l << CSL::Style::Text.new(:variable => 'title', :'text-case' => 'title')
+          end
+        end
+
+        let(:citation) { CSL::Style::Citation.new.tap { |c| c << layout } }
+
+        def item(language)
+          i = CiteProc::CitationItem.new(:id => language.to_s)
+          i.data = CiteProc::Item.new(:id => language.to_s, :title => 'of mice and men', :language => language)
+          i
+        end
+
+        it 'title cases items in English or without a language' do
+          expect(renderer.render_citation([item('en')], citation)).to eq('Of Mice and Men')
+          expect(renderer.render_citation([item(nil)], citation)).to eq('Of Mice and Men')
+        end
+
+        it 'does not title case items in other languages' do
+          expect(renderer.render_citation([item('de')], citation)).to eq('of mice and men')
+        end
+
+        it 'uses the language of each cite' do
+          layout[:delimiter] = '; '
+          expect(renderer.render_citation([item('de'), item('en')], citation)).to eq('of mice and men; Of Mice and Men')
+        end
+
+        it 'clears the language after rendering' do
+          renderer.render_citation([item('de')], citation)
+          expect(renderer.state.language).to be_nil
+        end
+      end
+
+      describe '#locale=' do
+        it 'loads the locale' do
+          renderer.locale = 'de-DE'
+          expect(renderer.locale.to_s).to eq('de-DE')
+        end
+
+        it 'falls back to the language for unknown regions' do
+          renderer.locale = 'de-XX'
+          expect(renderer.locale.to_s).to eq('de-DE')
+        end
+
+        it 'falls back to the default locale for unknown languages' do
+          renderer.locale = 'xx'
+          expect(renderer.locale.to_s).to eq('en-US')
+        end
+      end
+
       describe '#format_page_range' do
         it 'supports "minimal" format' do
           expect(renderer.format_page_range('42-45', 'minimal')).to eq('42–5')

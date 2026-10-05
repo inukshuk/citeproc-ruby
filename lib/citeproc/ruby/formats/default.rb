@@ -20,14 +20,15 @@ module CiteProc
       class Sort < Text
         #A special format to use when sorting which prevents formatting of extraneous things like quotes
 
-        def apply(input, node, locale = nil)
+        def apply(input, node, locale = nil, language = nil)
           return '' if input.nil?
           return input if input.empty? || node.nil?
 
           return ArgumentError unless node.respond_to?(:formatting_options)
 
 
-          @input, @output, @node, @locale = input, input.dup, node, locale
+          @input, @output, @node, @locale, @language =
+            input, input.dup, node, locale, language
 
           setup!
 

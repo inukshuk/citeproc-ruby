@@ -140,14 +140,16 @@ module CiteProc
         bibliography
       end
 
-      def apply(input, node, locale = nil)
+      # @param language [String] the language of the item being formatted
+      def apply(input, node, locale = nil, language = nil)
         return '' if input.nil?
         return input if input.empty? || node.nil?
 
         return ArgumentError unless node.respond_to?(:formatting_options)
 
 
-        @input, @output, @node, @locale = input, input.dup, node, locale
+        @input, @output, @node, @locale, @language =
+          input, input.dup, node, locale, language
 
         setup!
 
@@ -224,7 +226,7 @@ module CiteProc
           output.gsub!(/\b(\p{Lu})(\p{Lu}+)\b/) { "#{$1}#{CiteProc.downcase($2)}" }
 
         when 'title'
-          return if locale && locale.language != :en
+          return unless english?
 
           # TODO add support for stop words consisting of multiple words
           #output.gsub!(/\b(\p{Lu})(\p{Lu}+)\b/) { "#{$1}#{CiteProc.downcase($2)}" }
@@ -254,6 +256,16 @@ module CiteProc
               "#{CiteProc.upcase(first_letter)}#{rest_of_word}"
             end
           end
+        end
+      end
+
+      # Title case applies only to English items: items whose language
+      # is English or, if they have no language, when the locale is English.
+      def english?
+        if @language.nil? || @language.empty?
+          locale.nil? || locale.language == :en
+        else
+          @language.match?(/\Aen(-|\z)/i)
         end
       end
 

@@ -65,10 +65,14 @@ module CiteProc
       # @param node [CSL::Style::Layout]
       # @return [String] the rendered and string
       def render_single_citation(item, node)
+        state.language = language_of(item.data)
+
         # TODO author_only
         item.suppress! 'author' if item.suppress_author?
 
         join [item.prefix, render_layout(item, node), item.suffix].compact
+      ensure
+        state.language = nil
       end
 
       # @param item [CiteProc::CitationItem]
@@ -76,6 +80,7 @@ module CiteProc
       # @return [String] the rendered and formatted string
       def render_bibliography(item, node)
         state.store! item, node
+        state.language = language_of(item.data)
 
         if allow_locale_overrides? && item.language != locale.language
           begin
@@ -101,6 +106,7 @@ module CiteProc
 
       def render_sort(item, node, key)
         state.store! nil, key
+        state.language = language_of(item)
 
         original_format = @format
         @format = Formats::Sort.new
