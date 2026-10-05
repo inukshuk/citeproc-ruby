@@ -39,7 +39,7 @@ end
 
 task :release do |t|
   system "gem build citeproc-ruby.gemspec"
-  system "git tag #{CiteProc::Ruby::VERSION}"
+  system "git tag v#{CiteProc::Ruby::VERSION}"
   system "git push --tags"
   system "gem push citeproc-ruby-#{CiteProc::Ruby::VERSION}.gem"
 end
