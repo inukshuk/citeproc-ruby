@@ -66,7 +66,7 @@ module CiteProc
 
         it 'renders the reference for the given id' do
           expect(cp.render(:bibliography, :id => 'grammatology')).to eq(['Derrida, J. (1976). Of Grammatology (corrected ed.). Baltimore: Johns Hopkins University Press.'])
-          expect(cp.render(:citation, id: 'grammatology', locator: '3-4', label: 'page')).to eq('(Derrida, 1976, pp. 3-4)')
+          expect(cp.render(:citation, id: 'grammatology', locator: '3-4', label: 'page')).to eq('(Derrida, 1976, pp. 3–4)')
           expect(cp.render(:bibliography, :id => 'knuth1968')).to eq(['Knuth, D. (1968). The art of computer programming (Vol. 1). Boston: Addison-Wesley.'])
 
           node = cp.engine.style.macros['author']
@@ -109,7 +109,7 @@ module CiteProc
           expect(cp.process([
             {id: 'knuth1968', locator: '23', label: 'page'},
             {id: 'grammatology', locator: '11-14', label: 'page'}
-          ])).to eq('(Derrida, 1976, pp. 11-14; Knuth, 1968, p. 23)')
+          ])).to eq('(Derrida, 1976, pp. 11–14; Knuth, 1968, p. 23)')
         end
       end
     end

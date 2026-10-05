@@ -32,6 +32,7 @@ module CiteProc
 					# nothing
         end
 
+				numbers.map! { |num| num == '-' ? range_delimiter : num }
 				numbers.join('')
       end
 

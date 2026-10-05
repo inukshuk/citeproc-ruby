@@ -93,7 +93,7 @@ module CiteProc
           before(:each) { item.data.edition = '42-44, 46 -51 & 52 - 65& 66- 68' }
 
           it 'returns the numbers as a normalized list' do
-            expect(renderer.render_number(item, node)).to eq('42-44, 46-51 & 52-65 & 66-68')
+            expect(renderer.render_number(item, node)).to eq('42–44, 46–51 & 52–65 & 66–68')
           end
         end
 
@@ -101,14 +101,14 @@ module CiteProc
           before(:each) { item.data.edition = 'A42 - B44, 46-51 & 52-65ff' }
 
           it 'returns the numbers as a normalized list' do
-            expect(renderer.render_number(item, node)).to eq('A42-B44, 46-51 & 52-65ff')
+            expect(renderer.render_number(item, node)).to eq('A42–B44, 46–51 & 52–65ff')
           end
           
           describe 'when the node is set to roman' do
             before(:each) { node[:form] = :roman }
             
             it 'returns the list with only the simple numbers romanized' do
-              expect(renderer.render_number(item, node)).to eq('A42-B44, xlvi-li & lii-65ff')
+              expect(renderer.render_number(item, node)).to eq('A42–B44, xlvi–li & lii–65ff')
             end
           end
         end
