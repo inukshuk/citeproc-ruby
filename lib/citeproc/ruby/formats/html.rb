@@ -222,6 +222,31 @@ module CiteProc
           bibliography.connector = indent ? "\n" : ''
           bibliography
         end
+
+        def apply_vertical_align
+          case options[:'vertical-align']
+          when 'sup', 'sub'
+            output.replace content_tag(options[:'vertical-align'], output)
+          else
+            super
+          end
+        end
+
+        protected
+
+        def finalize!
+          super
+
+          # Use typographic apostrophes
+          output.gsub!(/(?<=\p{L})'|'(?=\d)/, '’')
+        end
+
+        private
+
+        def style_for(options)
+          return unless options && !options.empty?
+          options.map { |k, v| "#{k}:#{v};" }.join
+        end
       end
 
     end
