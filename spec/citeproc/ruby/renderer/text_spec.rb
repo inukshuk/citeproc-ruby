@@ -98,6 +98,20 @@ module CiteProc
         end
       end
 
+      describe 'given a text node with the locator variable' do
+        let(:node) { CSL::Style::Text.new(:variable => 'locator') }
+
+        it 'renders numeric locators' do
+          item.locator = 328
+          expect(renderer.render(item, node)).to eq('328')
+        end
+
+        it 'replaces hyphens with en-dashes' do
+          item.locator = '100-103'
+          expect(renderer.render(item, node)).to eq('100–103')
+        end
+      end
+
       describe 'given a text node with a macro reference' do
         let(:node) { CSL::Style::Text.new(:macro => 'foo') }
 

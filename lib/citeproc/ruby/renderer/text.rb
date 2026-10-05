@@ -16,7 +16,7 @@ module CiteProc
             # in item.data; there should be no locator there
             # either but the read access will be noticed by
             # observers (if any).
-            text = item.locator || item.data[:locator].to_s
+            text = (item.locator || item.data[:locator]).to_s
 
           else
             text = item.data.variable(node.variable, node.variable_options).to_s
@@ -37,6 +37,9 @@ module CiteProc
           case
           when node.variable == 'page'
             format_page_range!(text, node.page_range_format)
+
+          when node.variable == 'locator'
+            text = format_page_range(text, nil)
 
           when node.variable == 'page-first' && text.empty?
             text = item.data[:'page'].to_s[/\d+/].to_s
