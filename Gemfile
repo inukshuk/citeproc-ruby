@@ -26,6 +26,6 @@ group :extra do
 end
 
 group :coverage do
-  gem 'simplecov', require: false
+  gem 'simplecov', '>= 1.3', require: false
   gem 'simplecov-lcov', require: false
 end
