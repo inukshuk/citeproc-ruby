@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ['Sylvester Keil']
   s.email       = ['http://sylvester.keil.or.at']
-  s.licenses     = ['BSD-2-Clause']
+  s.licenses    = ['BSD-2-Clause']
   s.date        = Time.now.strftime('%Y-%m-%d')
   s.homepage    = 'https://github.com/inukshuk/citeproc-ruby'
   s.summary     = 'A Citation Style Language (CSL) cite processor'
@@ -25,13 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'csl', '~> 2.0'
   s.add_dependency 'observer', '< 1.0'
 
-  s.files        = `git ls-files`.split("\n") - %w{
-    .gitignore
-    .rspec
-    .rubocop.yml
-    .simplecov
-    citeproc-ruby.gemspec
-  } - `git ls-files -- {spec,features}/*`.split("\n")
+  s.files        = `git ls-files -- lib`.split("\n") + %w[BSDL README.md]
 
   s.require_path = 'lib'
 end
