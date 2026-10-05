@@ -5,12 +5,14 @@ require 'spec_helper'
 module CiteProc
   module Ruby
 
-    describe 'SortItems#compare_items' do
+    describe 'SortItems#sort!' do
       let(:cp) { CiteProc::Processor.new :style => 'apa', :format => 'text' }
       let(:engine) { cp.engine }
 
-      def sort(*strings)
-        strings.sort { |a, b| engine.compare_items(a, b) }
+      def sort(*titles)
+        items = titles.map { |title| CiteProc::Item.new(:title => title) }
+        engine.sort!(items, [CSL::Style::Sort::Key.new(:variable => 'title')])
+        items.map { |item| item[:title].to_s }
       end
 
       shared_examples 'locale-independent sorting' do
@@ -28,9 +30,8 @@ module CiteProc
         end
 
         it 'orders strings differing only in diacritics consistently' do
-          expect(engine.compare_items('Muller', 'Müller')).to eq(-1)
-          expect(engine.compare_items('Müller', 'Muller')).to eq(1)
-          expect(engine.compare_items('Müller', 'Müller')).to eq(0)
+          expect(sort('Muller', 'Müller')).to eq(['Muller', 'Müller'])
+          expect(sort('Müller', 'Muller')).to eq(['Muller', 'Müller'])
         end
 
         describe 'when sorting case sensitively' do
@@ -67,20 +68,26 @@ module CiteProc
       end
     end
 
-    describe 'SortItems#compare_items_by_key' do
+    describe 'SortItems#sort! with empty variables' do
       let(:engine) { CiteProc::Processor.new(:style => 'apa', :format => 'text').engine }
-      let(:key) { CSL::Style::Sort::Key.new(:variable => 'title') }
 
-      let(:a) { CiteProc::Item.new(:id => 'a', :title => 'A') }
-      let(:empty) { CiteProc::Item.new(:id => 'empty') }
-
-      it 'sorts items with empty variables last' do
-        expect(engine.compare_items_by_key(empty, a, key)).to eq(1)
-        expect(engine.compare_items_by_key(a, empty, key)).to eq(-1)
+      let(:keys) do
+        [CSL::Style::Sort::Key.new(:variable => 'title'),
+         CSL::Style::Sort::Key.new(:variable => 'note')]
       end
 
-      it 'treats items with empty variables as equal' do
-        expect(engine.compare_items_by_key(empty, empty.dup, key)).to eq(0)
+      let(:a) { CiteProc::Item.new(:id => 'a', :title => 'A') }
+      let(:b) { CiteProc::Item.new(:id => 'b', :note => 'B') }
+      let(:c) { CiteProc::Item.new(:id => 'c', :note => 'C') }
+
+      it 'sorts items with empty variables last' do
+        expect(engine.sort!([b, a], keys)).to eq([a, b])
+        expect(engine.sort!([a, b], keys)).to eq([a, b])
+      end
+
+      it 'sorts items with empty variables by the next key' do
+        expect(engine.sort!([c, b], keys)).to eq([b, c])
+        expect(engine.sort!([b, c], keys)).to eq([b, c])
       end
     end
 

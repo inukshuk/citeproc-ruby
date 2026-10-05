@@ -99,26 +99,23 @@ module CiteProc
         state.clear! result
       end
 
-      def render_sort(a, b, node, key)
+      def render_sort(item, node, key)
         state.store! nil, key
 
         original_format = @format
         @format = Formats::Sort.new
 
-        if a.is_a?(CiteProc::Names)
-          [render_name(a, node), render_name(b, node)]
+        if item.is_a?(CiteProc::Names)
+          render_name(item, node)
 
         else
           # We need to clear any items that are suppressed
           # because they were used as substitutes during
           # rendering for sorting purposes!
-          a_rendered = render a.cite, node
-          a.suppressed.clear
+          rendered = render item.cite, node
+          item.suppressed.clear
 
-          b_rendered = render b.cite, node
-          b.suppressed.clear
-
-          [a_rendered, b_rendered]
+          rendered
         end
 
       ensure

@@ -402,7 +402,8 @@ module CiteProc
 
       it 'keeps leading non-ASCII letters in family names' do
         ecrivain = CiteProc::Names.new('Écrivain, Jean')
-        expect(renderer.render_sort(ecrivain, people(:papadopoulos), node, key)).to eq(['Jean Écrivain', 'Γιώργος Παπαδόπουλος'])
+        expect(renderer.render_sort(ecrivain, node, key)).to eq('Jean Écrivain')
+        expect(renderer.render_sort(people(:papadopoulos), node, key)).to eq('Γιώργος Παπαδόπουλος')
       end
 
       it 'strips leading punctuation from family names' do
@@ -412,7 +413,8 @@ module CiteProc
         papadopoulos = people(:papadopoulos)
         papadopoulos[0].family = '«Παπαδόπουλος'
 
-        expect(renderer.render_sort(ecrivain, papadopoulos, node, key)).to eq(['Jean Écrivain', 'Γιώργος Παπαδόπουλος'])
+        expect(renderer.render_sort(ecrivain, node, key)).to eq('Jean Écrivain')
+        expect(renderer.render_sort(papadopoulos, node, key)).to eq('Γιώργος Παπαδόπουλος')
       end
 
       it 'strips square brackets from family names' do
@@ -422,7 +424,8 @@ module CiteProc
         papadopoulos = people(:papadopoulos)
         papadopoulos[0].family = '[Παπαδόπουλος]'
 
-        expect(renderer.render_sort(ecrivain, papadopoulos, node, key)).to eq(['Jean Écrivain', 'Γιώργος Παπαδόπουλος'])
+        expect(renderer.render_sort(ecrivain, node, key)).to eq('Jean Écrivain')
+        expect(renderer.render_sort(papadopoulos, node, key)).to eq('Γιώργος Παπαδόπουλος')
       end
     end
   end
