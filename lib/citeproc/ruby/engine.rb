@@ -13,7 +13,7 @@ module CiteProc
       attr_reader :renderer, :style
 
       def_delegators :renderer,
-        :format, :format=, :locale, :locale=
+        :format, :format=, :locale, :locale=, :clear_cache!
 
       def initialize(*arguments)
         super(*arguments)
@@ -22,8 +22,10 @@ module CiteProc
         update! unless processor.nil?
       end
 
+      # @param new_style [CSL::Style, String] a style or a style name, path,
+      #   or URL; styles are used as is and never changed by the engine
       def style=(new_style)
-        @style = CSL::Style.load new_style
+        @style = new_style.is_a?(CSL::Style) ? new_style : CSL::Style.load(new_style)
       end
 
       def process(data)
@@ -109,23 +111,15 @@ module CiteProc
         end
       end
 
-
+      # Applies the processor's format, locale, and style options.
+      #
+      # @return [self]
       def update!
+        renderer.clear_cache!
         renderer.format = processor.options[:format]
         renderer.locale = processor.options[:locale]
 
-        if processor.options[:style].is_a? CSL::Style
-          @style = processor.options[:style]
-        else
-          @style = CSL::Style.load processor.options[:style]
-        end
-
-        # Preliminary locale override implementation!
-        # Does not yet reverse merge default region and default locale.
-        @style.locales.sort.reverse.each do |locale|
-          renderer.locale.merge! locale if renderer.locale.like?(locale)
-        end
-
+        self.style = processor.options[:style]
         self
       end
 

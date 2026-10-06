@@ -26,6 +26,15 @@ module CiteProc
       end
       alias abbrev abbreviate
 
+      # Clears the renderer's caches. Call this after changing styles or
+      # locales in place, or to free memory when using many different styles.
+      #
+      # @return [self]
+      def clear_cache!
+        clear_locale_cache!
+        self
+      end
+
       def allow_locale_overrides?
         return false unless engine
         engine.options[:allow_locale_overrides]
@@ -82,12 +91,14 @@ module CiteProc
         state.store! item, node
         state.language = language_of(item.data)
 
-        if allow_locale_overrides? && item.language != locale.language
-          begin
-            new_locale = CSL::Locale.load(item.language)
+        language = item.language.to_s
 
-            unless new_locale.nil?
-              original_locale, @locale = @locale, new_locale
+        if allow_locale_overrides? && !language.empty?
+          begin
+            item_locale = locale_for(language)
+
+            if item_locale != base_locale
+              original_locale, @locale = @locale, item_locale
             end
           rescue ParseError
             # locale not found

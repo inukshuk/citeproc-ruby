@@ -43,10 +43,67 @@ module CiteProc
         end
       end
 
+      describe 'in-style locales' do
+        def style(term)
+          CSL::Style.parse(<<~XML)
+            <style xmlns="http://purl.org/net/xbiblio/csl" version="1.0">
+              <locale xml:lang="en">
+                <terms><term name="editor">#{term}</term></terms>
+              </locale>
+              <citation>
+                <layout>
+                  <names variable="editor"><name/><label prefix=" (" suffix=")"/></names>
+                </layout>
+              </citation>
+            </style>
+          XML
+        end
+
+        let(:item) do
+          i = CiteProc::CitationItem.new(:id => 'doe')
+          i.data = CiteProc::Item.new(:id => 'doe', :type => 'book', :editor => [{ :family => 'Doe', :given => 'John' }])
+          i
+        end
+
+        it 'are applied when rendering' do
+          expect(renderer.render([item], style('EDITOR').citation)).to eq('John Doe (EDITOR)')
+        end
+
+        it 'of the current style are applied' do
+          expect(renderer.render([item], style('ONE').citation)).to eq('John Doe (ONE)')
+          expect(renderer.render([item], style('TWO').citation)).to eq('John Doe (TWO)')
+        end
+
+        it 'are updated after clearing the cache' do
+          s = style('ONE')
+          expect(renderer.render([item], s.citation)).to eq('John Doe (ONE)')
+
+          s.locales[0].store 'editor', 'TWO'
+          renderer.clear_cache!
+
+          expect(renderer.render([item], s.citation)).to eq('John Doe (TWO)')
+        end
+
+        it 'do not change the locale' do
+          locale = CSL::Locale.load('en-US')
+          renderer.locale = locale
+          renderer.render([item], style('EDITOR').citation)
+
+          expect(renderer.locale).to equal(locale)
+          expect(locale.translate('editor')).to eq('editor')
+        end
+      end
+
       describe '#locale=' do
         it 'loads the locale' do
           renderer.locale = 'de-DE'
           expect(renderer.locale.to_s).to eq('de-DE')
+        end
+
+        it 'uses locale instances as is' do
+          locale = CSL::Locale.load('de-DE')
+          renderer.locale = locale
+          expect(renderer.locale).to equal(locale)
         end
 
         it 'falls back to the language for unknown regions' do

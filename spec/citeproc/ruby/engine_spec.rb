@@ -114,6 +114,121 @@ module CiteProc
       end
     end
 
+    describe 'in-style locales' do
+      let(:style) { CSL::Style.parse(xml) }
+
+      let(:xml) do
+        <<~XML
+          <style xmlns="http://purl.org/net/xbiblio/csl" class="note" version="1.0">
+            <locale xml:lang="gx">
+              <terms>
+                <term name="editor">edxitor</term>
+              </terms>
+            </locale>
+            <citation>
+              <layout>
+                <names variable="editor">
+                  <name/>
+                  <label prefix=" (" suffix=")"/>
+                </names>
+              </layout>
+            </citation>
+          </style>
+        XML
+      end
+
+      def cite(locale)
+        cp = CiteProc::Processor.new :style => style, :format => 'text', :locale => locale
+        cp << { :id => 'doe', :type => 'book', :editor => [{ :family => 'Doe', :given => 'John' }] }
+        cp.render(:citation, :id => 'doe')
+      end
+
+      it 'are used for the requested language without a locale file' do
+        expect(cite('gx')).to eq('John Doe (edxitor)')
+      end
+
+      it 'are not used for other languages' do
+        expect(cite('en-US')).to eq('John Doe (editor)')
+      end
+
+      it 'do not change locale instances' do
+        locale = CSL::Locale.load('gx')
+        expect(cite(locale)).to eq('John Doe (edxitor)')
+        expect(locale.translate('editor')).to eq('editor')
+      end
+
+      it 'are updated when the engine is updated' do
+        cp = CiteProc::Processor.new :style => style, :format => 'text', :locale => CSL::Locale.load('gx')
+        cp << { :id => 'doe', :type => 'book', :editor => [{ :family => 'Doe', :given => 'John' }] }
+        cp.render(:citation, :id => 'doe')
+
+        style.locales[0].store 'editor', 'changed'
+        cp.engine.update!
+
+        expect(cp.render(:citation, :id => 'doe')).to eq('John Doe (changed)')
+      end
+
+      it 'are applied again when the style changes' do
+        cp = CiteProc::Processor.new :style => style, :format => 'text', :locale => 'gx'
+        cp << { :id => 'doe', :type => 'book', :editor => [{ :family => 'Doe', :given => 'John' }] }
+        cp.render(:citation, :id => 'doe')
+
+        cp.engine.style = CSL::Style.parse(xml.sub('edxitor', 'changed'))
+        expect(cp.render(:citation, :id => 'doe')).to eq('John Doe (changed)')
+      end
+    end
+
+    describe 'locale overrides' do
+      let(:style) do
+        CSL::Style.parse(<<~XML)
+          <style xmlns="http://purl.org/net/xbiblio/csl" version="1.0">
+            <locale xml:lang="de">
+              <terms><term name="editor">HRSG</term></terms>
+            </locale>
+            <citation><layout><text value="x"/></layout></citation>
+            <bibliography>
+              <layout>
+                <names variable="editor"><name/><label prefix=" (" suffix=")"/></names>
+              </layout>
+            </bibliography>
+          </style>
+        XML
+      end
+
+      let(:cp) do
+        CiteProc::Processor.new :style => style, :format => 'text',
+          :locale => 'en-US', :allow_locale_overrides => true
+      end
+
+      def bibliography(language)
+        cp << { :id => 'doe', :type => 'book', :language => language,
+          :editor => [{ :family => 'Doe', :given => 'John' }] }
+        cp.bibliography.references
+      end
+
+      it 'use the locale of the item including in-style definitions' do
+        expect(bibliography('de')).to eq(['John Doe (HRSG)'])
+      end
+
+      it 'keep the locale for items without language' do
+        cp.engine.locale = CSL::Locale.load('de-DE')
+        expect(bibliography(nil)).to eq(['John Doe (HRSG)'])
+      end
+
+      it 'keep the locale for items in the same language' do
+        cp.engine.locale = CSL::Locale.load('en-US').tap { |l| l.store 'editor', 'CUSTOM' }
+        expect(bibliography('en')).to eq(['John Doe (CUSTOM)'])
+      end
+
+      it 'switch from fallback locales for items in the fallback language' do
+        style << CSL::Locale.new('gx').tap { |l| l.store 'editor', 'GX' }
+        style << CSL::Locale.new('en').tap { |l| l.store 'editor', 'EN' }
+
+        cp.engine.locale = 'gx'
+        expect(bibliography('en')).to eq(['John Doe (EN)'])
+      end
+    end
+
   end
 
   end
