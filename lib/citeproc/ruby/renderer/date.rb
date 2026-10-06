@@ -3,6 +3,9 @@ module CiteProc
 
     class Renderer
 
+      # The date parts from largest to smallest
+      DATE_PARTS = %w{ year month day }.freeze
+
       # @param item [CiteProc::CitationItem]
       # @param node [CSL::Node]
       # @raise RenderingError
@@ -15,13 +18,11 @@ module CiteProc
 
         return date.to_s if date.literal?
 
-        # TODO date-ranges
-
         if node.localized?
           localized_node = locale.date.detect { |d| d.form == node.form } or
             raise RenderingError, "no localized date for form #{node.form} found"
 
-          delimiter, filter = node.delimiter, node.parts_filter
+          delimiter, filter = localized_node.delimiter, node.parts_filter
 
           parts = localized_node.parts.select do |part|
             filter.include? part.name
@@ -30,6 +31,60 @@ module CiteProc
           parts, delimiter = node.parts, node.delimiter
         end
 
+        if date.range?
+          render_date_range date, parts, delimiter
+        else
+          render_date_parts date, parts, delimiter
+        end
+      end
+
+      # Renders a date range. The date parts which are the same for
+      # both dates are rendered only once; the date parts which differ
+      # are rendered for both dates and are joined by the range delimiter
+      # of the largest date part that differs.
+      #
+      # @param date [CiteProc::Date] the date range
+      # @param parts [Array<CSL::Style::DatePart, CSL::Locale::DatePart>]
+      # @param delimiter [String]
+      # @return [String]
+      def render_date_range(date, parts, delimiter)
+        from, to = date.start_date, date.end_date
+
+        # Skip date parts without values (e.g., days in a month range)
+        parts = parts.select do |part|
+          [from, to].compact.any? { |d| d.public_send(part.name) }
+        end
+
+        # Open ranges are rendered with a trailing range delimiter
+        if to.nil?
+          return render_date_parts(from, parts, delimiter) +
+            range_delimiter_for(parts, 'year')
+        end
+
+        largest = DATE_PARTS.detect do |name|
+          parts.any? { |part| part.name == name } &&
+            from.public_send(name) != to.public_send(name)
+        end
+
+        return render_date_parts(from, parts, delimiter) if largest.nil?
+
+        # If one date is more precise than the other, all parts differ
+        differing = same_precision?(from, to, parts) ?
+          DATE_PARTS.drop_while { |name| name != largest } : DATE_PARTS
+
+        before, range, after = split_date_parts(parts, differing) || [[], parts, []]
+
+        [
+          render_date_parts(from, before, delimiter),
+          [
+            render_date_parts(from, without_suffix(range), delimiter),
+            render_date_parts(to, range, delimiter)
+          ].join(range_delimiter_for(parts, largest)),
+          render_date_parts(from, after, delimiter)
+        ].reject(&:empty?).join(delimiter)
+      end
+
+      def render_date_parts(date, parts, delimiter)
         parts.map { |part|
           render date, part
         }.reject(&:empty?).join(delimiter)
@@ -89,6 +144,50 @@ module CiteProc
         else
           ''
         end
+      end
+
+      private
+
+      # @return [String] the range delimiter set on the date part
+      #   with the given name; defaults to an en-dash
+      def range_delimiter_for(parts, name)
+        part = parts.detect { |p| p.name == name }
+        part && part[:'range-delimiter'] || '–'
+      end
+
+      # @return [Boolean] whether or not both dates have values
+      #   for the same date parts
+      def same_precision?(from, to, parts)
+        parts.all? do |part|
+          from.public_send(part.name).nil? == to.public_send(part.name).nil?
+        end
+      end
+
+      # Splits the date parts into the common parts before, the
+      # differing parts, and the common parts after them.
+      #
+      # @return [Array<Array>, nil] the split parts or nil if the
+      #   differing parts are not adjacent
+      def split_date_parts(parts, differing)
+        first = parts.index { |part| differing.include?(part.name) }
+        last = parts.rindex { |part| differing.include?(part.name) }
+        range = parts[first..last]
+
+        return unless range.all? { |part| differing.include?(part.name) }
+
+        [parts[0...first], range, parts[(last + 1)..]]
+      end
+
+      # @return [Array<CSL::Node>] the date parts with a copy
+      #   of the last date part without its suffix
+      def without_suffix(parts)
+        last = parts[-1]
+        return parts unless last.attribute?(:suffix)
+
+        copy = last.deep_copy
+        copy[:suffix] = nil
+
+        [*parts[0...-1], copy]
       end
 
     end

@@ -22,6 +22,86 @@ module CiteProc
             expect(renderer.render(item, node)).to eq('01/27/2012')
           end
         end
+
+        it 'uses the delimiter of the localized date' do
+          localized = CSL::Locale::Date.new(:form => 'text', :delimiter => ' ')
+          localized << CSL::Locale::DatePart.new(:name => 'month')
+          localized << CSL::Locale::DatePart.new(:name => 'year')
+          allow(renderer.locale).to receive(:date).and_return([localized])
+
+          item.data[:issued] = '2012-01-27'
+          node[:form] = 'text'
+          expect(renderer.render(item, node)).to eq('January 2012')
+        end
+
+        it 'renders date ranges' do
+          item.data[:issued] = [[2005, 11, 15], [2006, 12, 20]]
+          node[:'date-parts'] = 'year-month'
+          expect(renderer.render(item, node)).to eq('11/2005–12/2006')
+        end
+      end
+
+      describe 'range rendering' do
+        let(:node) do
+          CSL::Style::Date.new(:variable => 'issued').tap do |d|
+            d << CSL::Style::DatePart.new(:name => 'day', :suffix => ' ')
+            d << CSL::Style::DatePart.new(:name => 'month', :suffix => ' ')
+            d << CSL::Style::DatePart.new(:name => 'year')
+          end
+        end
+
+        it 'renders day ranges' do
+          item.data[:issued] = [[2003, 8, 10], [2003, 8, 23]]
+          expect(renderer.render(item, node)).to eq('10–23 August 2003')
+        end
+
+        it 'renders month ranges' do
+          item.data[:issued] = [[2003, 8, 3], [2003, 10, 23]]
+          expect(renderer.render(item, node)).to eq('3 August–23 October 2003')
+        end
+
+        it 'renders year ranges' do
+          item.data[:issued] = [[1987, 8, 3], [2003, 10, 23]]
+          expect(renderer.render(item, node)).to eq('3 August 1987–23 October 2003')
+        end
+
+        it 'renders open ranges' do
+          item.data[:issued] = [[1987], [0]]
+          expect(renderer.render(item, node)).to eq('1987–')
+        end
+
+        it 'renders dates of different precision in full' do
+          item.data[:issued] = [[2003], [2003, 5]]
+          expect(renderer.render(item, node)).to eq('2003–May 2003')
+        end
+
+        it 'renders identical dates once' do
+          item.data[:issued] = [[2003, 8, 3], [2003, 8, 3]]
+          expect(renderer.render(item, node)).to eq('3 August 2003')
+        end
+
+        it 'ignores differences in date parts that are not rendered' do
+          node.parts.first.unlink
+          item.data[:issued] = [[2003, 8, 3], [2003, 8, 23]]
+          expect(renderer.render(item, node)).to eq('August 2003')
+        end
+
+        it 'uses the range delimiter of the largest differing date part' do
+          node.parts[1][:'range-delimiter'] = ' to '
+          item.data[:issued] = [[2003, 8, 3], [2003, 10, 23]]
+          expect(renderer.render(item, node)).to eq('3 August to 23 October 2003')
+        end
+
+        it 'renders season ranges' do
+          node.parts.first.unlink
+          item.data[:issued] = [[1999, 21], [2001, 22]]
+          expect(renderer.render(item, node)).to eq('Spring 1999–Summer 2001')
+        end
+
+        it 'skips date parts without values' do
+          item.data[:issued] = [[1999, 22], [1999, 21]]
+          expect(renderer.render(item, node)).to eq('Summer–Spring 1999')
+        end
       end
 
       describe 'static rendering' do
