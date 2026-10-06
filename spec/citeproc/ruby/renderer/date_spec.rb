@@ -216,8 +216,15 @@ module CiteProc
         end
 
         it 'renders the name of the season when a season is set' do
-          january.season = 4
-          expect(renderer.render_date_part(january, node)).to eq('Winter')
+          date = CiteProc::Date.new([2012])
+          date.season = 4
+          expect(renderer.render_date_part(date, node)).to eq('Winter')
+        end
+
+        it 'renders the season field verbatim if it is no season' do
+          date = CiteProc::Date.new([2012])
+          date.season = 'Holiday'
+          expect(renderer.render_date_part(date, node)).to eq('Holiday')
         end
       end
 

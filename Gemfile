@@ -17,7 +17,6 @@ end
 
 group :optional do
   gem 'edtf'
-	gem 'chronic'
 	gem 'ffi-icu'
 end
 

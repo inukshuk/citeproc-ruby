@@ -48,29 +48,28 @@ module CiteProc
       # @param delimiter [String]
       # @return [String]
       def render_date_range(date, parts, delimiter)
-        from, to = date.start_date, date.end_date
+        from, to = date.parts
 
         # Skip date parts without values (e.g., days in a month range)
-        parts = parts.select do |part|
-          [from, to].compact.any? { |d| d.public_send(part.name) }
-        end
+        parts = parts.select { |part| from[part.name] || to[part.name] }
 
         # Open ranges are rendered with a trailing range delimiter
-        if to.nil?
-          return render_date_parts(from, parts, delimiter) +
-            range_delimiter_for(parts, 'year')
-        end
+        return [
+          render_date_parts(from, parts, delimiter),
+          range_delimiter_for(parts, 'year')
+        ].join('') if date.open_range?
 
+        names = parts.map(&:name)
         largest = DATE_PARTS.detect do |name|
-          parts.any? { |part| part.name == name } &&
-            from.public_send(name) != to.public_send(name)
+          names.include?(name) && from[name] != to[name]
         end
 
         return render_date_parts(from, parts, delimiter) if largest.nil?
 
         # If one date is more precise than the other, all parts differ
-        differing = same_precision?(from, to, parts) ?
-          DATE_PARTS.drop_while { |name| name != largest } : DATE_PARTS
+        differing = names.any? { |name| from[name].nil? != to[name].nil? } ?
+          DATE_PARTS :
+          DATE_PARTS.drop_while { |name| name != largest }
 
         before, range, after = split_date_parts(parts, differing) || [[], parts, []]
 
@@ -90,7 +89,7 @@ module CiteProc
         }.reject(&:empty?).join(delimiter)
       end
 
-      # @param date [CiteProc::Date]
+      # @param date [CiteProc::Date, CiteProc::Date::DateParts]
       # @param node [CSL::Style::DatePart, CSL::Locale::DatePart]
       # @return [String]
       def render_date_part(date, node)
@@ -113,6 +112,8 @@ module CiteProc
 
         when node.month?
           case
+          when date.season.is_a?(String)
+            date.season
           when date.season?
             translate(('season-%02d' % date.season), node.attributes_for(:form))
           when date.month.nil?
@@ -153,14 +154,6 @@ module CiteProc
       def range_delimiter_for(parts, name)
         part = parts.detect { |p| p.name == name }
         part && part[:'range-delimiter'] || '–'
-      end
-
-      # @return [Boolean] whether or not both dates have values
-      #   for the same date parts
-      def same_precision?(from, to, parts)
-        parts.all? do |part|
-          from.public_send(part.name).nil? == to.public_send(part.name).nil?
-        end
       end
 
       # Splits the date parts into the common parts before, the
