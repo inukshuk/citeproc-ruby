@@ -56,6 +56,11 @@ module CiteProc
             expect(renderer.render_label(item, node)).to eq('pages')
           end
 
+          it 'returns the singular label for escaped hyphens' do
+            item.write_attribute :page, '327\\-30'
+            expect(renderer.render_label(item, node)).to eq('page')
+          end
+
           describe 'when pluralization is contextual' do
             before(:each) { node[:plural] = 'contextual' }
 
@@ -220,9 +225,22 @@ module CiteProc
         end
 
         describe "for an item with a locator and no label" do
-          it "returns nil" do
+          it "returns the page label" do
             item.locator = 2
-            expect(renderer.render_label(item, node)).to eq(nil)
+            expect(renderer.render_label(item, node)).to eq('page')
+          end
+
+          it "returns the singular label for escaped hyphens" do
+            item.locator = '327\\-30'
+            expect(renderer.render_label(item, node)).to eq('page')
+          end
+
+          it "uses the locator up to an embedded label to detect plurals" do
+            item.locator = '1, fol. 186'
+            expect(renderer.render_label(item, node)).to eq('page')
+
+            item.locator = '367-368, fig. 333'
+            expect(renderer.render_label(item, node)).to eq('pages')
           end
         end
       end

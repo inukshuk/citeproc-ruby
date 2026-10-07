@@ -24,10 +24,37 @@ module CiteProc
         locale.ordinalize(number, options)
       end
 
+      # @return [Hash<String,String>] the abbreviations of locator labels
+      #   including the localized short terms
+      def locator_abbreviations
+        @locator_abbreviations ||= {}.compare_by_identity
+        @locator_abbreviations[locale] ||= begin
+          terms = {}
+
+          CiteProc::CitationItem.labels.each do |label|
+            [false, true].each do |plural|
+              term = translate(label, :form => 'short', :plural => plural)
+              terms[term] = label.to_s unless term.to_s.empty?
+            end
+          end
+
+          CiteProc::CitationItem.locator_abbreviations.merge(terms)
+        end
+      end
+
       private
 
+      # Ordinals agree in gender with the term they accompany.
+      #
+      # @param name [String] the name of the term
+      # @return [Hash] the ordinal options for the gender of the term
+      def gender_options_for(name)
+        term = locale.terms.lookup(name)
+        term&.gendered? ? { :'gender-form' => term.gender } : {}
+      end
+
       def clear_locale_cache!
-        @localized, @locales = nil, nil
+        @localized, @locales, @locator_abbreviations = nil, nil, nil
       end
 
       # @return [CSL::Locale] the locale without in-style locale

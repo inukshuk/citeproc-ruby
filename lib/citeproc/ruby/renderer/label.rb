@@ -15,8 +15,6 @@ module CiteProc
         when node.page?
           value, name = item.read_attribute(:page) || item.data.unobservable_read_attribute(:page).to_s, :page
 
-          format_page_range!(value, node.page_range_format)
-
         when node.locator?
 
           # Subtle: when there is no locator we also look
@@ -25,6 +23,11 @@ module CiteProc
           # observers (if any).
           value = item.locator || item.data.unobservable_read_attribute(:locator)
           name = item.label
+
+          # Only the locator up to the first embedded label
+          # (e.g., "fol." in "1, fol. 186") determines the plural
+          pattern = CiteProc::CitationItem.locator_label_pattern(locator_abbreviations)
+          value = value.to_s.split(/\s(?:#{pattern})\s/, 2)[0]
 
         when node.names_label?
 

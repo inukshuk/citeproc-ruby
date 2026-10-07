@@ -37,6 +37,7 @@ module CiteProc
         # populate item data
         data.each do |item|
           item.data = processor[item.id].dup
+          item.parse_locator!(renderer.locator_abbreviations)
         end
 
         # TODO implement sort in citation data
@@ -102,6 +103,7 @@ module CiteProc
 
           data.each do |item|
             item.data = processor[item.id].dup
+            item.parse_locator!(renderer.locator_abbreviations)
           end
 
           renderer.render_citation data, node

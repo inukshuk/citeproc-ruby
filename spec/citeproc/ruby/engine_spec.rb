@@ -105,6 +105,15 @@ module CiteProc
           expect(cp.process(id: 'knuth1968', locator: '23', label: 'page')).to eq('(Knuth, 1968, p. 23)')
         end
 
+        it 'uses page as the default locator label' do
+          expect(cp.process(id: 'knuth1968', locator: '23')).to eq('(Knuth, 1968, p. 23)')
+        end
+
+        it 'parses labels at the start of the locator' do
+          expect(cp.process(id: 'knuth1968', locator: 'ch. 3')).to eq('(Knuth, 1968, chap. 3)')
+          expect(cp.process(id: 'knuth1968', locator: 'chap. 3')).to eq('(Knuth, 1968, chap. 3)')
+        end
+
         it 'combines and sorts multiple cite items' do
           expect(cp.process([
             {id: 'knuth1968', locator: '23', label: 'page'},
