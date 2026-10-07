@@ -24,11 +24,6 @@ module CiteProc
           value = item.locator || item.data.unobservable_read_attribute(:locator)
           name = item.label
 
-          # Only the locator up to the first embedded label
-          # (e.g., "fol." in "1, fol. 186") determines the plural
-          pattern = CiteProc::CitationItem.locator_label_pattern(locator_abbreviations)
-          value = value.to_s.split(/\s(?:#{pattern})\s/, 2)[0]
-
         when node.names_label?
 
           # We handle the editortranslator special case
@@ -55,6 +50,8 @@ module CiteProc
             false
           when node.number_of_pages?, node.number_of_volumes?
             value.to_i > 1
+          when node.locator?
+            item.plural_locator?(locator_abbreviations)
           when value.respond_to?(:plural?)
             value.plural?
           else

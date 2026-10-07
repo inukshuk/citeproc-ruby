@@ -44,15 +44,6 @@ module CiteProc
 
       private
 
-      # Ordinals agree in gender with the term they accompany.
-      #
-      # @param name [String] the name of the term
-      # @return [Hash] the ordinal options for the gender of the term
-      def gender_options_for(name)
-        term = locale.terms.lookup(name)
-        term&.gendered? ? { :'gender-form' => term.gender } : {}
-      end
-
       def clear_locale_cache!
         @localized, @locales, @locator_abbreviations = nil, nil, nil
       end

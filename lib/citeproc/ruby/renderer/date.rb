@@ -8,7 +8,7 @@ module CiteProc
 
       # @param item [CiteProc::CitationItem]
       # @param node [CSL::Node]
-      # @raise RenderingError
+      # @raise CSL::Error if the locale has no date in the form of the node
       # @return [String]
       def render_date(item, node)
         return '' unless node.has_variable?
@@ -18,18 +18,7 @@ module CiteProc
 
         return date.to_s if date.literal?
 
-        if node.localized?
-          localized_node = locale.date.detect { |d| d.form == node.form } or
-            raise RenderingError, "no localized date for form #{node.form} found"
-
-          delimiter, filter = localized_node.delimiter, node.parts_filter
-
-          parts = localized_node.parts.select { |part|
-            filter.include? part.name
-          }.map { |part| override_date_part(part, node) }
-        else
-          parts, delimiter = node.parts, node.delimiter
-        end
+        parts, delimiter = node.parts_for(locale), node.delimiter_for(locale)
 
         if date.range?
           render_date_range date, parts, delimiter
@@ -102,8 +91,8 @@ module CiteProc
             if date.day > 1 && locale.limit_day_ordinals?
               date.day.to_s
             else
-              month = 'month-%02d' % date.month unless date.month.nil?
-              ordinalize date.day, gender_options_for(month)
+              # The ordinal uses the gender of the month
+              ordinalize date.day, :noun => date.month && 'month-%02d' % date.month
             end
           when node.form == 'numeric-leading-zeros'
             '%02d' % date.day
@@ -170,19 +159,6 @@ module CiteProc
         return unless range.all? { |part| differing.include?(part.name) }
 
         [parts[0...first], range, parts[(last + 1)..]]
-      end
-
-      # Date parts in the style override the attributes,
-      # except affixes, of the localized date parts.
-      #
-      # @return [CSL::Node] the date part or an overridden copy
-      def override_date_part(part, node)
-        style_part = node.parts.detect { |p| p.name == part.name }
-        return part if style_part.nil?
-
-        copy = part.deep_copy
-        copy.merge! style_part.attributes.to_hash.except(:prefix, :suffix)
-        copy
       end
 
       # @return [Array<CSL::Node>] the date parts with a copy

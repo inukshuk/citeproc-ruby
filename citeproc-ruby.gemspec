@@ -1,33 +1,28 @@
-# -*- encoding: utf-8 -*-
-lib = File.expand_path('../lib/', __FILE__)
-$:.unshift lib unless $:.include?(lib)
-
-require 'citeproc/ruby/version'
+require_relative 'lib/citeproc/ruby/version'
 
 Gem::Specification.new do |s|
   s.name        = 'citeproc-ruby'
-  s.version     = CiteProc::Ruby::VERSION.dup
-  s.platform    = Gem::Platform::RUBY
+  s.version     = CiteProc::Ruby::VERSION
   s.authors     = ['Sylvester Keil']
-  s.email       = ['http://sylvester.keil.or.at']
-  s.licenses    = ['BSD-2-Clause']
-  s.date        = Time.now.strftime('%Y-%m-%d')
+  s.email       = ['sylvester@keil.or.at']
   s.homepage    = 'https://github.com/inukshuk/citeproc-ruby'
+  s.licenses    = ['BSD-2-Clause']
   s.summary     = 'A Citation Style Language (CSL) cite processor'
-  s.description =
-		"""
+  s.description = <<~EOS
     CiteProc-Ruby is a Citation Style Language (CSL) 1.0.2 compatible cite
     processor implementation written in pure Ruby.
-		""".gsub(/^\s+/, '')
+  EOS
+
+  s.metadata = {
+    'source_code_uri' => 'https://github.com/inukshuk/citeproc-ruby',
+    'bug_tracker_uri' => 'https://github.com/inukshuk/citeproc-ruby/issues',
+    'rubygems_mfa_required' => 'true'
+  }
 
   s.required_ruby_version = '>= 3.1'
-  s.add_dependency 'citeproc', '~> 1.0', '>= 1.0.9'
-  s.add_dependency 'csl', '~> 2.3'
+  s.add_dependency 'citeproc', '~> 1.4'
+  s.add_dependency 'csl', '~> 2.5'
   s.add_dependency 'observer', '< 1.0'
 
-  s.files        = `git ls-files -- lib`.split("\n") + %w[BSDL README.md]
-
-  s.require_path = 'lib'
+  s.files = Dir['lib/**/*.rb', 'BSDL', 'README.md']
 end
-
-# vim: syntax=ruby

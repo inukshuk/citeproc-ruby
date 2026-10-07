@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 gemspec
 
-#gem 'citeproc', :github => 'inukshuk/citeproc'
-#gem 'csl', :github => 'inukshuk/csl-ruby'
+# gem 'csl', github: 'inukshuk/csl-ruby', branch: 'master'
+# gem 'citeproc', github: 'inukshuk/citeproc', branch: 'master'
 
 group :development, :test do
   gem 'rake'
@@ -11,13 +11,12 @@ group :development, :test do
 end
 
 group :debug do
-  gem 'debug', '>= 1.0.0', require: false, platforms: :mri
-  gem 'ruby-debug', require: false, platforms: :jruby
+  gem 'debug', require: false, platforms: :mri
 end
 
 group :optional do
   gem 'edtf'
-	gem 'ffi-icu'
+  gem 'ffi-icu'
 end
 
 group :coverage do

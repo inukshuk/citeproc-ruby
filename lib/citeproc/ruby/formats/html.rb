@@ -131,7 +131,7 @@ module CiteProc
         end
 
         def strip(string)
-          string.split(/((?:^<\p{Alpha}[^>]*>)|(?:<\/\p{Alpha}[^>]*>))$/, 2)
+          string.split(/((?:\A<\p{Alpha}[^>]*>)|(?:<\/\p{Alpha}[^>]*>))\z/, 2)
         end
 
         protected

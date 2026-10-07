@@ -25,7 +25,8 @@ module CiteProc
 
           rendered_names = render_substitute item, node.substitute
 
-          if substitute_subsequent_authors_completely? &&
+          # Substituted output is replaced as a whole for all rules
+          if substitute_subsequent_authors? &&
             completely_substitute?(rendered_names)
 
             rendered_names = state.node.subsequent_author_substitute
@@ -146,8 +147,11 @@ module CiteProc
         connector = node.connector
         connector = translate('and') if connector == 'text'
 
-        # Add spaces around connector
-        connector = " #{connector} " unless connector.nil?
+        # Add spaces around connector unless it belongs to a
+        # script which does not separate words by spaces
+        if CiteProc.romanesque_start?(connector)
+          connector = " #{connector} "
+        end
 
         rendered_names =
           case
@@ -171,12 +175,14 @@ module CiteProc
               ], node.ellipsis
 
             else
-              others = node.et_al ?
-                format!(translate(node.et_al[:term]), node.et_al) :
-                translate('et-al')
+              term = translate(node.et_al ? node.et_al[:term] : 'et-al')
+              others = node.et_al ? format!(term, node.et_al) : term
 
-              connector = node.delimiter_precedes_et_al?(truncated) ?
-                delimiter : ' '
+              connector = case
+                when node.delimiter_precedes_et_al?(truncated) then delimiter
+                when CiteProc.romanesque_start?(term) then ' '
+                else ''
+                end
 
               join [
                 join(truncated.map.with_index { |name, idx|
@@ -220,7 +226,7 @@ module CiteProc
           rendered_names = state.node.subsequent_author_substitute
         end
 
-        format! rendered_names, node
+        affix rendered_names, node
       end
 
       # @param names [CiteProc::Name]
@@ -230,10 +236,6 @@ module CiteProc
       def render_individual_name(name, node, position = 1)
         if name.personal?
           name = name.dup
-
-          # TODO move parts of the formatting logic here
-          # because name parts may include particles etc.
-
 
           # Strip away some unusual characters to normalize
           # sort order for names.
@@ -250,59 +252,20 @@ module CiteProc
             name.options[:'demote-non-dropping-particle'] = style.demote_particle
           end
 
-          # Strip away (hyphenated) particles in sort mode!
-          if sort_mode? && name.demote_particle?
-            name.family = name.family.to_s.sub(/^[[:lower:]]+[\s-]/, '')
-          end
-
-          node.name_part.each do |part|
-            case part[:name]
-            when 'family'
-              if !name.particle? || name.demote_particle?
-                name.family = format!(name.family, part)
-              else
-                name.family = format!("#{name.particle} #{name.family}", part)
-                name.particle = nil
-              end
-
-              # Name suffix must be enclosed by family-part
-              # suffix in display order!
-              if name.has_suffix? && !name.sort_order? && part.attribute?(:suffix)
-                comma = name.comma_suffix? ? name.comma : ' '
-                suffix = part[:suffix]
-
-                name.family.chomp! suffix
-                name.family.concat "#{comma}#{name.suffix}#{suffix}"
-                name.suffix = nil
-              end
-
-            when 'given'
-              if name.dropping_particle?
-                name.given = format!("#{name.initials} #{name.dropping_particle}", part)
-                name.dropping_particle = nil
-              else
-                name.given = format!(name.initials, part)
-              end
-
-              # Demoted particles must be enclosed by
-              # given-part affixes in sort order!
-              if name.particle? && name.demote_particle? &&
-                name.sort_order? && part.attribute?(:suffix)
-
-                suffix = part[:suffix]
-
-                name.given.chomp! suffix
-                name.given.concat " #{name.particle}#{suffix}"
-
-                name.particle = nil
-              end
-
-            end
-          end
+          # Particles are demoted in sort keys unless they are never demoted
+          name.always_demote_particle! if sort_mode? && !name.never_demote_particle?
 
         end
 
-        format! name.format, node
+        parts = node.name_part.to_h { |part| [part[:name].to_sym, part] }
+
+        formatted = name.format(
+          ->(part, text) { format_without_affixes(text, parts[part]) },
+          ->(part, text) { affix(text, parts[part]) }
+        )
+
+        # The affixes of the name node enclose the list of names
+        format_without_affixes formatted, node
       end
 
       # @param item [CiteProc::CitationItem]
@@ -379,6 +342,23 @@ module CiteProc
         end
 
         name
+      end
+
+      # @return [String, nil] the text with the formatting, but
+      #   without the affixes, of the node
+      def format_without_affixes(text, node)
+        return text if node.nil? || text.to_s.empty?
+
+        formatting = node.deep_copy
+        formatting[:prefix] = formatting[:suffix] = nil
+
+        format! text, formatting
+      end
+
+      # @return [String, nil] the text enclosed by the affixes of the node
+      def affix(text, node)
+        return text if node.nil? || text.to_s.empty?
+        "#{node[:prefix]}#{text}#{node[:suffix]}"
       end
 
       def resolve_editor_translator_exception!(names)

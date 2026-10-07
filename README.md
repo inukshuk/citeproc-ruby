@@ -129,7 +129,7 @@ To get started, install the development dependencies and run all tests:
 
     $ cd citeproc-ruby
     $ bundle install
-    $ rake
+    $ bundle exec rake
 
 If you've found a bug or have a question,
 please open an issue on the

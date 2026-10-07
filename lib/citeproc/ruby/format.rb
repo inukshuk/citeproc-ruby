@@ -7,7 +7,7 @@ module CiteProc
 
       @available = []
 
-      @squeezable = /^[\s\.,:;!?\)\(\[\]]+$/
+      @squeezable = /^[\s\.,:;!?]+$/
 
       @stopwords = {
         :en => %w(a about above across afore after against along alongside amid amidst among amongst

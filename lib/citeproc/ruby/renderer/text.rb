@@ -36,7 +36,7 @@ module CiteProc
 
           case
           when node.variable == 'page'
-            format_page_range!(text, node.page_range_format)
+            text = format_page_range(text, node.page_range_format)
 
           when node.variable == 'locator'
             format = node.page_range_format if item.label == 'page'

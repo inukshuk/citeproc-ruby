@@ -7,6 +7,10 @@ module CiteProc
       it 'can be created with an options hash' do
         expect(Formats::Html.new(:css_only => true)).to be_css_only
       end
+
+      it 'joins tagged strings with newlines' do
+        expect(Format.load('html').join(['<b>a</b>, <i>b</i>', '<b>c</b>'], "\n")).to eq("<b>a</b>, <i>b</i>\n<b>c</b>")
+      end
     end
 
     describe 'Formats::Html#apply' do

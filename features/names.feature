@@ -157,6 +157,28 @@ Feature: CSL Name Rendering
       | Doe, Jane, John Doe. Title E. |
       | ---. Title F.                 |
 
+  Scenario: Subsequent author substitutes replace substituted text for all rules
+    Given the following style node:
+      """
+      <bibliography subsequent-author-substitute="---" subsequent-author-substitute-rule="partial-each">
+        <layout>
+          <names variable="author">
+            <name/>
+            <substitute>
+              <text variable="title"/>
+            </substitute>
+          </names>
+        </layout>
+      </bibliography>
+      """
+    When I render the following citation items as "text":
+      | title     |
+      | Title One |
+      | Title One |
+    Then the results should be:
+      | Title One |
+      | ---       |
+
   Scenario: Name / Label Order
     Given the following style node:
       """

@@ -171,6 +171,33 @@ module CiteProc
         end
       end
 
+      describe 'given a node with affixes and formatting' do
+        it 'formats each name and encloses all names in the affixes' do
+          renderer.format = 'html'
+          node.merge! :prefix => '(', :suffix => ')', :'font-style' => 'italic', :and => 'text'
+
+          expect(renderer.render_name(philosophers.take(2), node)).to eq('(<i>Plato</i> and <i>Socrates</i>)')
+        end
+      end
+
+      describe 'given terms of scripts without spaces' do
+        it 'adds no spaces around the and term' do
+          node[:and] = 'text'
+          allow(renderer).to receive(:translate).with('and').and_return("ו\u2008")
+
+          names = CiteProc::Names.new({ :family => 'תפוח' }, { :family => 'תפוז' })
+          expect(renderer.render_name(names, node)).to eq("תפוחו\u2008תפוז")
+        end
+
+        it 'adds no space before the et-al term' do
+          node[:'et-al-min'] = 3
+          node[:'et-al-use-first'] = 1
+          allow(renderer).to receive(:translate).with('et-al').and_return('等')
+
+          expect(renderer.render_name(philosophers, node)).to eq('Plato等')
+        end
+      end
+
       describe 'given a node with delimier-precedes-last' do
         it 'inserts final delimiter only for three or more names when set to "contextual"' do
           node.delimiter_contextually_precedes_last!
@@ -229,6 +256,15 @@ module CiteProc
           node[:'name-as-sort-order'] = 'all'
           expect(renderer.render_name(names, node)).to eq('Doe, J., Smith, S., and Williams, T.')
           expect(renderer.render_name(names.take(2), node)).to eq('Doe, J., and Smith, S.')
+        end
+
+        it 'does not insert the final delimiter after literal names for the only-after-inverted-name rule' do
+          names = CiteProc::Names.new({ :literal => 'Productivity Commission' }, { :literal => 'Treasury' })
+          node.delimiter_precedes_last_after_inverted_name!
+          node[:'name-as-sort-order'] = 'all'
+          node[:and] = 'text'
+
+          expect(renderer.render_name(names, node)).to eq('Productivity Commission and Treasury')
         end
       end
 
@@ -368,13 +404,27 @@ module CiteProc
           expect(renderer.render_name(people(:van_gogh), node)).to eq('Vincent VAN GOGH')
         end
 
-        it 'family part affixes includes name suffix for non-inverted names' do
+        it 'family part affixes enclose particles and suffix for non-inverted names' do
           part.merge! :name => 'family', :prefix => '(', :suffix => ')'
 
           la_fontaine = people(:la_fontaine)
           la_fontaine[0].suffix = 'Jr.'
 
-          expect(renderer.render_name(la_fontaine, node)).to eq('Jean de (LA FONTAINE Jr.)')
+          expect(renderer.render_name(la_fontaine, node)).to eq('Jean (de LA FONTAINE Jr.)')
+
+          node.all_names_as_sort_order!
+          expect(renderer.render_name(la_fontaine, node)).to eq('(FONTAINE), Jean de LA, Jr.')
+
+          la_fontaine[0].never_demote_particle!
+          expect(renderer.render_name(la_fontaine, node)).to eq('(LA FONTAINE), Jean de, Jr.')
+        end
+
+        it 'formats particles and names separately' do
+          renderer.format = 'html'
+          part.merge! :name => 'family', :'font-weight' => 'bold'
+          part[:'text-case'] = nil
+
+          expect(renderer.render_name(people(:van_gogh), node)).to eq('Vincent <b>van</b> <b>Gogh</b>')
         end
 
         it 'supports given name formatting' do
@@ -395,13 +445,27 @@ module CiteProc
 
           la_fontaine = people(:la_fontaine)
 
-          expect(renderer.render_name(la_fontaine, node)).to eq('(JEAN DE) La Fontaine')
+          expect(renderer.render_name(la_fontaine, node)).to eq('(JEAN) DE La Fontaine')
 
           node.all_names_as_sort_order!
-          expect(renderer.render_name(la_fontaine, node)).to eq('La Fontaine, (JEAN DE)')
-
-          la_fontaine[0].always_demote_particle!
           expect(renderer.render_name(la_fontaine, node)).to eq('Fontaine, (JEAN DE La)')
+
+          la_fontaine[0].never_demote_particle!
+          expect(renderer.render_name(la_fontaine, node)).to eq('La Fontaine, (JEAN DE)')
+        end
+
+        it 'does not add a space after name-part affixes ending in a space' do
+          part.merge! :name => 'given', :suffix => "\u00a0"
+          part[:'text-case'] = nil
+
+          expect(renderer.render_name(poe, node)).to eq("Edgar Allen\u00a0Poe")
+        end
+
+        it 'formats literal names like family names' do
+          part.merge! :name => 'family', :prefix => '(', :suffix => ')'
+          names = CiteProc::Names.new(:literal => 'São Paulo (Estado)')
+
+          expect(renderer.render_name(names, node)).to eq('(SÃO PAULO (ESTADO))')
         end
 
         it 'does not alter the passed-in name object' do
