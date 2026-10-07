@@ -16,8 +16,7 @@ module CiteProc
 
         case
         when node.ordinal? || node.long_ordinal?
-          options = node.attributes_for :form
-          # TODO lookup term of variable to check gender
+          options = node.attributes_for(:form).merge(gender_options_for(node.variable))
 
           numbers.map! do |num|
             num =~ /^\d+$/ ? ordinalize(num, options) : num

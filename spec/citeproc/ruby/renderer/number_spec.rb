@@ -61,6 +61,16 @@ module CiteProc
             it 'returns the number ordinalized' do
               expect(renderer.render_number(item, node)).to eq('42nd')
             end
+
+            it 'uses the gender of the variable term' do
+              renderer.locale = CSL::Locale.parse(File.read(File.join(Fixtures::PATH, 'gendered-ordinals.xml')))
+
+              item.data.edition = '1'
+              expect(renderer.render_number(item, node)).to eq('1re')
+
+              item.data.edition = '3'
+              expect(renderer.render_number(item, node)).to eq('3e')
+            end
           end
           
         end

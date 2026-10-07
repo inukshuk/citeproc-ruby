@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The example from the CSL specification (Gender-specific Ordinals) -->
+<locale xml:lang="fr-FR">
+  <terms>
+    <term name="edition" gender="feminine">
+      <single>édition</single>
+      <multiple>éditions</multiple>
+    </term>
+    <term name="edition" form="short">éd.</term>
+    <term name="month-01" gender="masculine">janvier</term>
+    <term name="ordinal">e</term>
+    <term name="ordinal-01" gender-form="feminine" match="whole-number">re</term>
+    <term name="ordinal-01" gender-form="masculine" match="whole-number">er</term>
+  </terms>
+</locale>
