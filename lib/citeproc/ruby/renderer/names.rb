@@ -185,7 +185,7 @@ module CiteProc
 
                 others
 
-              ], connector
+              ].reject { |part| part.to_s.empty? }, connector
 
             end
 
@@ -244,7 +244,7 @@ module CiteProc
           name.options.merge! node.name_options
           name.sort_order! node.name_as_sort_order_at?(position)
 
-          name.initialize_without_hyphen! if node.initialize_without_hyphen?
+          name.initialize_without_hyphen! if style && style.initialize_without_hyphen?
 
           if style && style.demote_particle?
             name.options[:'demote-non-dropping-particle'] = style.demote_particle
@@ -390,6 +390,9 @@ module CiteProc
         return names if j.nil?
 
         return names unless names[i][1] == names[j][1]
+
+        # An empty term disables the special case
+        return names if translate('editortranslator').to_s.empty?
 
         # rename the first instance and drop the second one
         i, j = j, i if j < i

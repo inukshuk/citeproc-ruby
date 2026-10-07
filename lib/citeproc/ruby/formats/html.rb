@@ -58,7 +58,7 @@ module CiteProc
           end
 
           if bibliography.hanging_indent?
-            hanging_indent = "#{config[:bib_hanging_indent]}#{bib_unit}"
+            hanging_indent = "#{config[:bib_hanging_indent]}#{unit}"
 
             container_options['style']['padding-left'] = hanging_indent
             entry_options['style']['text-indent'] = "-#{hanging_indent}"
@@ -194,6 +194,9 @@ module CiteProc
       end
 
       class CiteProcJS < Html
+        # The superscript characters converted to sup tags by citeproc-js
+        SUPERSCRIPTS = /[ª²-³¹-ºʰ-ʸˀ-ˁˠ-ˤۥ-ۦᴬ-ᴮᴰ-ᴺᴼ-ᵍᵏ-ᵡ⁰-ⁱ⁴-ⁿ℠™㆒-㆟]/
+
         def initialize
           super(
             :bib_container => 'div',
@@ -239,6 +242,10 @@ module CiteProc
 
           # Use typographic apostrophes
           output.gsub!(/(?<=\p{L})'|'(?=\d)/, '’')
+
+          output.gsub!(SUPERSCRIPTS) do |char|
+            content_tag('sup', char.unicode_normalize(:nfkc))
+          end
         end
 
         private

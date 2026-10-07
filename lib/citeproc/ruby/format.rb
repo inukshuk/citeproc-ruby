@@ -210,10 +210,10 @@ module CiteProc
       def apply_text_case
         case options[:'text-case']
         when 'lowercase'
-          output.replace CiteProc.downcase output
+          output.replace turkic? ? output.downcase(:turkic) : CiteProc.downcase(output)
 
         when 'uppercase'
-          output.replace CiteProc.upcase output
+          output.replace turkic? ? output.upcase(:turkic) : CiteProc.upcase(output)
 
         when 'capitalize-first'
           output.sub!(/^([^\p{Alnum}]*)(\p{Ll})/) { "#{$1}#{CiteProc.upcase($2)}" }
@@ -236,14 +236,23 @@ module CiteProc
           output.gsub!(/\b(\p{L})([\p{L}\.]+)\b/) do |word|
             first_letter = $1
             rest_of_word = $2
+            before, after = Regexp.last_match.pre_match, Regexp.last_match.post_match
             result = word
 
-            if first_letter.match(/^\p{Ll}/) && (!Format.stopword?(word) || first)
+            # Stop words are capitalized at the start of hyphenated words
+            capitalize = first || !Format.stopword?(word) ||
+              after.start_with?('-') && !before.end_with?('-')
+
+            # Words in mixed case like "iPad" are left as is
+            if first_letter.match(/^\p{Ll}/) && !rest_of_word.match?(/\p{Lu}/) && capitalize
               result = "#{CiteProc.upcase(first_letter)}#{rest_of_word}"
             end
             first = false
             result
           end
+
+          # Capitalize the first word after a colon
+          output.gsub!(/(:\s+)(\p{Ll})(?=\p{Ll}*\b)/) { "#{$1}#{CiteProc.upcase($2)}" }
 
           output.gsub!(/(\.|\b)(\p{Ll})([\p{L}\.]+)\b$/) do |word|
             word_boundary = $1
@@ -267,6 +276,11 @@ module CiteProc
         else
           @language.match?(/\Aen(-|\z)/i)
         end
+      end
+
+      # @return [Boolean] whether the item's language uses Turkic case mappings
+      def turkic?
+        @language.to_s.match?(/\A(tr|az)(-|\z)/i)
       end
 
       def punctuation_in_quotes?

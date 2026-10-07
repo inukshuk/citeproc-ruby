@@ -24,9 +24,9 @@ module CiteProc
 
           delimiter, filter = localized_node.delimiter, node.parts_filter
 
-          parts = localized_node.parts.select do |part|
+          parts = localized_node.parts.select { |part|
             filter.include? part.name
-          end
+          }.map { |part| override_date_part(part, node) }
         else
           parts, delimiter = node.parts, node.delimiter
         end
@@ -102,7 +102,8 @@ module CiteProc
             if date.day > 1 && locale.limit_day_ordinals?
               date.day.to_s
             else
-              ordinalize date.day
+              month = 'month-%02d' % date.month unless date.month.nil?
+              ordinalize date.day, gender_options_for(month)
             end
           when node.form == 'numeric-leading-zeros'
             '%02d' % date.day
@@ -169,6 +170,19 @@ module CiteProc
         return unless range.all? { |part| differing.include?(part.name) }
 
         [parts[0...first], range, parts[(last + 1)..]]
+      end
+
+      # Date parts in the style override the attributes,
+      # except affixes, of the localized date parts.
+      #
+      # @return [CSL::Node] the date part or an overridden copy
+      def override_date_part(part, node)
+        style_part = node.parts.detect { |p| p.name == part.name }
+        return part if style_part.nil?
+
+        copy = part.deep_copy
+        copy.merge! style_part.attributes.to_hash.except(:prefix, :suffix)
+        copy
       end
 
       # @return [Array<CSL::Node>] the date parts with a copy

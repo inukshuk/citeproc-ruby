@@ -69,6 +69,15 @@ module CiteProc
           expect(format.apply('schön!', node)).to eq('SCHÖN!')
         end
 
+        it 'supports uppercase and lowercase for Turkic languages' do
+          node[:'text-case'] = 'uppercase'
+          expect(format.apply('ic and ıd', node, nil, 'tr')).to eq('İC AND ID')
+          expect(format.apply('ic and ıd', node, nil, 'en')).to eq('IC AND ID')
+
+          node[:'text-case'] = 'lowercase'
+          expect(format.apply('İC AND ID', node, nil, 'tr')).to eq('ic and ıd')
+        end
+
         it 'does not alter the original string' do
           node[:'text-case'] = 'lowercase'
           input = 'fooBar'
@@ -124,6 +133,21 @@ module CiteProc
           expect(format.apply("Pride and Prejudice", node)).to eq("Pride and Prejudice")
           expect(format.apply("Check the page: easybib.com", node)).to eq("Check the Page: Easybib.com")
           expect(format.apply("Dogs life.obviously the best guide for pet owners", node)).to eq("Dogs Life.obviously the Best Guide for Pet Owners")
+        end
+
+        it 'capitalizes stop words after a colon' do
+          node[:'text-case'] = 'title'
+          expect(format.apply('out-of-fashion initiatives: a second story', node)).to eq('Out-of-Fashion Initiatives: A Second Story')
+        end
+
+        it 'capitalizes stop words before a hyphen' do
+          node[:'text-case'] = 'title'
+          expect(format.apply('employee pro-environmental behavior', node)).to eq('Employee Pro-Environmental Behavior')
+        end
+
+        it 'does not change words in mixed case' do
+          node[:'text-case'] = 'title'
+          expect(format.apply('iPad is a thing', node)).to eq('iPad Is a Thing')
         end
 
         describe 'title case and languages' do

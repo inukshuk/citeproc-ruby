@@ -34,6 +34,13 @@ module CiteProc
           expect(renderer.render(item, node)).to eq('January 2012')
         end
 
+        it 'applies the attributes of date parts in the style except affixes' do
+          item.data[:issued] = '2005-12-15'
+          node[:form] = 'text'
+          node << CSL::Style::DatePart.new(:name => 'month', :form => 'short', :prefix => '!')
+          expect(renderer.render(item, node)).to eq('Dec. 15, 2005')
+        end
+
         it 'renders date ranges' do
           item.data[:issued] = [[2005, 11, 15], [2006, 12, 20]]
           node[:'date-parts'] = 'year-month'
@@ -183,6 +190,13 @@ module CiteProc
 
           independence.day = 1
           expect(renderer.render_date_part(independence, node)).to eq('1st')
+        end
+
+        it 'uses the gender of the month term for ordinals' do
+          node[:form] = 'ordinal'
+          renderer.locale = CSL::Locale.parse(File.read(File.join(Fixtures::PATH, 'gendered-ordinals.xml')))
+
+          expect(renderer.render_date_part(CiteProc::Date.new([2012, 1, 1]), node)).to eq('1er')
         end
       end
 

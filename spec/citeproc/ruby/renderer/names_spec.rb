@@ -125,6 +125,17 @@ module CiteProc
 
           expect(renderer.render(item, node)).to eq('Quinn & Thompson (editors & translators); Poe (author)')
         end
+
+        it 'does not combine editors and translators if the editortranslator term is empty' do
+          node[:variable] = 'editor translator'
+          item.data.editor = poe
+          item.data.translator = poe
+
+          allow(renderer).to receive(:translate).and_call_original
+          allow(renderer).to receive(:translate).with('editortranslator').and_return('')
+
+          expect(renderer.render_names(item, node)).to eq('Edgar Allen Poe; Edgar Allen Poe')
+        end
       end
     end
 
@@ -235,6 +246,14 @@ module CiteProc
 
           others[:term] = 'and others'
           expect(renderer.render_name(names, node)).to eq('J. Doe, S. Smith, !!and others')
+        end
+
+        it 'skips empty et-al terms' do
+          node[:'et-al-min'] = 3
+          node[:'et-al-use-first'] = 2
+          allow(renderer).to receive(:translate).with('et-al').and_return('')
+
+          expect(renderer.render_name(names, node)).to eq('J. Doe, S. Smith')
         end
 
         it 'supports et-al-use-last' do

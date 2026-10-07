@@ -79,69 +79,96 @@ module CiteProc
         dash = range_delimiter
 
         pages.gsub! PAGE_RANGE_PATTERN do
-          affixes, f, t = [$1, $3, $4, $6], $2, $5
-
-          # When there are affixes or no format was
-          # specified we skip this part. As a result,
-          # only the delimiter will be replaced!
-
-          if affixes.all?(&:empty?) && !format.nil?
-
-            dim = f.length
-            delta = dim - t.length
-
-            if delta >= 0
-              t.prepend f[0, delta] unless delta.zero?
-
-              # TODO
-              if format == 'chicago-16' || format == 'chicago-15'
-                format = 'chicago'
-              end
-
-              if format == 'chicago'
-                changes = dim - f.chars.zip(t.chars).
-                  take_while { |a,b| a == b }.length if dim == 4
-
-                format = case
-                  when dim < 3
-                    'expanded'
-                  when dim == 4 && changes > 2
-                    'expanded'
-                  when f[-2, 2] == '00'
-                    'expanded'
-                  when f[-2] == '0'
-                    'minimal'
-                  else
-                    'minimal-two'
-                  end
-              end
-
-              case format
-              when 'expanded'
-                # nothing to do
-              when 'minimal'
-                t = t.each_char.drop_while.with_index { |c, i| c == f[i] }.join('')
-              when 'minimal-two'
-                if dim > 2
-                  t = t.each_char.drop_while.with_index { |c, i|
-                    c == f[i] && dim - i > 2
-                  }.join('')
-                end
-              else
-                raise ArgumentError, "unknown page range format: #{format}"
-              end
-            end
-          end
-
-          affixes.zip([f, dash, t]).flatten.compact.join('')
+          from, to = $1, $2
+          format_page_bounds(from, to, format, dash) || "#{from}-#{to}"
         end
 
+        # Escaped hyphens are not range delimiters
+        pages.gsub!('\\-', '-')
         pages
       end
 
-      PAGE_RANGE_PATTERN =
-        #   ------------  -2-  ------------             ------------  -5-  ------------
-        /\b([[:alpha:]]*)(\d+)([[:alpha:]]*)\s*[–-]+\s*([[:alpha:]]*)(\d+)([[:alpha:]]*)\b/
+      PAGE_RANGE_PATTERN = /([[:alnum:]]+)\s*[–-]+\s*([[:alnum:]]+)/
+
+      # A page number with optional prefix and suffix
+      PAGE_PATTERN = /\A(\d*[[:alpha:]]+)?(\d+)([[:alpha:]]*)\z/
+
+      ROMAN_PATTERN = /\A[ivxlcdm]+\z/i
+
+      private
+
+      # @return [String, nil] the formatted page range or nil if
+      #   the bounds do not form a page range
+      def format_page_bounds(from, to, format, dash)
+        if ROMAN_PATTERN.match?(from) && ROMAN_PATTERN.match?(to)
+          return "#{from}#{dash}#{to}"
+        end
+
+        f, t = PAGE_PATTERN.match(from), PAGE_PATTERN.match(to)
+
+        # Ranges must have the same prefix on both sides
+        return unless f && t && f[1] == t[1]
+
+        # When there are suffixes or no format was
+        # specified we only replace the delimiter
+        if format.nil? || !f[3].empty? || !t[3].empty?
+          return "#{from}#{dash}#{to}"
+        end
+
+        prefix = f[1]
+        last = format_page_number(f[2], t[2].dup, format)
+
+        # The prefix is repeated only for expanded ranges
+        "#{prefix}#{f[2]}#{dash}#{prefix if format == 'expanded'}#{last}"
+      end
+
+      def format_page_number(f, t, format)
+        dim = f.length
+        delta = dim - t.length
+
+        if delta >= 0
+          t.prepend f[0, delta] unless delta.zero?
+
+          format = 'chicago-15' if format == 'chicago'
+
+          if format == 'chicago-15' || format == 'chicago-16'
+            # Only the 15th edition expands four digit
+            # numbers when three or more digits change
+            changes = dim - f.chars.zip(t.chars).
+              take_while { |a,b| a == b }.length if dim == 4
+
+            format = case
+              when dim < 3
+                'expanded'
+              when dim == 4 && format == 'chicago-15' && changes > 2
+                'expanded'
+              when f[-2, 2] == '00'
+                'expanded'
+              when f[-2] == '0'
+                'minimal'
+              else
+                'minimal-two'
+              end
+          end
+
+          case format
+          when 'expanded'
+            # nothing to do
+          when 'minimal'
+            t = t.each_char.drop_while.with_index { |c, i| c == f[i] }.join('')
+          when 'minimal-two'
+            if dim > 2
+              t = t.each_char.drop_while.with_index { |c, i|
+                c == f[i] && dim - i > 2
+              }.join('')
+            end
+          else
+            raise ArgumentError, "unknown page range format: #{format}"
+          end
+        end
+
+        t
+      end
 
     end
 

@@ -168,6 +168,14 @@ module CiteProc
           format.bibliography(bibliography)
           expect(bibliography.join).to eq('<div class="csl-bibliography"><span>foo</span><span>bar</span></div>')
         end
+
+        it 'supports hanging indents' do
+          format.config[:bib_indent] = nil
+          bibliography.options[:'hanging-indent'] = 'true'
+
+          format.bibliography(bibliography)
+          expect(bibliography.join).to eq('<ol class="csl-bibliography" style="padding-left: 0.5em"><li class="csl-entry" style="text-indent: -0.5em">foo</li><li class="csl-entry" style="text-indent: -0.5em">bar</li></ol>')
+        end
       end
     end
 
@@ -192,6 +200,11 @@ module CiteProc
       it 'uses typographic apostrophes' do
         expect(format.apply("Plato's thought", node)).to eq('Plato’s thought')
         expect(format.apply("ETFA '09", node)).to eq('ETFA ’09')
+      end
+
+      it 'uses sup tags for superscript characters' do
+        expect(format.apply('1ʳᵉ édition', node)).to eq('1<sup>r</sup><sup>e</sup> édition')
+        expect(format.apply('2.º', node)).to eq('2.<sup>o</sup>')
       end
     end
 

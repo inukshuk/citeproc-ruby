@@ -94,6 +94,53 @@ module CiteProc
         end
       end
 
+      describe 'style options' do
+        let(:item) do
+          i = CiteProc::CitationItem.new(:id => 'chen')
+          i.data = CiteProc::Item.new(:id => 'chen', :author => [{ :family => 'Chen', :given => 'Hsien-Li' }])
+          i
+        end
+
+        it 'drops hyphens from initials if initialize-with-hyphen is false' do
+          style = CSL::Style.parse(<<~XML)
+            <style xmlns="http://purl.org/net/xbiblio/csl" version="1.0" initialize-with-hyphen="false">
+              <citation>
+                <layout>
+                  <names variable="author"><name initialize-with="." form="long"/></names>
+                </layout>
+              </citation>
+            </style>
+          XML
+
+          expect(renderer.render([item], style.citation)).to eq('H.L. Chen')
+        end
+
+        it 'formats page locators using the page-range-format' do
+          style = CSL::Style.parse(<<~XML)
+            <style xmlns="http://purl.org/net/xbiblio/csl" version="1.0" page-range-format="expanded">
+              <citation>
+                <layout>
+                  <text variable="locator"/>
+                </layout>
+              </citation>
+            </style>
+          XML
+
+          item.locator = '427-30'
+          expect(renderer.render([item], style.citation)).to eq('427–430')
+
+          item.label = 'chapter'
+          expect(renderer.render([item], style.citation)).to eq('427–30')
+        end
+      end
+
+      describe '#locator_abbreviations' do
+        it 'includes the localized short terms of locator labels' do
+          renderer.locale = 'de-DE'
+          expect(renderer.locator_abbreviations).to include('S.' => 'page', 'Bd.' => 'volume', 'vol.' => 'volume')
+        end
+      end
+
       describe '#locale=' do
         it 'loads the locale' do
           renderer.locale = 'de-DE'
@@ -164,8 +211,35 @@ module CiteProc
           expect(renderer.format_page_range('1496-504; 2787-2816', 'chicago')).to eq('1496–1504; 2787–2816')
         end
 
+        it 'supports "chicago-16" format' do
+          expect(renderer.format_page_range('1496-1500; 1087-89; 11564-11615', 'chicago-16')).to eq('1496–500; 1087–89; 11564–615')
+          expect(renderer.format_page_range('1100-13; 101-108; 321-8', 'chicago-16')).to eq('1100–1113; 101–8; 321–28')
+        end
+
         it 'formats multiple page ranges' do
           expect(renderer.format_page_range('42-45 and 57; 81-3 & 123-4', 'minimal-two')).to eq('42–45 and 57; 81–83 & 123–24')
+        end
+
+        it 'formats page ranges with the same prefix' do
+          expect(renderer.format_page_range('N110 - N5', 'expanded')).to eq('N110–N115')
+          expect(renderer.format_page_range('n11564-n1568', 'chicago')).to eq('n11564–68')
+          expect(renderer.format_page_range('8n11564-8n1568', 'minimal')).to eq('8n11564–8')
+        end
+
+        it 'does not format page ranges with different prefixes' do
+          expect(renderer.format_page_range('N110 - 5', 'expanded')).to eq('N110-5')
+          expect(renderer.format_page_range('n11564-1568', 'minimal')).to eq('n11564-1568')
+          expect(renderer.format_page_range('123N110 - N5, 456K200 - 99', 'expanded')).to eq('123N110-N5, 456K200-99')
+        end
+
+        it 'uses the range delimiter for roman numerals' do
+          expect(renderer.format_page_range('xxv-xxviii', 'chicago-16')).to eq('xxv–xxviii')
+          expect(renderer.format_page_range('i-ix', nil)).to eq('i–ix')
+        end
+
+        it 'does not format words or escaped hyphens' do
+          expect(renderer.format_page_range('Michaelson-Morely', nil)).to eq('Michaelson-Morely')
+          expect(renderer.format_page_range('327\\-30', 'expanded')).to eq('327-30')
         end
       end
     end
