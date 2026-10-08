@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   }
 
   s.required_ruby_version = '>= 3.1'
-  s.add_dependency 'citeproc', '~> 1.4'
+  s.add_dependency 'citeproc', '~> 2.0'
   s.add_dependency 'csl', '~> 2.5'
   s.add_dependency 'observer', '< 1.0'
 
