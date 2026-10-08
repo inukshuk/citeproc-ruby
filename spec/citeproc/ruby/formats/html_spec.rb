@@ -77,6 +77,11 @@ module CiteProc
 
           expect(format.apply('ooo', layout)).to eq('<i>foooooooo</i>')
         end
+
+        it 'adds the suffix of a layout inside a trailing display block' do
+          layout = CSL::Style::Layout.new(:suffix => '.')
+          expect(format.apply('<div class="csl-block">foo</div>', layout)).to eq('<div class="csl-block">foo.</div>')
+        end
       end
 
       describe 'font-style' do

@@ -118,6 +118,14 @@ module CiteProc
           )
         end
 
+        # The suffix of a layout goes into a trailing display block
+        def apply_suffix
+          close = closing_tag(config[:display])
+          return super unless node.is_a?(CSL::Style::Layout) && output.end_with?(close)
+
+          output.replace "#{squeeze_suffix(output.delete_suffix(close), suffix)}#{close}"
+        end
+
         def prefix
           CSL.encode_xml_text(options[:prefix])
         end

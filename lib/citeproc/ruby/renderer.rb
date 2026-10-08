@@ -105,7 +105,21 @@ module CiteProc
           end
         end
 
-        result = render item, node.layout
+        fields = node.layout.each_child.map { |child|
+          render item, child
+        }.reject(&:empty?)
+
+        # With second-field-align, the first field is rendered
+        # in the left margin and the other fields inline
+        # (without trailing whitespace)
+        if node.second_field_align? && fields.length > 1
+          fields = [
+            format!(fields[0], CSL::Style::Group.new(:display => 'left-margin')),
+            format!(join(fields[1..]).rstrip, CSL::Style::Group.new(:display => 'right-inline'))
+          ]
+        end
+
+        result = format! join(fields), node.layout
 
       ensure
         unless original_locale.nil?

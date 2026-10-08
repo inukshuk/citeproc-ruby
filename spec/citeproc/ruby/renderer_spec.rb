@@ -141,6 +141,47 @@ module CiteProc
         end
       end
 
+      describe 'second-field-align' do
+        let(:item) do
+          i = CiteProc::CitationItem.new(:id => 'doe')
+          i.data = CiteProc::Item.new(:id => 'doe', :title => 'Title')
+          i
+        end
+
+        def style(align)
+          CSL::Style.parse(<<~XML)
+            <style xmlns="http://purl.org/net/xbiblio/csl" version="1.0">
+              <bibliography#{align}>
+                <layout suffix=".">
+                  <text value="1" suffix=". "/>
+                  <text variable="title"/>
+                </layout>
+              </bibliography>
+            </style>
+          XML
+        end
+
+        it 'renders the first field in the left margin and the rest inline' do
+          renderer.format = 'html'
+          expect(renderer.render_bibliography(item, style(' second-field-align="flush"').bibliography)).to eq(
+            '<div class="csl-left-margin">1. </div><div class="csl-right-inline">Title.</div>')
+        end
+
+        it 'removes trailing whitespace from the inline fields' do
+          renderer.format = 'html'
+          style = style(' second-field-align="flush"')
+          style.bibliography.layout.each_child.to_a.last[:suffix] = '. '
+
+          expect(renderer.render_bibliography(item, style.bibliography)).to eq(
+            '<div class="csl-left-margin">1. </div><div class="csl-right-inline">Title.</div>')
+        end
+
+        it 'renders all fields together by default' do
+          renderer.format = 'html'
+          expect(renderer.render_bibliography(item, style('').bibliography)).to eq('1. Title.')
+        end
+      end
+
       describe '#locale=' do
         it 'loads the locale' do
           renderer.locale = 'de-DE'
