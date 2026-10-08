@@ -75,6 +75,12 @@ module CiteProc
             expect(renderer.render_text(item, node)).to eq('the full title')
           end
         end
+
+        it 'does not fall back to the long form for short form variables' do
+          item.data.title = 'the full title'
+          node[:variable] = 'title-short'
+          expect(renderer.render_text(item, node)).to eq('')
+        end
       end
 
       describe 'given a text node with a variable' do

@@ -25,7 +25,8 @@ module CiteProc
             context, was_short_form = node.variable.split(/-short$/, 2)
 
             if !was_short_form.nil? || node[:form] == 'short'
-              if text.empty? && context != node.variable
+              # Only the short form falls back to the long form
+              if text.empty? && context != node.variable && node[:form] == 'short'
                 text = item.data.variable(context, node.variable_options).to_s
               end
 
