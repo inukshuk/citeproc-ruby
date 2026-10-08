@@ -106,6 +106,18 @@ module CiteProc
           expect(renderer.render(item, node)).to eq('328')
         end
 
+        it 'uses the localized ampersand' do
+          item.locator = '213 & 235'
+          expect(renderer.render(item, node)).to eq('213 & 235')
+
+          renderer.locale = CSL::Locale.parse(<<~XML)
+            <locale xml:lang="en">
+              <terms><term name="and" form="symbol">AMPERSAND</term></terms>
+            </locale>
+          XML
+          expect(renderer.render(item, node)).to eq('213 AMPERSAND 235')
+        end
+
         it 'replaces hyphens with en-dashes' do
           item.locator = '100-103'
           expect(renderer.render(item, node)).to eq('100–103')

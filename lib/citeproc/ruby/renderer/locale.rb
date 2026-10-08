@@ -42,6 +42,13 @@ module CiteProc
         end
       end
 
+      # @return [String] the symbol form of the "and" term
+      #   if the locale defines it; otherwise "&"
+      def ampersand
+        term = locale.terms.lookup('and', :form => 'symbol')
+        term&.form == 'symbol' ? term.to_s : '&'
+      end
+
       private
 
       def clear_locale_cache!

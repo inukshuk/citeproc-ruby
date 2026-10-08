@@ -42,6 +42,9 @@ module CiteProc
             format = node.page_range_format if item.label == 'page'
             text = format_page_range(text, format)
 
+            # Use the localized ampersand (e.g., in "213 & 235")
+            text = text.gsub(/\s*&\s*/, " #{ampersand} ")
+
           when node.variable == 'page-first' && text.empty?
             text = item.data[:'page'].to_s[/\d+/].to_s
 
