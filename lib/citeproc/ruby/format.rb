@@ -16,7 +16,7 @@ module CiteProc
           forenenst from given in inside into lest like modulo near next nor notwithstanding of off
           on onto or out over per plus pro qua sans since so than the through thru throughout thruout
           till to toward towards under underneath until unto up upon versus vs v via vis-à-vis with
-          within without)
+          within without yet de von van)
       }
 
       class << self
@@ -233,7 +233,7 @@ module CiteProc
 
           # TODO exceptions: word followed by colon
           first = true
-          output.gsub!(/\b(\p{L})([\p{L}\.]+)\b/) do |word|
+          output.gsub!(/(?<!['’])\b(\p{L})([\p{L}\.]+)\b/) do |word|
             first_letter = $1
             rest_of_word = $2
             before, after = Regexp.last_match.pre_match, Regexp.last_match.post_match

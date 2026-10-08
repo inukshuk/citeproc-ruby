@@ -145,6 +145,16 @@ module CiteProc
           expect(format.apply('employee pro-environmental behavior', node)).to eq('Employee Pro-Environmental Behavior')
         end
 
+        it 'does not capitalize words after apostrophes' do
+          node[:'text-case'] = 'title'
+          expect(format.apply('nobody knows you’re a dog', node)).to eq('Nobody Knows You’re a Dog')
+        end
+
+        it 'does not capitalize particles and yet' do
+          node[:'text-case'] = 'title'
+          expect(format.apply('antiquités de l’Égypte yet again', node)).to eq('Antiquités de l’Égypte yet Again')
+        end
+
         it 'does not change words in mixed case' do
           node[:'text-case'] = 'title'
           expect(format.apply('iPad is a thing', node)).to eq('iPad Is a Thing')
