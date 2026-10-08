@@ -6,12 +6,10 @@ module CiteProc
       private
 
       # @param item [CiteProc::CitationItem]
-      # @param node [CSL::Style::Layout]
+      # @param node [CSL::Style::Macro]
       # @return [String]
       def render_macro(item, node)
-        node.each_child.map { |child|
-          render item, child
-        }.join('')
+        render_as_group item, node
       end
 
     end

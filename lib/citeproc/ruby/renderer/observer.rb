@@ -20,14 +20,14 @@ module CiteProc
           self
         end
 
+        # A variable read more than once counts as non-empty
+        # if any of the reads was non-empty
         def update(method, key, value)
-          history[key] = value if method == :read
+          history[key] = value if method == :read && empty?(history[key])
         end
 
         def skip?
-          !history.empty? && history.values.all? { |v|
-            v.nil? || v.respond_to?(:empty?) && v.empty?
-          }
+          !history.empty? && history.values.all? { |v| empty?(v) }
         end
 
         def accessed
@@ -37,6 +37,12 @@ module CiteProc
         def clear!
           history.clear
           self
+        end
+
+        private
+
+        def empty?(value)
+          value.nil? || value.respond_to?(:empty?) && value.empty?
         end
       end
 

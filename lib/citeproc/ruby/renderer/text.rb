@@ -18,6 +18,11 @@ module CiteProc
             # observers (if any).
             text = (item.locator || item.data[:locator]).to_s
 
+          elsif node.variable == 'year-suffix'
+            # The year-suffix is set by the processor (for disambiguation)
+            # and does not count as a variable for group suppression
+            text = item.data.unobservable_read_attribute(:'year-suffix').to_s
+
           else
             text = item.data.variable(node.variable, node.variable_options).to_s
 

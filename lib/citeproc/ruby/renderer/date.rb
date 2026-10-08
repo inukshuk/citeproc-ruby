@@ -13,17 +13,19 @@ module CiteProc
       def render_date(item, node)
         return '' unless node.has_variable?
 
-        date = item.data[node.variable]
-        return '' if date.nil? || date.empty?
+        # Observers see the date as rendered:
+        # a date without the date parts used counts as empty
+        item.data.deferred_read_attribute(node.variable) do |date|
+          next '' if date.nil? || date.empty?
+          next date.to_s if date.literal?
 
-        return date.to_s if date.literal?
+          parts, delimiter = node.parts_for(locale), node.delimiter_for(locale)
 
-        parts, delimiter = node.parts_for(locale), node.delimiter_for(locale)
-
-        if date.range?
-          render_date_range date, parts, delimiter
-        else
-          render_date_parts date, parts, delimiter
+          if date.range?
+            render_date_range date, parts, delimiter
+          else
+            render_date_parts date, parts, delimiter
+          end
         end
       end
 

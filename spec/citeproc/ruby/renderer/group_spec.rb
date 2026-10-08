@@ -109,6 +109,100 @@ module CiteProc
         end
 
       end
+
+      describe 'when a macro or nested group in the group produces output' do
+        let(:style) do
+          CSL::Style.parse(<<~XML)
+            <style xmlns="http://purl.org/net/xbiblio/csl" version="1.0">
+              <macro name="date">
+                <choose>
+                  <if variable="issued"><date variable="issued"><date-part name="year"/></date></if>
+                  <else><text term="no date" form="short"/></else>
+                </choose>
+              </macro>
+              <citation>
+                <layout>
+                  <group delimiter="; ">
+                    <text macro="date"/>
+                    <text variable="volume"/>
+                  </group>
+                  <group delimiter="; ">
+                    <group><text term="in"/></group>
+                    <text variable="volume"/>
+                  </group>
+                </layout>
+              </citation>
+            </style>
+          XML
+        end
+
+        let(:groups) { style.citation.layout.each_child.to_a }
+
+        it 'treats a non-empty macro as a non-empty variable' do
+          expect(renderer.render(item, groups[0])).to eq('n.d.')
+        end
+
+        it 'treats a non-empty nested group as a non-empty variable' do
+          expect(renderer.render(item, groups[1])).to eq('in')
+        end
+      end
+
+      describe 'when the group contains the year-suffix' do
+        before do
+          node << CSL::Style::Text.new(:term => 'no date', :form => 'short')
+          node << CSL::Style::Text.new(:variable => 'year-suffix')
+        end
+
+        it 'does not count the year-suffix as a variable' do
+          expect(renderer.render(item, node)).to eq('n.d.')
+        end
+      end
+
+      describe 'when the date in the group renders no date parts' do
+        before do
+          item.data[:issued] = '1965'
+
+          node << CSL::Style::Text.new(:value => 'and not this')
+          node << CSL::Style::Date.new(:variable => 'issued') { |d| d << CSL::Style::DatePart.new(:name => 'month') }
+        end
+
+        it 'treats the date as an empty variable' do
+          expect(renderer.render(item, node)).to eq('')
+        end
+
+        it 'treats the date as non-empty if it renders elsewhere in the group' do
+          node.children.unshift CSL::Style::Date.new(:variable => 'issued') { |d| d << CSL::Style::DatePart.new(:name => 'year') }
+          expect(renderer.render(item, node)).to eq('1965and not this')
+        end
+      end
+
+      describe 'when the group contains a substituted variable' do
+        let(:style) do
+          CSL::Style.parse(<<~XML)
+            <style xmlns="http://purl.org/net/xbiblio/csl" version="1.0">
+              <citation>
+                <layout>
+                  <names variable="author">
+                    <substitute><names variable="editor"/></substitute>
+                  </names>
+                  <group>
+                    <text value="edited by "/>
+                    <names variable="editor"/>
+                  </group>
+                </layout>
+              </citation>
+            </style>
+          XML
+        end
+
+        before { item.data[:editor] = 'Doe, John' }
+
+        it 'treats the substituted variable as empty' do
+          names, group = style.citation.layout.each_child.to_a
+          expect(renderer.render(item, names)).to eq('John Doe')
+          expect(renderer.render(item, group)).to eq('')
+        end
+      end
     end
   end
 end
